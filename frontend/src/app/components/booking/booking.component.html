@@ -1,0 +1,104 @@
+<!-- LISTA MEDICI -->
+<div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-8 shadow-xl">
+  <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-white/10">
+    <span class="material-symbols-outlined text-blue-400">medical_information</span>
+    <div>
+      <h2 class="text-xl font-bold text-white">I Nostri Medici Specialisti</h2>
+      <p class="text-xs text-slate-400">Sfoglia l'elenco dei professionisti disponibili nella clinica HealthCare Plus.</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-white/5 border border-white/10 rounded-xl p-5 flex items-start space-x-4 hover:bg-white/10 hover:border-white/20 transition-all shadow" *ngFor="let doc of doctors">
+      <div class="p-3 bg-blue-500/20 text-blue-400 rounded-xl">
+        <span class="material-symbols-outlined text-2xl">person_play</span>
+      </div>
+      <div class="space-y-1">
+        <h4 class="font-bold text-white text-base">{{ doc.name }}</h4>
+        <span class="inline-block text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded px-2 py-0.5">{{ doc.specialization }}</span>
+        <p class="text-xs text-slate-400 flex items-center space-x-1 mt-1.5">
+          <span class="material-symbols-outlined text-xs">mail</span>
+          <span>{{ doc.email }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM PRENOTAZIONE -->
+<div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl max-w-2xl mx-auto">
+  <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-white/10">
+    <span class="material-symbols-outlined text-blue-400">edit_calendar</span>
+    <div>
+      <h2 class="text-xl font-bold text-white">Prenota una Visita</h2>
+      <p class="text-xs text-slate-400">Compila i campi sottostanti per programmare una nuova visita medica.</p>
+    </div>
+  </div>
+
+  <div class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-200 rounded-lg p-4 mb-6 flex items-start space-x-3 text-sm" *ngIf="bookingSuccess">
+    <span class="material-symbols-outlined text-emerald-400 mt-0.5">check_circle</span>
+    <p>Prenotazione effettuata con successo! Controlla la tua Dashboard.</p>
+  </div>
+
+  <div class="bg-red-500/20 border border-red-500/30 text-red-200 rounded-lg p-4 mb-6 flex items-start space-x-3 text-sm animate-pulse" *ngIf="bookingError">
+    <span class="material-symbols-outlined text-red-400 mt-0.5">error</span>
+    <p>{{ bookingError }}</p>
+  </div>
+
+  <form (submit)="submitBooking(); $event.preventDefault()" class="space-y-5">
+    <div class="form-group">
+      <label for="doctor" class="block text-sm font-medium text-slate-300 mb-2">Seleziona Medico e Specializzazione *</label>
+      <select 
+        id="doctor" 
+        [(ngModel)]="selectedDoctorId" 
+        name="selectedDoctorId" 
+        class="w-full bg-white/5 border border-white/10 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+        required>
+        <option [value]="undefined" disabled>Seleziona un medico...</option>
+        <option *ngFor="let doc of doctors" [value]="doc.id">
+          {{ doc.name }} - {{ doc.specialization }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="datetime" class="block text-sm font-medium text-slate-300 mb-2">Data e Ora Visita *</label>
+      <input 
+        type="datetime-local" 
+        id="datetime" 
+        [(ngModel)]="appointmentDate" 
+        name="appointmentDate" 
+        class="w-full bg-white/5 border border-white/10 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+        required>
+    </div>
+
+    <div class="form-group">
+      <label for="reason" class="block text-sm font-medium text-slate-300 mb-2">Motivo della Visita *</label>
+      <input 
+        type="text" 
+        id="reason" 
+        placeholder="es. Controllo periodico, prima visita cardiologica..." 
+        [(ngModel)]="appointmentReason" 
+        name="appointmentReason" 
+        class="w-full bg-white/5 border border-white/10 text-white rounded-lg px-4 py-3 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+        required>
+    </div>
+
+    <div class="form-group">
+      <label for="notes" class="block text-sm font-medium text-slate-300 mb-2">Note aggiuntive (Opzionale)</label>
+      <textarea 
+        id="notes" 
+        rows="3" 
+        placeholder="Sintomi riscontrati, farmaci assunti, preferenze..." 
+        [(ngModel)]="appointmentNotes" 
+        name="appointmentNotes"
+        class="w-full bg-white/5 border border-white/10 text-white rounded-lg px-4 py-3 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"></textarea>
+    </div>
+
+    <div class="flex items-center space-x-4 pt-2">
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-blue-500/20 active:scale-[0.98] transition-all">
+        Conferma Prenotazione
+      </button>
+    </div>
+  </form>
+</div>

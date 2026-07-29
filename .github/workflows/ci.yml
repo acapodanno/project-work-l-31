@@ -54,7 +54,7 @@ jobs:
 
       - name: Installa dipendenze
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Build di produzione
         working-directory: frontend
@@ -148,7 +148,7 @@ jobs:
 
       - name: Installa dipendenze
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Esegui test con coverage (Karma headless + Istanbul)
         working-directory: frontend

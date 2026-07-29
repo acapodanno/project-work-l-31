@@ -1,0 +1,32 @@
+# Esegue i test + code coverage dei tre servizi in container, senza avviare
+# nulla in ascolto (i target `test` terminano dopo aver eseguito la suite).
+#
+# Uso:
+#   docker compose -f docker-compose.test.yml build
+#
+# I container di test terminano appena i test finiscono: per estrarre i
+# report di coverage sull'host conviene usare l'output BuildKit invece che
+# `docker compose up`, ad es.:
+#
+#   DOCKER_BUILDKIT=1 docker build --target test \
+#       --output type=local,dest=./coverage/backend  backend/
+#   DOCKER_BUILDKIT=1 docker build --target test \
+#       --output type=local,dest=./coverage/frontend frontend/
+#   DOCKER_BUILDKIT=1 docker build --target test \
+#       --output type=local,dest=./coverage/agent    agent/
+
+services:
+  backend-test:
+    build:
+      context: ./backend
+      target: test
+
+  frontend-test:
+    build:
+      context: ./frontend
+      target: test
+
+  agent-test:
+    build:
+      context: ./agent
+      target: test

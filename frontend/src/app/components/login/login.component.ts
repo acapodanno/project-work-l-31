@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { LoginFormComponent } from './login-form/login-form.component';
+import { TwoFaFormComponent } from './two-fa-form/two-fa-form.component';
+import { RegisterFormComponent } from './register-form/register-form.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, LoginFormComponent, TwoFaFormComponent, RegisterFormComponent],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -14,64 +16,24 @@ export class LoginComponent {
 
   @Output() loginSuccess = new EventEmitter<void>();
 
-  loginEmail = '';
-  loginPassword = '';
-  loginError = '';
-
-  registerName = '';
-  registerEmail = '';
-  registerPhone = '';
-  registerPassword = '';
-  registerError = '';
-  registerSuccess = '';
   showRegisterForm = false;
+  show2faForm = false;
+  loginEmail = '';
+  registerSuccessMsg = '';
 
-  login() {
-    if (!this.loginEmail || !this.loginPassword) {
-      this.loginError = 'Inserisci email e password.';
-      return;
-    }
-
-    this.loginError = '';
-    this.authService.login({ email: this.loginEmail, password: this.loginPassword }).subscribe({
-      next: () => {
-        this.loginEmail = '';
-        this.loginPassword = '';
-        this.loginSuccess.emit();
-      },
-      error: (err) => {
-        console.error("Errore durante il login:", err);
-        this.loginError = 'Credenziali non valide. Riprova.';
-      }
-    });
+  onRequires2fa(email: string) {
+    this.loginEmail = email;
+    this.show2faForm = true;
+    this.showRegisterForm = false;
   }
 
-  register() {
-    if (!this.registerName || !this.registerEmail || !this.registerPassword) {
-      this.registerError = 'Compila tutti i campi obbligatori.';
-      return;
-    }
+  onLoginSuccess() {
+    this.loginSuccess.emit();
+  }
 
-    this.registerError = '';
-    this.registerSuccess = '';
-    this.authService.register({
-      name: this.registerName,
-      email: this.registerEmail,
-      password: this.registerPassword,
-      phone: this.registerPhone
-    }).subscribe({
-      next: () => {
-        this.registerSuccess = 'Registrazione avvenuta con successo! Ora puoi accedere.';
-        this.registerName = '';
-        this.registerEmail = '';
-        this.registerPhone = '';
-        this.registerPassword = '';
-        this.showRegisterForm = false;
-      },
-      error: (err) => {
-        console.error("Errore durante la registrazione:", err);
-        this.registerError = err.error?.message || 'Errore durante la registrazione. Riprova.';
-      }
-    });
+  onRegisterSuccess(msg: string) {
+    this.registerSuccessMsg = msg;
+    this.showRegisterForm = false;
+    this.show2faForm = false;
   }
 }

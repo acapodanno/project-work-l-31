@@ -9,6 +9,8 @@ import com.example.healthcare.mapper.AppointmentMapper;
 import com.example.healthcare.repository.AppointmentRepository;
 import com.example.healthcare.repository.DoctorRepository;
 import com.example.healthcare.repository.PatientRepository;
+import com.example.healthcare.service.strategy.appointment.AppointmentStatusStrategy;
+import com.example.healthcare.service.strategy.appointment.AppointmentStrategyFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final AppointmentMapper appointmentMapper;
+    private final AppointmentStrategyFactory strategyFactory;
 
     @Transactional(readOnly = true)
     public List<AppointmentDTO> getAllAppointments() {
@@ -41,10 +44,10 @@ public class AppointmentService {
 
     @Transactional
     public AppointmentDTO createAppointment(AppointmentDTO appointmentDTO) {
-        Patient patient = patientRepository.findById(appointmentDTO.getPatientId())
-                .orElseThrow(() -> new RuntimeException("Paziente non trovato con ID: " + appointmentDTO.getPatientId()));
-        Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Medico non trovato con ID: " + appointmentDTO.getDoctorId()));
+        Patient patient = patientRepository.findById(appointmentDTO.patientId())
+                .orElseThrow(() -> new RuntimeException("Paziente non trovato con ID: " + appointmentDTO.patientId()));
+        Doctor doctor = doctorRepository.findById(appointmentDTO.doctorId())
+                .orElseThrow(() -> new RuntimeException("Medico non trovato con ID: " + appointmentDTO.doctorId()));
 
         Appointment appointment = appointmentMapper.toEntity(appointmentDTO);
         appointment.setPatient(patient);
@@ -61,7 +64,16 @@ public class AppointmentService {
     public AppointmentDTO updateStatus(Long id, String status) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appuntamento non trovato con ID: " + id));
-        appointment.setStatus(AppointmentStatus.valueOf(status.toUpperCase()));
+                
+        AppointmentStatus newStatus = AppointmentStatus.valueOf(status.toUpperCase());
+        appointment.setStatus(newStatus);
+        
+        // Applica il pattern Strategy
+        AppointmentStatusStrategy strategy = strategyFactory.getStrategy(newStatus);
+        if (strategy != null) {
+            strategy.handleStatusChange(appointment);
+        }
+        
         Appointment saved = appointmentRepository.save(appointment);
         return appointmentMapper.toDto(saved);
     }

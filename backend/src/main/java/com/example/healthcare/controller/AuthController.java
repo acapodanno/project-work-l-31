@@ -3,23 +3,15 @@ package com.example.healthcare.controller;
 import com.example.healthcare.dto.LoginRequest;
 import com.example.healthcare.dto.LoginResponse;
 import com.example.healthcare.dto.RegistrationRequest;
-import com.example.healthcare.entity.AppUser;
-import com.example.healthcare.entity.Patient;
-import com.example.healthcare.entity.Role;
-import com.example.healthcare.repository.DoctorRepository;
-import com.example.healthcare.repository.PatientRepository;
-import com.example.healthcare.repository.UserRepository;
-import com.example.healthcare.security.JwtUtils;
-import com.example.healthcare.security.UserDetailsImpl;
+import com.example.healthcare.dto.ChangePasswordRequest;
+import com.example.healthcare.dto.TwoFactorSetupResponse;
+import com.example.healthcare.dto.TwoFactorVerificationRequest;
+import com.example.healthcare.dto.TwoFactorLoginRequest;
+import com.example.healthcare.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -30,67 +22,42 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
-    private final DoctorRepository doctorRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+    public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(authService.authenticateUser(loginRequest));
+    }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+    @PostMapping("/login/verify-2fa")
+    public ResponseEntity<LoginResponse> verify2faAndLogin(@Valid @RequestBody TwoFactorLoginRequest request) {
+        return ResponseEntity.ok(authService.verify2faAndLogin(request));
+    }
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String role = userDetails.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
+    @GetMapping("/2fa/setup")
+    public ResponseEntity<TwoFactorSetupResponse> setup2fa() {
+        return ResponseEntity.ok(authService.setup2fa());
+    }
 
-        Long profileId = null;
-        if ("PATIENT".equals(role)) {
-            profileId = patientRepository.findByEmail(userDetails.getEmail())
-                    .map(Patient::getId)
-                    .orElse(null);
-        } else if ("DOCTOR".equals(role)) {
-            profileId = doctorRepository.findByEmail(userDetails.getEmail())
-                    .map(com.example.healthcare.entity.Doctor::getId)
-                    .orElse(null);
-        }
+    @PostMapping("/2fa/enable")
+    public ResponseEntity<?> enable2fa(@Valid @RequestBody TwoFactorVerificationRequest request) {
+        authService.enable2fa(request);
+        return ResponseEntity.ok(Map.of("message", "Autenticazione a due fattori abilitata con successo"));
+    }
 
-        return ResponseEntity.ok(LoginResponse.builder()
-                .token(jwt)
-                .email(userDetails.getEmail())
-                .role(role)
-                .profileId(profileId)
-                .build());
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok(Map.of("message", "Password aggiornata con successo"));
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerPatient(@Valid @RequestBody RegistrationRequest registrationRequest) {
-        if (userRepository.findByEmail(registrationRequest.getEmail()).isPresent()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(Map.of("message", "Errore: L'email è già in uso!"));
+        try {
+            authService.registerPatient(registrationRequest);
+            return new ResponseEntity<>(Map.of("message", "Paziente registrato con successo!"), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
-
-        // Create new patient profile
-        Patient patient = Patient.builder()
-                .name(registrationRequest.getName())
-                .email(registrationRequest.getEmail())
-                .phone(registrationRequest.getPhone())
-                .build();
-        patientRepository.save(patient);
-
-        // Create user credentials
-        AppUser user = AppUser.builder()
-                .email(registrationRequest.getEmail())
-                .password(passwordEncoder.encode(registrationRequest.getPassword()))
-                .role(Role.PATIENT)
-                .build();
-        userRepository.save(user);
-
-        return new ResponseEntity<>(Map.of("message", "Paziente registrato con successo!"), HttpStatus.CREATED);
     }
 }

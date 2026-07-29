@@ -38,4 +38,16 @@ public class PatientService {
         Patient saved = patientRepository.save(patient);
         return patientMapper.toDto(saved);
     }
+
+    @Transactional
+    public PatientDTO updatePatient(Long id, PatientDTO patientDTO) {
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paziente non trovato con ID: " + id));
+        
+        patient.setName(patientDTO.name());
+        patient.setPhone(patientDTO.phone());
+        
+        Patient saved = patientRepository.save(patient);
+        return patientMapper.toDto(saved);
+    }
 }

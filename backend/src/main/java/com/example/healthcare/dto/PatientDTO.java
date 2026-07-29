@@ -2,21 +2,18 @@ package com.example.healthcare.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Builder;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class PatientDTO {
-    private Long id;
+public record PatientDTO(
+    Long id,
 
     @NotBlank(message = "Il nome è obbligatorio")
-    private String name;
+    String name,
 
     @Email(message = "L'email deve essere valida")
     @NotBlank(message = "L'email è obbligatoria")
-    private String email;
+    String email,
 
-    private String phone;
-}
+    String phone
+) {}

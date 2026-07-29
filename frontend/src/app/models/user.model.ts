@@ -15,6 +15,7 @@ export interface LoginResponse {
   email: string;
   role: string;
   profileId?: number;
+  requires2fa?: boolean;
 }
 
 export interface RegistrationRequest {

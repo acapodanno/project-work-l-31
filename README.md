@@ -12,5 +12,6 @@ Questo repository contiene la struttura base per un progetto full-stack in ambit
 
 ## Documentazione e Avvio
 
-Tutte le istruzioni dettagliate sull'avvio dell'applicazione, la struttura del database e il design dell'architettura (UML, ER) sono disponibili nella relazione tecnica:
-*   [REPORT.md](file:///Users/acapodanno/Documents/project-work-l-31/REPORT.md)
+*   [REPORT.md](./REPORT.md): riassunto esecutivo del progetto e istruzioni rapide di avvio.
+*   [doc/README.md](./doc/README.md): relazione tecnica completa (9 capitoli — contesto, design UML/ER, API/Swagger, repository Git, processo di sviluppo, test funzionali, pianificazione delle fasi, risorse utilizzate, valutazione critica dei risultati), da considerarsi la relazione di riferimento richiesta dalla traccia.
+*   [agent/README.md](./agent/README.md): dettagli sull'assistente AI (LangChain + LlamaIndex), modalità online/offline, test e valutazione.

@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ChatMessage } from '../../models/healthcare.models';
+import { ChatMessageComponent } from './chat-message/chat-message.component';
+import { ChatInputComponent } from './chat-input/chat-input.component';
 
 @Component({
   selector: 'app-assistant',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ChatMessageComponent, ChatInputComponent],
   templateUrl: './assistant.component.html'
 })
 export class AssistantComponent {
@@ -18,15 +19,7 @@ export class AssistantComponent {
 
   @Output() send = new EventEmitter<string>();
 
-  newMessageText = '';
-
-  sendMessage() {
-    if (!this.newMessageText.trim()) return;
-    this.send.emit(this.newMessageText.trim());
-    this.newMessageText = '';
-  }
-
-  sendSuggestion(suggestion: string) {
-    this.send.emit(suggestion);
+  onSend(message: string) {
+    this.send.emit(message);
   }
 }

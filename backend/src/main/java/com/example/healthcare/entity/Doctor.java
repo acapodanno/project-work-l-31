@@ -27,4 +27,11 @@ public class Doctor {
     @NotBlank(message = "L'email è obbligatoria")
     @Column(unique = true)
     private String email;
+
+    private Integer experienceYears;
+
+    @Column(length = 1000)
+    private String bio;
+
+    private String workingHours;
 }

@@ -1,68 +1,37 @@
-<div class="chat-container bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl flex flex-col h-[600px] max-w-4xl mx-auto overflow-hidden">
+<div class="chat-container glass-panel shadow-xl flex flex-col h-[600px] max-w-4xl mx-auto overflow-hidden">
   
   <!-- CHAT HEADER -->
-  <div class="flex items-center justify-between p-5 border-b border-white/10 bg-white/5">
+  <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center">
+      <div class="w-10 h-10 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center">
         <span class="material-symbols-outlined text-2xl">smart_toy</span>
       </div>
       <div>
-        <h2 class="text-base font-bold text-white leading-tight">Assistente Virtuale RAG</h2>
-        <span class="text-xs text-emerald-400 flex items-center space-x-1.5 mt-0.5">
+        <h2 class="text-base font-bold text-slate-800 leading-tight">Assistente Virtuale</h2>
+        <span class="text-xs text-emerald-600 flex items-center space-x-1.5 mt-0.5">
           <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block animate-ping"></span>
           <span>Pronto a rispondere</span>
         </span>
       </div>
     </div>
     <div>
-      <span class="text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-full px-3 py-1 font-medium">LangChain & LlamaIndex</span>
+      <span class="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1 font-medium">Supporto AI</span>
     </div>
   </div>
 
   <!-- MESSAGES AREA -->
-  <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-900/10">
-    <div 
+  <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50">
+    <app-chat-message 
       *ngFor="let msg of chatMessages" 
-      class="flex max-w-[80%] space-x-3 items-start"
-      [class.self-end]="msg.sender === 'user'"
-      [class.flex-row-reverse]="msg.sender === 'user'"
-      [class.space-x-reverse]="msg.sender === 'user'"
-      [class.ml-auto]="msg.sender === 'user'">
-      
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
-        [class.bg-blue-600]="msg.sender === 'user'"
-        [class.text-white]="msg.sender === 'user'"
-        [class.bg-white/10]="msg.sender !== 'user'"
-        [class.text-blue-400]="msg.sender !== 'user'">
-        <span class="material-symbols-outlined text-lg">
-          {{ msg.sender === 'user' ? 'person' : 'smart_toy' }}
-        </span>
-      </div>
-
-      <div class="rounded-2xl px-4 py-3 shadow-md space-y-1"
-        [class.bg-blue-600]="msg.sender === 'user'"
-        [class.text-white]="msg.sender === 'user'"
-        [class.rounded-tr-none]="msg.sender === 'user'"
-        [class.bg-white/5]="msg.sender !== 'user'"
-        [class.text-slate-100]="msg.sender !== 'user'"
-        [class.border]="msg.sender !== 'user'"
-        [class.border-white/10]="msg.sender !== 'user'"
-        [class.rounded-tl-none]="msg.sender !== 'user'">
-        <p class="text-sm leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
-        <span class="block text-[10px] text-right"
-          [class.text-blue-200]="msg.sender === 'user'"
-          [class.text-slate-400]="msg.sender !== 'user'">
-          {{ msg.timestamp | date:'HH:mm' }}
-        </span>
-      </div>
-    </div>
+      [message]="msg">
+    </app-chat-message>
     
     <!-- TYPING INDICATOR -->
     <div class="flex max-w-[80%] space-x-3 items-start mr-auto" *ngIf="chatLoading">
-      <div class="w-8 h-8 rounded-lg bg-white/10 text-blue-400 flex items-center justify-center flex-shrink-0">
+      <div class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
         <span class="material-symbols-outlined text-lg animate-pulse">smart_toy</span>
       </div>
-      <div class="bg-white/5 border border-white/10 rounded-2xl rounded-tl-none px-4 py-3 flex items-center space-x-1.5 h-10 shadow-md">
+      <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none px-4 py-3 flex items-center space-x-1.5 h-10 shadow-sm">
         <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75"></span>
         <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150"></span>
         <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-300"></span>
@@ -70,40 +39,11 @@
     </div>
   </div>
 
-  <!-- QUICK SUGGESTIONS -->
-  <div class="p-3 border-t border-white/5 flex flex-wrap gap-2 justify-center bg-white/5" *ngIf="authService.getRole() === 'PATIENT'">
-    <button class="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-xs font-medium text-slate-300 px-3 py-1.5 rounded-full active:scale-95 transition-all" 
-      (click)="sendSuggestion('Quali sono i vostri orari di apertura?')">
-      Orari clinica
-    </button>
-    <button class="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-xs font-medium text-slate-300 px-3 py-1.5 rounded-full active:scale-95 transition-all" 
-      (click)="sendSuggestion('Quali specializzazioni mediche offrite?')">
-      Specializzazioni
-    </button>
-    <button class="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-xs font-medium text-slate-300 px-3 py-1.5 rounded-full active:scale-95 transition-all" 
-      (click)="sendSuggestion('Ho riscontrato un errore nel sito, potete aiutarmi ad aprire un ticket?')">
-      Apri un Ticket
-    </button>
-  </div>
-
-  <!-- INPUT AREA -->
-  <div class="p-4 border-t border-white/10 bg-white/5">
-    <form (submit)="sendMessage(); $event.preventDefault()" class="flex space-x-3">
-      <input 
-        type="text" 
-        placeholder="Scrivi qui la tua domanda o segnalazione..." 
-        [(ngModel)]="newMessageText" 
-        name="chatText" 
-        [disabled]="chatLoading"
-        class="flex-1 bg-white/5 border border-white/10 text-white rounded-lg px-4 py-3 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-        required>
-      <button 
-        type="submit" 
-        [disabled]="chatLoading || !newMessageText.trim()"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-medium p-3 rounded-lg shadow-lg hover:shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center disabled:opacity-50 disabled:scale-100">
-        <span class="material-symbols-outlined text-lg">send</span>
-      </button>
-    </form>
-  </div>
+  <!-- INPUT AREA (WITH SUGGESTIONS) -->
+  <app-chat-input
+    [chatLoading]="chatLoading"
+    [showPatientSuggestions]="authService.getRole() === 'PATIENT'"
+    (send)="onSend($event)">
+  </app-chat-input>
 
 </div>

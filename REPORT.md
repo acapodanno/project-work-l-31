@@ -7,13 +7,19 @@
 
 **HealthCare Plus** è una clinica medica privata polispecialistica che offre visite specialistiche in diversi settori (Cardiologia, Dermatologia, Pediatria, Ortopedia e Medicina Generale). La clinica gestisce quotidianamente un elevato flusso di prenotazioni, cartelle cliniche e richieste di supporto tecnico da parte dei pazienti.
 
+> Nota: questa sezione è un riassunto esecutivo. La relazione completa e dettagliata, organizzata in 9 capitoli (contesto, design UML/ER, API/Swagger, repository Git, processo di sviluppo, test funzionali, pianificazione delle fasi, risorse utilizzate, valutazione critica dei risultati) è disponibile in [`doc/README.md`](./doc/README.md).
+
 ### Il Servizio Offerto
 Per digitalizzare e semplificare i processi operativi, si è sviluppata un'applicazione web basata su un'architettura **API-oriented** che offre:
 1.  **Portale Prenotazioni**: Consente ai pazienti di selezionare un medico in base alla specializzazione, scegliere data e ora, e inviare una richiesta di prenotazione memorizzata a database.
-2.  **Dashboard Personale**: Mostra la cronologia degli appuntamenti programmati, lo stato delle visite e le segnalazioni attive.
-3.  **Assistente AI Integrato (RAG)**: Un assistente intelligente operante sul portale che:
+2.  **Dashboard Personale**: Mostra la cronologia degli appuntamenti programmati, lo stato delle visite e le segnalazioni attive, oltre ai referti medici caricati dal medico e al piano terapeutico in corso.
+3.  **Autenticazione e Sicurezza**: Login con **JWT stateless**, **2FA via TOTP** opzionale e controllo degli accessi basato sui ruoli (**RBAC**: Paziente, Medico, Supporto IT).
+4.  **Gestione Referti e Terapie**: I medici caricano referti (PDF) e prescrivono terapie con data di inizio/fine, visibili al paziente in dashboard.
+5.  **Sistema di Ticket IT**: Il personale di supporto gestisce e risolve le segnalazioni tecniche aperte dai pazienti (manualmente o tramite l'assistente AI).
+6.  **Assistente AI Integrato (RAG)**: Un assistente intelligente operante sul portale, costruito con **LangChain** (orchestrazione tool) e **LlamaIndex** (motore RAG), che:
     *   Risponde istantaneamente alle domande frequenti (FAQ) dell'utenza (es. orari di apertura, convenzioni assicurative, specializzazioni) attraverso una knowledge base aziendale gestita via **RAG (Retrieval-Augmented Generation)**.
     *   Rileva problemi segnalati dall'utente e automatizza l'apertura di un **Ticket di Assistenza Tecnica** direttamente sul database centrale del backend.
+    *   Funziona anche **offline/senza chiave API** grazie a un motore di fallback deterministico, mantenendo l'intero sistema testabile senza costi (vedi [`agent/README.md`](./agent/README.md)).
 
 ---
 
@@ -122,7 +128,7 @@ sequenceDiagram
 
 ## 3. Documentazione delle API (REST)
 
-Il backend Spring Boot espone la documentazione interattiva tramite **Swagger/OpenAPI** all'indirizzo `http://localhost:8080/swagger-ui.html`. Di seguito vengono riassunte le rotte principali:
+Il backend Spring Boot espone la documentazione interattiva tramite **Swagger/OpenAPI** all'indirizzo `http://localhost:8080/swagger-ui.html`. Di seguito vengono riassunte le rotte principali (elenco completo di tutti i controller, incluse autenticazione e referti medici, in [`doc/3-API_Swagger.md`](./doc/3-API_Swagger.md)):
 
 ### 3.1 Servizio Appuntamenti (`/api/appointments`)
 *   **`GET /api/appointments`**: Ritorna la lista di tutte le visite nel sistema.

@@ -2,34 +2,31 @@ package com.example.healthcare.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class AppointmentDTO {
-    private Long id;
+public record AppointmentDTO(
+    Long id,
 
     @NotNull(message = "L'ID del paziente è obbligatorio")
-    private Long patientId;
+    Long patientId,
 
     @NotNull(message = "L'ID del medico è obbligatorio")
-    private Long doctorId;
+    Long doctorId,
 
     @NotNull(message = "La data dell'appuntamento è obbligatoria")
-    private LocalDateTime appointmentDate;
+    LocalDateTime appointmentDate,
 
     @NotBlank(message = "Il motivo della visita è obbligatorio")
-    private String reason;
+    String reason,
 
-    private String notes;
+    String notes,
 
-    private String status;
+    String status,
 
     // Campi di sola lettura per la visualizzazione dei dettagli nel frontend
-    private PatientDTO patient;
-    private DoctorDTO doctor;
-}
+    PatientDTO patient,
+    DoctorDTO doctor
+) {}

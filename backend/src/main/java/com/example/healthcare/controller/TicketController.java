@@ -32,4 +32,11 @@ public class TicketController {
     public ResponseEntity<TicketDTO> createTicket(@Valid @RequestBody TicketDTO ticketDTO) {
         return new ResponseEntity<>(ticketService.createTicket(ticketDTO), HttpStatus.CREATED);
     }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TicketDTO> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        return ResponseEntity.ok(ticketService.updateStatus(id, status));
+    }
 }

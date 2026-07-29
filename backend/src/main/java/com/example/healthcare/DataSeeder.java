@@ -58,6 +58,9 @@ public class DataSeeder implements CommandLineRunner {
                     .name("Dr. Giovanni Neri")
                     .specialization("Cardiologia")
                     .email("giovanni.neri@healthcare.com")
+                    .experienceYears(15)
+                    .bio("Specialista in cardiologia clinica e interventistica. Il Dr. Neri ha una vasta esperienza nella diagnosi e nel trattamento delle patologie cardiovascolari, ponendo sempre il paziente al centro del percorso di cura.")
+                    .workingHours("Lunedì - Venerdì: 09:00 - 17:00")
                     .build();
             doctorRepository.save(neri);
             userRepository.save(AppUser.builder()
@@ -70,6 +73,9 @@ public class DataSeeder implements CommandLineRunner {
                     .name("Dr.ssa Anna Verdi")
                     .specialization("Dermatologia")
                     .email("anna.verdi@healthcare.com")
+                    .experienceYears(8)
+                    .bio("Dermatologa appassionata e attenta ai dettagli. Si occupa di dermatologia oncologica e cura degli inestetismi della pelle. Crede fortemente nella prevenzione e nell'educazione del paziente.")
+                    .workingHours("Martedì - Giovedì: 10:00 - 18:00")
                     .build();
             doctorRepository.save(verdi);
             userRepository.save(AppUser.builder()
@@ -82,6 +88,9 @@ public class DataSeeder implements CommandLineRunner {
                     .name("Dr. Roberto Bruno")
                     .specialization("Pediatria")
                     .email("roberto.bruno@healthcare.com")
+                    .experienceYears(20)
+                    .bio("Pediatra con oltre 20 anni di esperienza. Il suo approccio empatico e rassicurante aiuta sia i bambini che i genitori ad affrontare con serenità ogni visita medica.")
+                    .workingHours("Lunedì - Mercoledì - Venerdì: 08:30 - 14:30")
                     .build();
             doctorRepository.save(bruno);
             userRepository.save(AppUser.builder()
@@ -94,6 +103,9 @@ public class DataSeeder implements CommandLineRunner {
                     .name("Dr.ssa Elena Russo")
                     .specialization("Ortopedia")
                     .email("elena.russo@healthcare.com")
+                    .experienceYears(12)
+                    .bio("Esperta in traumatologia sportiva e chirurgia protesica. La Dott.ssa Russo lavora per far tornare i suoi pazienti a muoversi liberamente e senza dolore nel minor tempo possibile.")
+                    .workingHours("Lunedì - Venerdì: 09:00 - 13:00, 15:00 - 19:00")
                     .build();
             doctorRepository.save(russo);
             userRepository.save(AppUser.builder()
@@ -106,6 +118,9 @@ public class DataSeeder implements CommandLineRunner {
                     .name("Dr. Paolo Corti")
                     .specialization("Medicina Generale")
                     .email("paolo.corti@healthcare.com")
+                    .experienceYears(25)
+                    .bio("Medico di medicina generale, è il punto di riferimento per le famiglie. Ascolto, pazienza e dedizione sono i cardini della sua pratica medica quotidiana.")
+                    .workingHours("Lunedì - Venerdì: 08:00 - 16:00")
                     .build();
             doctorRepository.save(corti);
             userRepository.save(AppUser.builder()

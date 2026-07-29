@@ -13,12 +13,34 @@ export class AuthService {
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials).pipe(
+      tap(response => {
+        if (!response.requires2fa) {
+          this.saveSession(response);
+        }
+      })
+    );
+  }
+
+  verify2fa(data: {email: string, code: string}): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.authUrl}/login/verify-2fa`, data).pipe(
       tap(response => this.saveSession(response))
     );
   }
 
   register(userData: RegistrationRequest): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/register`, userData);
+  }
+
+  changePassword(passwordData: any): Observable<any> {
+    return this.http.put<any>(`${this.authUrl}/password`, passwordData);
+  }
+
+  setup2fa(): Observable<{secret: string, qrCodeImageBase64: string}> {
+    return this.http.get<{secret: string, qrCodeImageBase64: string}>(`${this.authUrl}/2fa/setup`);
+  }
+
+  enable2fa(code: string): Observable<any> {
+    return this.http.post<any>(`${this.authUrl}/2fa/enable`, { code });
   }
 
   saveSession(response: LoginResponse): void {

@@ -1,17 +1,12 @@
 package com.example.healthcare.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class LoginResponse {
-    private String token;
-    private String email;
-    private String role;
-    private Long profileId;
-}
+public record LoginResponse(
+    String token,
+    String email,
+    String role,
+    Long profileId,
+    boolean requires2fa
+) {}

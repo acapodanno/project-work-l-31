@@ -2,30 +2,27 @@ package com.example.healthcare.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class TicketDTO {
-    private Long id;
+public record TicketDTO(
+    Long id,
 
     @NotNull(message = "L'ID del paziente è obbligatorio")
-    private Long patientId;
+    Long patientId,
 
     @NotBlank(message = "Il titolo del ticket è obbligatorio")
-    private String title;
+    String title,
 
     @NotBlank(message = "La descrizione è obbligatoria")
-    private String description;
+    String description,
 
-    private String status;
+    String status,
 
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt,
 
     // Per mostrare i dettagli del paziente se necessario
-    private PatientDTO patient;
-}
+    PatientDTO patient
+) {}

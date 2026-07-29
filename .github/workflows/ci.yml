@@ -251,19 +251,19 @@ jobs:
   #       run: mvn -B test-compile
   #
   #     - name: Scarica report coverage backend (JaCoCo)
-  #       uses: actions/download-artifact@v4
+  #       uses: actions/download-artifact@v8
   #       with:
   #         name: backend-jacoco-report
   #         path: backend/target/site/jacoco
   #
   #     - name: Scarica report coverage frontend (lcov)
-  #       uses: actions/download-artifact@v4
+  #       uses: actions/download-artifact@v8
   #       with:
   #         name: frontend-coverage-report
   #         path: frontend/coverage/healthcare-frontend
   #
   #     - name: Scarica report coverage agente (pytest-cov)
-  #       uses: actions/download-artifact@v4
+  #       uses: actions/download-artifact@v8
   #       with:
   #         name: agent-coverage-report
   #         path: agent
@@ -320,19 +320,19 @@ jobs:
         run: echo "version=1.0.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
       - name: Scarica artefatto backend
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: backend-jar
           path: release/backend
 
       - name: Scarica artefatto frontend
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: frontend-dist
           path: release/frontend
 
       - name: Scarica artefatto agente
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: agent-package
           path: release/agent

@@ -16,5 +16,11 @@ public record DoctorDTO(
 
     @Email(message = "L'email deve essere valida")
     @NotBlank(message = "L'email è obbligatoria")
-    String email
+    String email,
+
+    Integer experienceYears,
+
+    String bio,
+
+    String workingHours
 ) {}

@@ -7,7 +7,7 @@ requests==2.32.3
 
 # --- Orchestrazione Agente (LangChain) ---
 langchain==0.3.7
-langchain-core==0.3.15
+langchain-core==1.5.2
 langchain-openai==0.2.6
 
 # --- RAG (LlamaIndex) ---

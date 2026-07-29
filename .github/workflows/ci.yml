@@ -279,7 +279,7 @@ jobs:
           echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
       - name: Analisi SonarQube (backend + frontend + agent in un'unica scansione)
-        uses: SonarSource/sonarqube-scan-action@v4
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_HOST_URL: http://localhost:9000
           SONAR_TOKEN: ${{ steps.sonar-token.outputs.token }}

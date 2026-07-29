@@ -35,7 +35,7 @@ jobs:
         run: mvn -B clean package -DskipTests
 
       - name: Carica artefatto JAR
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-jar
           path: backend/target/*.jar
@@ -64,7 +64,7 @@ jobs:
         run: npm run build
 
       - name: Carica artefatto dist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-dist
           path: frontend/dist/
@@ -98,7 +98,7 @@ jobs:
         run: zip -r agent-package.zip agent -x "agent/__pycache__/*" "agent/**/__pycache__/*" "agent/tests/*"
 
       - name: Carica artefatto agente
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: agent-package
           path: agent-package.zip
@@ -130,7 +130,7 @@ jobs:
 
       - name: Pubblica report dei test (Surefire)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-test-reports
           path: backend/target/surefire-reports
@@ -138,7 +138,7 @@ jobs:
 
       - name: Pubblica report di copertura (JaCoCo)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-jacoco-report
           path: backend/target/site/jacoco
@@ -169,7 +169,7 @@ jobs:
 
       - name: Pubblica report di copertura (lcov)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-coverage-report
           path: frontend/coverage/healthcare-frontend
@@ -208,7 +208,7 @@ jobs:
 
       - name: Pubblica report di copertura (pytest-cov)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: agent-coverage-report
           path: agent/coverage.xml

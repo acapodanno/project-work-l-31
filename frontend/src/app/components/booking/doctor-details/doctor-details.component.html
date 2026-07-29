@@ -1,0 +1,35 @@
+<div class="glass-card p-6 max-w-xl mx-auto space-y-5">
+  <div class="flex items-center gap-4">
+    <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+      <span class="material-symbols-outlined text-3xl">stethoscope</span>
+    </div>
+    <div>
+      <h2 class="text-lg font-bold text-slate-800">{{ selectedDoctor.name }}</h2>
+      <span class="text-sm text-blue-700 font-medium">{{ selectedDoctor.specialization }}</span>
+    </div>
+  </div>
+
+  <p class="text-sm text-slate-600 leading-relaxed" *ngIf="selectedDoctor.bio">
+    {{ selectedDoctor.bio }}
+  </p>
+
+  <div class="grid grid-cols-2 gap-4 text-sm">
+    <div>
+      <span class="text-xs uppercase text-slate-400 font-semibold">Email</span>
+      <p class="text-slate-700">{{ selectedDoctor.email }}</p>
+    </div>
+    <div *ngIf="selectedDoctor.experienceYears">
+      <span class="text-xs uppercase text-slate-400 font-semibold">Esperienza</span>
+      <p class="text-slate-700">{{ selectedDoctor.experienceYears }} anni</p>
+    </div>
+    <div class="col-span-2" *ngIf="selectedDoctor.workingHours">
+      <span class="text-xs uppercase text-slate-400 font-semibold">Orari</span>
+      <p class="text-slate-700">{{ selectedDoctor.workingHours }}</p>
+    </div>
+  </div>
+
+  <div class="flex gap-3 pt-2">
+    <button class="btn btn-secondary flex-1" (click)="cancel.emit()">Indietro</button>
+    <button class="btn btn-primary flex-1" (click)="proceed.emit()">Prenota una visita</button>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="space-y-6">
+  <!-- STATISTICHE -->
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4" *ngIf="stats">
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.totalPatients }}</p>
+      <p class="text-xs text-slate-500 mt-1">Pazienti</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.totalDoctors }}</p>
+      <p class="text-xs text-slate-500 mt-1">Medici</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.scheduledAppointments }}</p>
+      <p class="text-xs text-slate-500 mt-1">Visite programmate</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.completedAppointments }}</p>
+      <p class="text-xs text-slate-500 mt-1">Visite completate</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.openTickets }}</p>
+      <p class="text-xs text-slate-500 mt-1">Ticket aperti</p>
+    </div>
+  </div>
+
+  <!-- APPUNTAMENTI -->
+  <div class="glass-card p-6">
+    <h3 class="text-base font-bold text-slate-800 mb-4">Gestione appuntamenti</h3>
+    <div class="space-y-3">
+      <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let app of appointments">
+        <div>
+          <h4 class="text-sm font-bold text-slate-800">{{ app.patient?.name || ('Paziente #' + app.patientId) }}</h4>
+          <p class="text-xs text-slate-500">Con {{ app.doctor?.name }} · {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+          <p class="text-xs text-slate-600 mt-1">{{ app.reason }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge" [ngClass]="{
+            'badge-scheduled': app.status === 'SCHEDULED',
+            'badge-completed': app.status === 'COMPLETED',
+            'badge-cancelled': app.status === 'CANCELLED'
+          }">{{ app.status }}</span>
+
+          <ng-container *ngIf="app.status === 'SCHEDULED'">
+            <button class="btn btn-secondary text-xs" (click)="onStatusChange(app.id!, 'COMPLETED')">Completa</button>
+            <button class="btn btn-danger text-xs" (click)="onStatusChange(app.id!, 'CANCELLED')">Annulla</button>
+          </ng-container>
+        </div>
+      </div>
+
+      <p class="text-sm text-slate-500 text-center py-6" *ngIf="appointments.length === 0">
+        Nessun appuntamento presente.
+      </p>
+    </div>
+  </div>
+
+  <!-- TICKET -->
+  <div class="glass-card p-6">
+    <h3 class="text-base font-bold text-slate-800 mb-4">Gestione ticket di supporto</h3>
+    <div class="space-y-3">
+      <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let tkt of tickets">
+        <div>
+          <h4 class="text-sm font-bold text-slate-800">{{ tkt.title }}</h4>
+          <p class="text-xs text-slate-500">Paziente #{{ tkt.patientId }} · {{ tkt.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+          <p class="text-xs text-slate-600 mt-1">{{ tkt.description }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-open">{{ tkt.status }}</span>
+          <button class="btn btn-secondary text-xs" *ngIf="tkt.status !== 'CLOSED'" (click)="onTicketStatusChange(tkt.id!, 'CLOSED')">
+            Chiudi
+          </button>
+        </div>
+      </div>
+
+      <p class="text-sm text-slate-500 text-center py-6" *ngIf="tickets.length === 0">
+        Nessun ticket aperto.
+      </p>
+    </div>
+  </div>
+</div>

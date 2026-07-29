@@ -1,0 +1,25 @@
+<div class="flex items-center justify-center min-h-[70vh] p-4">
+  <div class="w-full max-w-md space-y-4">
+    <app-alert type="success" [message]="registerSuccessMsg" *ngIf="registerSuccessMsg && !show2faForm && !showRegisterForm"></app-alert>
+
+    <app-two-fa-form
+      *ngIf="show2faForm"
+      [loginEmail]="loginEmail"
+      (verifySuccess)="onLoginSuccess()"
+      (goBack)="show2faForm = false">
+    </app-two-fa-form>
+
+    <app-register-form
+      *ngIf="!show2faForm && showRegisterForm"
+      (registerSuccess)="onRegisterSuccess($event)"
+      (goToLogin)="showRegisterForm = false">
+    </app-register-form>
+
+    <app-login-form
+      *ngIf="!show2faForm && !showRegisterForm"
+      (loginSuccess)="onLoginSuccess()"
+      (requires2fa)="onRequires2fa($event)"
+      (goToRegister)="showRegisterForm = true; registerSuccessMsg = ''">
+    </app-login-form>
+  </div>
+</div>

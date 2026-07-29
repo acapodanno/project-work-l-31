@@ -1,0 +1,13 @@
+<div
+  *ngIf="message"
+  class="flex items-start gap-3 rounded-xl px-4 py-3 text-sm font-medium border"
+  [ngClass]="{
+    'bg-red-50 text-red-700 border-red-200': type === 'error',
+    'bg-emerald-50 text-emerald-700 border-emerald-200': type === 'success',
+    'bg-blue-50 text-blue-700 border-blue-200': type === 'info'
+  }">
+  <span class="material-symbols-outlined text-lg leading-none">
+    {{ type === 'error' ? 'error' : (type === 'success' ? 'check_circle' : 'info') }}
+  </span>
+  <span>{{ message }}</span>
+</div>

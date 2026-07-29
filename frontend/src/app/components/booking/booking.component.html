@@ -1,0 +1,23 @@
+<div class="max-w-4xl mx-auto">
+  <app-doctor-list
+    *ngIf="bookingStep === 'list'"
+    [doctors]="doctors"
+    (selectDoctor)="openDoctorDetails($event)">
+  </app-doctor-list>
+
+  <app-doctor-details
+    *ngIf="bookingStep === 'details' && selectedDoctor"
+    [selectedDoctor]="selectedDoctor"
+    (cancel)="closeModal()"
+    (proceed)="goToBookingForm()">
+  </app-doctor-details>
+
+  <app-booking-form
+    *ngIf="bookingStep === 'form' && selectedDoctor"
+    [selectedDoctor]="selectedDoctor"
+    [bookingSuccess]="bookingSuccess"
+    [bookingError]="bookingError"
+    (back)="closeModal()"
+    (submitBooking)="submitBooking($event)">
+  </app-booking-form>
+</div>

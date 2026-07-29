@@ -1,0 +1,31 @@
+<div class="glass-card p-8 max-w-md w-full mx-auto">
+  <h2 class="text-xl font-bold text-slate-800 mb-1">Verifica in due passaggi</h2>
+  <p class="text-sm text-slate-500 mb-6">
+    Inserisci il codice OTP inviato per <strong>{{ loginEmail }}</strong>
+  </p>
+
+  <app-alert type="error" [message]="loginError" class="block mb-4"></app-alert>
+
+  <form (ngSubmit)="verify2fa()" class="space-y-4">
+    <div>
+      <label for="twoFaCode">Codice OTP</label>
+      <input
+        id="twoFaCode"
+        type="text"
+        name="twoFaCode"
+        placeholder="123456"
+        inputmode="numeric"
+        maxlength="6"
+        [(ngModel)]="twoFaCode"
+        required />
+    </div>
+
+    <button type="submit" class="btn btn-primary w-full">
+      <span class="material-symbols-outlined text-lg leading-none">verified</span>
+      Verifica
+    </button>
+    <button type="button" class="btn btn-secondary w-full" (click)="goBack.emit()">
+      Torna al login
+    </button>
+  </form>
+</div>

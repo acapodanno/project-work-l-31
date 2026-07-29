@@ -1,0 +1,19 @@
+<div class="space-y-3">
+  <div class="glass-card p-4" *ngFor="let therapy of therapies">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="text-sm font-bold text-slate-800">{{ therapy.description }}</h3>
+        <p class="text-xs text-slate-500 mt-1" *ngIf="therapy.doctor">
+          Prescritta da {{ therapy.doctor.name }}
+        </p>
+      </div>
+      <span class="badge badge-scheduled flex-shrink-0">
+        {{ therapy.startDate | date:'dd/MM/yyyy' }} - {{ therapy.endDate | date:'dd/MM/yyyy' }}
+      </span>
+    </div>
+  </div>
+
+  <p class="text-sm text-slate-500 text-center py-8" *ngIf="therapies.length === 0">
+    Nessuna terapia prescritta al momento.
+  </p>
+</div>

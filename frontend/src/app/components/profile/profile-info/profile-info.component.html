@@ -1,0 +1,49 @@
+<div class="glass-card p-6 max-w-xl mx-auto space-y-5">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+        <span class="material-symbols-outlined">person</span>
+      </div>
+      <div>
+        <h2 class="text-base font-bold text-slate-800">{{ currentPatient?.name || authService.getEmail() }}</h2>
+        <span class="text-xs text-slate-500">{{ currentPatient?.email || authService.getEmail() }}</span>
+      </div>
+    </div>
+    <button class="btn btn-secondary text-sm" (click)="openEditModal()">
+      <span class="material-symbols-outlined text-lg leading-none">edit</span>
+      Modifica
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" *ngIf="currentPatient">
+    <div>
+      <span class="text-xs uppercase text-slate-400 font-semibold">Nome</span>
+      <p class="text-slate-700">{{ currentPatient.name }}</p>
+    </div>
+    <div>
+      <span class="text-xs uppercase text-slate-400 font-semibold">Telefono</span>
+      <p class="text-slate-700">{{ currentPatient.phone || '—' }}</p>
+    </div>
+  </div>
+
+  <app-modal
+    title="Modifica profilo"
+    icon="edit"
+    [show]="showEditModal"
+    (close)="closeEditModal()">
+    <form (ngSubmit)="saveProfile()" class="space-y-4">
+      <div>
+        <label for="editName">Nome e cognome</label>
+        <input id="editName" type="text" name="editName" [(ngModel)]="editForm.name" required />
+      </div>
+      <div>
+        <label for="editPhone">Telefono</label>
+        <input id="editPhone" type="tel" name="editPhone" [(ngModel)]="editForm.phone" />
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="button" class="btn btn-secondary flex-1" (click)="closeEditModal()">Annulla</button>
+        <button type="submit" class="btn btn-primary flex-1">Salva</button>
+      </div>
+    </form>
+  </app-modal>
+</div>

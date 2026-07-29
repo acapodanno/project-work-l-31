@@ -4,11 +4,12 @@ import { AuthService } from '../../services/auth.service';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { TwoFaFormComponent } from './two-fa-form/two-fa-form.component';
 import { RegisterFormComponent } from './register-form/register-form.component';
+import { AlertComponent } from '../../shared/ui/alert/alert.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, LoginFormComponent, TwoFaFormComponent, RegisterFormComponent],
+  imports: [CommonModule, LoginFormComponent, TwoFaFormComponent, RegisterFormComponent, AlertComponent],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {

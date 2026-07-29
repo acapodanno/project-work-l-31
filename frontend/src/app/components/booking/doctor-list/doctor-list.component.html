@@ -1,0 +1,38 @@
+<div class="space-y-5">
+  <div class="relative">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+    <input
+      type="text"
+      style="padding-left: 2.5rem;"
+      placeholder="Cerca per nome o specializzazione..."
+      name="searchQuery"
+      [(ngModel)]="searchQuery" />
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div
+      class="glass-card p-5 cursor-pointer"
+      *ngFor="let doc of filteredDoctors"
+      (click)="onSelect(doc)">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined">stethoscope</span>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-slate-800">{{ doc.name }}</h3>
+          <span class="text-xs text-blue-700 font-medium">{{ doc.specialization }}</span>
+        </div>
+      </div>
+      <p class="text-xs text-slate-500" *ngIf="doc.experienceYears">
+        {{ doc.experienceYears }} anni di esperienza
+      </p>
+      <button class="btn btn-secondary w-full mt-4 text-sm">
+        Vedi dettagli
+      </button>
+    </div>
+  </div>
+
+  <p class="text-sm text-slate-500 text-center py-8" *ngIf="filteredDoctors.length === 0">
+    Nessun medico trovato per "{{ searchQuery }}".
+  </p>
+</div>

@@ -1,0 +1,21 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+  *ngIf="show"
+  (click)="onClose()">
+  <div
+    class="glass-panel bg-white rounded-2xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto"
+    (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-blue-700" *ngIf="icon">{{ icon }}</span>
+        <h3 class="text-base font-bold text-slate-800">{{ title }}</h3>
+      </div>
+      <button class="btn btn-secondary p-2" (click)="onClose()" title="Chiudi">
+        <span class="material-symbols-outlined text-lg leading-none">close</span>
+      </button>
+    </div>
+    <div class="p-6">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

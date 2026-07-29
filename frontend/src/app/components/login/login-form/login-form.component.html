@@ -1,0 +1,39 @@
+<div class="glass-card p-8 max-w-md w-full mx-auto">
+  <h2 class="text-xl font-bold text-slate-800 mb-1">Accedi</h2>
+  <p class="text-sm text-slate-500 mb-6">Entra nel tuo account HealthCare Plus</p>
+
+  <app-alert type="error" [message]="loginError" class="block mb-4"></app-alert>
+
+  <form (ngSubmit)="login()" class="space-y-4">
+    <div>
+      <label for="loginEmail">Email</label>
+      <input
+        id="loginEmail"
+        type="email"
+        name="loginEmail"
+        placeholder="mario.rossi@email.com"
+        [(ngModel)]="loginEmail"
+        required />
+    </div>
+    <div>
+      <label for="loginPassword">Password</label>
+      <input
+        id="loginPassword"
+        type="password"
+        name="loginPassword"
+        placeholder="••••••••"
+        [(ngModel)]="loginPassword"
+        required />
+    </div>
+
+    <button type="submit" class="btn btn-primary w-full">
+      <span class="material-symbols-outlined text-lg leading-none">login</span>
+      Accedi
+    </button>
+  </form>
+
+  <p class="text-sm text-slate-500 text-center mt-6">
+    Non hai un account?
+    <a class="text-blue-700 font-semibold cursor-pointer" (click)="goToRegister.emit()">Registrati</a>
+  </p>
+</div>

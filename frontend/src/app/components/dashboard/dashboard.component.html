@@ -1,0 +1,47 @@
+<div class="space-y-6">
+  <div class="glass-card p-6">
+    <h2 class="text-xl font-bold text-slate-800 mb-1">Benvenuto, {{ currentPatient?.name || authService.getEmail() }}!</h2>
+    <p class="text-sm text-slate-500" *ngIf="authService.getRole() === 'PATIENT'">
+      Gestisci la tua cronologia visite e contatta l'assistente AI in caso di problemi tecnici.
+    </p>
+    <p class="text-sm text-slate-500" *ngIf="authService.getRole() === 'DOCTOR'">
+      Consulta i tuoi appuntamenti clinici e gestisci lo stato delle visite dei pazienti.
+    </p>
+    <p class="text-sm text-slate-500" *ngIf="authService.getRole() === 'SUPPORT'">
+      Pannello di controllo per la gestione globale degli appuntamenti e delle segnalazioni tecniche.
+    </p>
+  </div>
+
+  <app-dashboard-patient
+    *ngIf="authService.getRole() === 'PATIENT'"
+    [appointments]="appointments"
+    [tickets]="tickets"
+    [currentPatient]="currentPatient"
+    (navigate)="onNavigate($event)"
+    (viewReportEvent)="viewReport($event)">
+  </app-dashboard-patient>
+
+  <app-dashboard-doctor
+    *ngIf="authService.getRole() === 'DOCTOR'"
+    [appointments]="appointments"
+    (statusChange)="onStatusChange($event)"
+    (viewReportEvent)="viewReport($event)">
+  </app-dashboard-doctor>
+
+  <app-dashboard-support
+    *ngIf="authService.getRole() === 'SUPPORT'"
+    [appointments]="appointments"
+    [tickets]="tickets"
+    [doctors]="doctors"
+    (statusChange)="onStatusChange($event)"
+    (ticketStatusChange)="onTicketStatusChange($event)">
+  </app-dashboard-support>
+
+  <app-report-viewer
+    *ngIf="selectedReport"
+    [report]="selectedReport"
+    [isDoctor]="authService.getRole() === 'DOCTOR'"
+    (close)="closeReportViewer()"
+    (saveNotes)="saveDoctorNotes($event)">
+  </app-report-viewer>
+</div>

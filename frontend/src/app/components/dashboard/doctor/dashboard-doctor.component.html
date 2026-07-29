@@ -1,0 +1,126 @@
+<div class="space-y-6">
+  <!-- STATISTICHE -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="stats">
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.totalPatients }}</p>
+      <p class="text-xs text-slate-500 mt-1">Pazienti totali</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.scheduledAppointments }}</p>
+      <p class="text-xs text-slate-500 mt-1">Visite programmate</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.completedAppointments }}</p>
+      <p class="text-xs text-slate-500 mt-1">Visite completate</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.openTickets }}</p>
+      <p class="text-xs text-slate-500 mt-1">Ticket aperti</p>
+    </div>
+  </div>
+
+  <!-- APPUNTAMENTI DEL MEDICO -->
+  <div class="glass-card p-6">
+    <h3 class="text-base font-bold text-slate-800 mb-4">I miei appuntamenti</h3>
+    <div class="space-y-3">
+      <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let app of appointments">
+        <div>
+          <h4 class="text-sm font-bold text-slate-800">{{ app.patient?.name || ('Paziente #' + app.patientId) }}</h4>
+          <p class="text-xs text-slate-500">{{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+          <p class="text-xs text-slate-600 mt-1">{{ app.reason }}</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap justify-end">
+          <span class="badge" [ngClass]="{
+            'badge-scheduled': app.status === 'SCHEDULED',
+            'badge-completed': app.status === 'COMPLETED',
+            'badge-cancelled': app.status === 'CANCELLED'
+          }">{{ app.status }}</span>
+
+          <ng-container *ngIf="app.status === 'SCHEDULED'">
+            <button class="btn btn-secondary text-xs" (click)="onStatusChange(app.id!, 'COMPLETED')">Completa</button>
+            <button class="btn btn-danger text-xs" (click)="onStatusChange(app.id!, 'CANCELLED')">Annulla</button>
+            <button class="btn btn-secondary text-xs" (click)="openTherapyModal(app)">Prescrivi terapia</button>
+          </ng-container>
+
+          <button class="btn btn-secondary text-xs" *ngIf="reportsMap.has(app.id!)" (click)="viewReport(app.id!)">
+            Referto
+          </button>
+        </div>
+      </div>
+
+      <p class="text-sm text-slate-500 text-center py-6" *ngIf="appointments.length === 0">
+        Nessun appuntamento in programma.
+      </p>
+    </div>
+  </div>
+
+  <!-- STORICO PAZIENTE -->
+  <div class="glass-card p-6">
+    <h3 class="text-base font-bold text-slate-800 mb-4">Storico clinico paziente</h3>
+
+    <select name="historyPatient" (change)="onHistoryPatientSelect($event)">
+      <option value="null">Seleziona un paziente...</option>
+      <option *ngFor="let p of allPatients" [value]="p.id">{{ p.name }}</option>
+    </select>
+
+    <div class="mt-4" *ngIf="selectedHistoryPatientId">
+      <p class="text-sm text-slate-500" *ngIf="loadingHistory">Caricamento storico...</p>
+
+      <div class="space-y-4" *ngIf="!loadingHistory">
+        <div>
+          <h4 class="text-xs uppercase text-slate-400 font-semibold mb-2">Appuntamenti precedenti</h4>
+          <div class="space-y-2">
+            <div class="p-3 rounded-lg border border-slate-200 text-sm flex justify-between" *ngFor="let app of patientHistoryAppointments">
+              <span>{{ app.appointmentDate | date:'dd/MM/yyyy' }} — {{ app.reason }}</span>
+              <span class="badge" [ngClass]="{
+                'badge-scheduled': app.status === 'SCHEDULED',
+                'badge-completed': app.status === 'COMPLETED',
+                'badge-cancelled': app.status === 'CANCELLED'
+              }">{{ app.status }}</span>
+            </div>
+            <p class="text-xs text-slate-500" *ngIf="patientHistoryAppointments.length === 0">Nessun appuntamento precedente.</p>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs uppercase text-slate-400 font-semibold mb-2">Terapie prescritte</h4>
+          <div class="space-y-2">
+            <div class="p-3 rounded-lg border border-slate-200 text-sm" *ngFor="let therapy of patientHistoryTherapies">
+              <p class="font-medium text-slate-800">{{ therapy.description }}</p>
+              <p class="text-xs text-slate-500">{{ therapy.startDate | date:'dd/MM/yyyy' }} - {{ therapy.endDate | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <p class="text-xs text-slate-500" *ngIf="patientHistoryTherapies.length === 0">Nessuna terapia prescritta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE PRESCRIZIONE TERAPIA -->
+  <app-modal
+    title="Prescrivi terapia"
+    icon="medication"
+    [show]="showTherapyModal"
+    (close)="closeTherapyModal()">
+    <form (ngSubmit)="saveTherapy()" class="space-y-4" *ngIf="selectedAppointmentForTherapy">
+      <div>
+        <label for="therapyDescription">Descrizione</label>
+        <textarea id="therapyDescription" name="therapyDescription" rows="3" [(ngModel)]="newTherapy.description" required></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="therapyStart">Data inizio</label>
+          <input id="therapyStart" type="date" name="therapyStart" [(ngModel)]="newTherapy.startDate" required />
+        </div>
+        <div>
+          <label for="therapyEnd">Data fine</label>
+          <input id="therapyEnd" type="date" name="therapyEnd" [(ngModel)]="newTherapy.endDate" required />
+        </div>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="button" class="btn btn-secondary flex-1" (click)="closeTherapyModal()">Annulla</button>
+        <button type="submit" class="btn btn-primary flex-1">Salva terapia</button>
+      </div>
+    </form>
+  </app-modal>
+</div>

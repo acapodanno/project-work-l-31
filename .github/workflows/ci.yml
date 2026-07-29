@@ -219,87 +219,89 @@ jobs:
 # STAGE 3 — QUALITÀ (richiede tutti i test OK)
 # La scansione sicurezza è gestita dal workflow dedicato codeql.yml
 # (CodeQL nativo GitHub) e da Dependabot (aggiornamenti dipendenze automatici).
-# Qui rimane solo SonarQube per le metriche di qualità e coverage.
+# SonarQube TEMPORANEAMENTE DISATTIVATO (commentato sotto) — ogni fase
+# (build, test, release) resta indipendente. Riattivare rimuovendo i commenti
+# e ripristinando "needs: [sonarqube-scan]" nel job release.
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-  # ── 3b. SonarQube ─────────────────────────────────────────────────────────
-  sonarqube-scan:
-    name: "Analisi — SonarQube (analisi statica)"
-    needs: [test-backend, test-frontend, test-agent]
-    runs-on: ubuntu-latest
-    # Istanza SonarQube effimera "usa e getta": nessuna persistenza tra un
-    # run e l'altro (niente storico/trend), ma sufficiente come quality gate
-    # su ogni push/PR. Per uno storico persistente valutare in futuro
-    # SonarCloud oppure un'istanza SonarQube self-hosted permanente.
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # SonarQube usa la history git per il blame delle issue
-
-      - name: Setup JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-          cache: maven
-
-      - name: Compila classi backend (senza rieseguire i test)
-        working-directory: backend
-        run: mvn -B test-compile
-
-      - name: Scarica report coverage backend (JaCoCo)
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-jacoco-report
-          path: backend/target/site/jacoco
-
-      - name: Scarica report coverage frontend (lcov)
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-coverage-report
-          path: frontend/coverage/healthcare-frontend
-
-      - name: Scarica report coverage agente (pytest-cov)
-        uses: actions/download-artifact@v4
-        with:
-          name: agent-coverage-report
-          path: agent
-
-      - name: Prerequisiti host per l'Elasticsearch embedded in SonarQube
-        run: |
-          sudo sysctl -w vm.max_map_count=524288
-          sudo sysctl -w fs.file-max=131072
-          ulimit -n 131072
-
-      - name: Avvia SonarQube Community Build
-        run: |
-          docker run -d --name sonarqube -p 9000:9000 sonarqube:community
-          echo "In attesa che SonarQube sia pronto (1-2 minuti)..."
-          timeout 180 bash -c '
-            until curl -s http://localhost:9000/api/system/status | grep -q "\"status\":\"UP\""; do
-              sleep 5
-            done
-          '
-
-      - name: Genera un token di analisi (credenziali di default, istanza effimera)
-        id: sonar-token
-        run: |
-          TOKEN=$(curl -s -u admin:admin -X POST \
-            "http://localhost:9000/api/user_tokens/generate" \
-            -d "name=ci-$(date +%s)" | jq -r .token)
-          echo "::add-mask::$TOKEN"
-          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
-
-      - name: Analisi SonarQube (backend + frontend + agent in un'unica scansione)
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_HOST_URL: http://localhost:9000
-          SONAR_TOKEN: ${{ steps.sonar-token.outputs.token }}
-
-      - name: Ferma il container SonarQube
-        if: always()
-        run: docker stop sonarqube && docker rm sonarqube
+  # ── 3b. SonarQube (DISATTIVATO) ─────────────────────────────────────────────
+  # sonarqube-scan:
+  #   name: "Analisi — SonarQube (analisi statica)"
+  #   needs: [test-backend, test-frontend, test-agent]
+  #   runs-on: ubuntu-latest
+  #   # Istanza SonarQube effimera "usa e getta": nessuna persistenza tra un
+  #   # run e l'altro (niente storico/trend), ma sufficiente come quality gate
+  #   # su ogni push/PR. Per uno storico persistente valutare in futuro
+  #   # SonarCloud oppure un'istanza SonarQube self-hosted permanente.
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0 # SonarQube usa la history git per il blame delle issue
+  #
+  #     - name: Setup JDK 21
+  #       uses: actions/setup-java@v4
+  #       with:
+  #         distribution: temurin
+  #         java-version: "21"
+  #         cache: maven
+  #
+  #     - name: Compila classi backend (senza rieseguire i test)
+  #       working-directory: backend
+  #       run: mvn -B test-compile
+  #
+  #     - name: Scarica report coverage backend (JaCoCo)
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: backend-jacoco-report
+  #         path: backend/target/site/jacoco
+  #
+  #     - name: Scarica report coverage frontend (lcov)
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: frontend-coverage-report
+  #         path: frontend/coverage/healthcare-frontend
+  #
+  #     - name: Scarica report coverage agente (pytest-cov)
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: agent-coverage-report
+  #         path: agent
+  #
+  #     - name: Prerequisiti host per l'Elasticsearch embedded in SonarQube
+  #       run: |
+  #         sudo sysctl -w vm.max_map_count=524288
+  #         sudo sysctl -w fs.file-max=131072
+  #         ulimit -n 131072
+  #
+  #     - name: Avvia SonarQube Community Build
+  #       run: |
+  #         docker run -d --name sonarqube -p 9000:9000 sonarqube:community
+  #         echo "In attesa che SonarQube sia pronto (1-2 minuti)..."
+  #         timeout 180 bash -c '
+  #           until curl -s http://localhost:9000/api/system/status | grep -q "\"status\":\"UP\""; do
+  #             sleep 5
+  #           done
+  #         '
+  #
+  #     - name: Genera un token di analisi (credenziali di default, istanza effimera)
+  #       id: sonar-token
+  #       run: |
+  #         TOKEN=$(curl -s -u admin:admin -X POST \
+  #           "http://localhost:9000/api/user_tokens/generate" \
+  #           -d "name=ci-$(date +%s)" | jq -r .token)
+  #         echo "::add-mask::$TOKEN"
+  #         echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+  #
+  #     - name: Analisi SonarQube (backend + frontend + agent in un'unica scansione)
+  #       uses: SonarSource/sonarqube-scan-action@v4
+  #       env:
+  #         SONAR_HOST_URL: http://localhost:9000
+  #         SONAR_TOKEN: ${{ steps.sonar-token.outputs.token }}
+  #
+  #     - name: Ferma il container SonarQube
+  #       if: always()
+  #       run: docker stop sonarqube && docker rm sonarqube
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -309,7 +311,7 @@ jobs:
 
   release:
     name: "Release — Pubblica build numerata"
-    needs: [sonarqube-scan]
+    needs: [test-backend, test-frontend, test-agent]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:

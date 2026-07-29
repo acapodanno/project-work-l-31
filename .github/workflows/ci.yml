@@ -203,71 +203,12 @@ jobs:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# STAGE 3 — ANALISI (richiede tutti i test OK)
-# Security scan e analisi statica girano in parallelo dopo che tutti i test
-# sono verdi.
+# STAGE 3 — QUALITÀ (richiede tutti i test OK)
+# La scansione sicurezza è gestita dal workflow dedicato codeql.yml
+# (CodeQL nativo GitHub) e da Dependabot (aggiornamenti dipendenze automatici).
+# Qui rimane solo SonarQube per le metriche di qualità e coverage.
 # ─────────────────────────────────────────────────────────────────────────────
 
-  # ── 3a. Security Scan (Snyk) ──────────────────────────────────────────────
-  security-scan:
-    name: "Analisi — Snyk Security Scan"
-    needs: [test-backend, test-frontend, test-agent]
-    runs-on: ubuntu-latest
-    # Richiede il secret SNYK_TOKEN nelle impostazioni del repository
-    # (Settings > Secrets and variables > Actions). Senza il token gli step
-    # falliscono singolarmente ma non bloccano la pipeline (continue-on-error),
-    # così il job resta "disattivabile" finché non si configura un account Snyk.
-    #
-    # A differenza delle GitHub Action `snyk/actions/*`, qui usiamo
-    # direttamente le immagini Docker ufficiali (hub.docker.com/r/snyk/snyk):
-    # ogni tag corrisponde a un toolchain (linguaggio + versione) già pronto,
-    # coerente con le versioni usate nei Dockerfile di backend/frontend/agent.
-    env:
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Snyk — dipendenze backend (Maven, JDK 21)
-        continue-on-error: true
-        run: |
-          docker run --rm --env SNYK_TOKEN -v "${{ github.workspace }}/backend:/app" \
-            snyk/snyk:maven-3-jdk-21 snyk test --severity-threshold=high
-
-      - name: Snyk — dipendenze frontend (npm, Node 22)
-        continue-on-error: true
-        run: |
-          docker run --rm --env SNYK_TOKEN -v "${{ github.workspace }}/frontend:/app" \
-            snyk/snyk:node-22 snyk test --severity-threshold=high
-
-      - name: Snyk — dipendenze agente (pip, Python 3.11)
-        continue-on-error: true
-        run: |
-          docker run --rm --env SNYK_TOKEN -v "${{ github.workspace }}/agent:/app" \
-            snyk/snyk:python-3.11 snyk test --severity-threshold=high
-
-      - name: Build immagini runtime (per la scansione container)
-        run: |
-          docker build -t healthcare-backend:ci --target runtime backend
-          docker build -t healthcare-frontend:ci --target runtime frontend
-          docker build -t healthcare-agent:ci --target runtime agent
-
-      - name: Snyk — immagine container backend
-        continue-on-error: true
-        run: |
-          docker run --rm --env SNYK_TOKEN -v /var/run/docker.sock:/var/run/docker.sock \
-            snyk/snyk:docker snyk test --docker healthcare-backend:ci --severity-threshold=high
-
-      - name: Snyk — immagine container frontend
-        continue-on-error: true
-        run: |
-          docker run --rm --env SNYK_TOKEN -v /var/run/docker.sock:/var/run/docker.sock \
-            snyk/snyk:docker snyk test --docker healthcare-frontend:ci --severity-threshold=high
-
-      - name: Snyk — immagine container agente
-        continue-on-error: true
-        run: |
-          docker run --rm --env SNYK_TOKEN -v /var/run/docker.sock:/var/run/docker.sock \
-            snyk/snyk:docker snyk test --docker healthcare-agent:ci --severity-threshold=high
 
   # ── 3b. SonarQube ─────────────────────────────────────────────────────────
   sonarqube-scan:

@@ -1,0 +1,75 @@
+name: CodeQL Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Scansione schedulata settimanale per rilevare nuove CVE
+  # anche in assenza di push recenti.
+  schedule:
+    - cron: "30 5 * * 1" # Ogni lunedì alle 05:30 UTC
+
+jobs:
+  analyze:
+    name: CodeQL — ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    permissions:
+      # Necessario per caricare i risultati SARIF su GitHub Security tab
+      security-events: write
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # ── Backend Java (Spring Boot) ───────────────────────────────────
+          - language: java-kotlin
+            build-mode: manual
+
+          # ── Frontend TypeScript (Angular) ────────────────────────────────
+          - language: javascript-typescript
+            build-mode: none
+
+          # ── Agente AI (Python / FastAPI) ─────────────────────────────────
+          - language: python
+            build-mode: none
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Setup toolchain per il build manuale Java ─────────────────────
+      - name: Setup JDK 21 (solo per Java)
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # ── Inizializza il database CodeQL ────────────────────────────────
+      - name: Inizializza CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          # Query suite "security-and-quality" include:
+          # - security-extended: vulnerabilità OWASP, injection, XSS, ecc.
+          # - quality: dead code, resource leak, bad practices
+          queries: security-and-quality
+
+      # ── Build manuale per Java (CodeQL deve instrumentare il compilatore)
+      - name: Build backend (per Java CodeQL)
+        if: matrix.language == 'java-kotlin'
+        working-directory: backend
+        run: mvn -B clean compile -DskipTests
+
+      # ── Esegui l'analisi e carica i risultati ────────────────────────
+      - name: Esegui analisi CodeQL
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+          # I risultati appaiono nella tab "Security > Code scanning alerts"
+          # del repository GitHub.
+          upload: always

@@ -50,7 +50,7 @@ jobs:
 
       # ── Inizializza il database CodeQL ────────────────────────────────
       - name: Inizializza CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
@@ -67,7 +67,7 @@ jobs:
 
       # ── Esegui l'analisi e carica i risultati ────────────────────────
       - name: Esegui analisi CodeQL
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
           # I risultati appaiono nella tab "Security > Code scanning alerts"

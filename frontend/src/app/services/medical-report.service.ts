@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MedicalReportResponse } from '../models/medical-report.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MedicalReportService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/reports';
+  private apiUrl = `${environment.backendUrl}/reports`;
 
   uploadReport(appointmentId: number, file: File): Observable<MedicalReportResponse> {
     const formData = new FormData();

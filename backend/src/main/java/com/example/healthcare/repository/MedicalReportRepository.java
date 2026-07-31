@@ -11,4 +11,5 @@ import java.util.List;
 public interface MedicalReportRepository extends JpaRepository<MedicalReport, Long> {
     Optional<MedicalReport> findByAppointmentId(Long appointmentId);
     List<MedicalReport> findByAppointmentPatientId(Long patientId);
+    Optional<MedicalReport> findByFileName(String fileName);
 }

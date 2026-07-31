@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,24 +20,43 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('DOCTOR', 'SUPPORT')")
     public ResponseEntity<List<AppointmentDTO>> getAllAppointments() {
         return ResponseEntity.ok(appointmentService.getAllAppointments());
     }
 
     @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'SUPPORT') or @ownership.isSelfPatient(#patientId, authentication)")
     public ResponseEntity<List<AppointmentDTO>> getAppointmentsByPatientId(@PathVariable Long patientId) {
         return ResponseEntity.ok(appointmentService.getAppointmentsByPatientId(patientId));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('PATIENT') and @ownership.isSelfPatient(#appointmentDTO.patientId(), authentication)")
     public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody AppointmentDTO appointmentDTO) {
         return new ResponseEntity<>(appointmentService.createAppointment(appointmentDTO), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("@ownership.canEditAppointment(#id, authentication)")
+    public ResponseEntity<AppointmentDTO> updateAppointment(
+            @PathVariable Long id,
+            @RequestBody AppointmentDTO appointmentDTO) {
+        return ResponseEntity.ok(appointmentService.updateAppointment(id, appointmentDTO));
+    }
+
     @PatchMapping("/{id}/status")
+    @PreAuthorize("@ownership.canManageAppointmentStatus(#id, #status, authentication)")
     public ResponseEntity<AppointmentDTO> updateStatus(
             @PathVariable Long id,
             @RequestParam String status) {
         return ResponseEntity.ok(appointmentService.updateStatus(id, status));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'SUPPORT')")
+    public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
+        appointmentService.deleteAppointment(id);
+        return ResponseEntity.noContent().build();
     }
 }

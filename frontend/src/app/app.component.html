@@ -8,13 +8,13 @@
         <p>Clinica Polispecialistica & Assistente AI</p>
       </div>
     </div>
-    
+
     <div class="user-profile-header" *ngIf="authService.isLoggedIn()">
       <div class="avatar">
         <span class="material-symbols-outlined">person</span>
       </div>
       <div class="user-info">
-        <span class="user-name">{{ currentPatient?.name || authService.getEmail() }}</span>
+        <span class="user-name">{{ appState.currentPatient?.name || authService.getEmail() }}</span>
         <span class="user-role badge" [class]="'badge-' + authService.getRole()?.toLowerCase()">
           {{ authService.getRole() }}
         </span>
@@ -30,42 +30,51 @@
     <!-- SIDEBAR -->
     <aside class="sidebar glass-panel">
       <nav class="nav-menu">
-        <button 
+        <a
           *ngIf="authService.isLoggedIn()"
-          class="nav-item" 
-          [class.active]="activeTab === 'dashboard'" 
-          (click)="activeTab = 'dashboard'">
+          class="nav-item"
+          routerLink="/dashboard"
+          routerLinkActive="active">
           <span class="material-symbols-outlined">dashboard</span>
           <span>Dashboard</span>
-        </button>
-        
-        <button 
+        </a>
+
+        <a
           *ngIf="authService.isLoggedIn() && (authService.getRole() === 'PATIENT' || authService.getRole() === 'SUPPORT')"
-          class="nav-item" 
-          [class.active]="activeTab === 'booking'" 
-          (click)="activeTab = 'booking'">
+          class="nav-item"
+          routerLink="/booking"
+          routerLinkActive="active">
           <span class="material-symbols-outlined">calendar_month</span>
           <span>Prenota Visita</span>
-        </button>
-        
-        <button 
+        </a>
+
+        <a
+          *ngIf="authService.isLoggedIn() && authService.getRole() === 'PATIENT'"
+          class="nav-item"
+          routerLink="/therapy"
+          routerLinkActive="active">
+          <span class="material-symbols-outlined">medication</span>
+          <span>Le Mie Terapie</span>
+        </a>
+
+        <a
           *ngIf="authService.isLoggedIn()"
-          class="nav-item btn-ai" 
-          [class.active]="activeTab === 'assistant'" 
-          (click)="activeTab = 'assistant'">
+          class="nav-item btn-ai"
+          routerLink="/assistant"
+          routerLinkActive="active">
           <span class="material-symbols-outlined">chat_bubble</span>
           <span>Assistente AI RAG</span>
-        </button>
+        </a>
 
-        <button 
-          class="nav-item" 
-          [class.active]="activeTab === 'user'" 
-          (click)="activeTab = 'user'">
+        <a
+          class="nav-item"
+          routerLink="/account"
+          routerLinkActive="active">
           <span class="material-symbols-outlined">account_circle</span>
           <span>{{ authService.isLoggedIn() ? 'Profilo' : 'Accedi' }}</span>
-        </button>
+        </a>
       </nav>
-      
+
       <div class="sidebar-footer">
         <div class="status-indicator">
           <span class="dot" [class.active]="authService.isLoggedIn()"></span>
@@ -76,64 +85,12 @@
 
     <!-- CONTENT AREA -->
     <main class="content-area">
-      
-      <!-- SECTION: USER (LOGIN / REGISTER / PROFILE) -->
-      <section *ngIf="activeTab === 'user'" class="tab-content fade-in">
-        <!-- SE NON LOGGATO -->
-        <app-login 
-          *ngIf="!authService.isLoggedIn()" 
-          (loginSuccess)="onLoginSuccess()">
-        </app-login>
-
-        <!-- SE LOGGATO -->
-        <app-profile 
-          *ngIf="authService.isLoggedIn()" 
-          [currentPatient]="currentPatient" 
-          (logout)="logout()">
-        </app-profile>
-      </section>
-
-      <!-- SECTION 1: DASHBOARD (Richiede autenticazione) -->
-      <section *ngIf="activeTab === 'dashboard' && authService.isLoggedIn()" class="tab-content fade-in">
-        <app-dashboard 
-          [appointments]="appointments" 
-          [tickets]="tickets" 
-          [doctors]="doctors" 
-          [currentPatient]="currentPatient"
-          (statusChange)="changeAppointmentStatus($event.id, $event.status)"
-          (navigate)="activeTab = $event">
-        </app-dashboard>
-      </section>
-
-      <!-- SECTION 2: PRENOTAZIONE (Solo per Pazienti e Supporto) -->
-      <section *ngIf="activeTab === 'booking' && authService.isLoggedIn() && (authService.getRole() === 'PATIENT' || authService.getRole() === 'SUPPORT')" class="tab-content fade-in">
-        <app-booking 
-          [doctors]="doctors" 
-          [bookingSuccess]="bookingSuccess" 
-          [bookingError]="bookingError"
-          (book)="bookAppointment($event)">
-        </app-booking>
-      </section>
-
-      <!-- SECTION 3: ASSISTENTE AI RAG (Richiede autenticazione) -->
-      <section *ngIf="activeTab === 'assistant' && authService.isLoggedIn()" class="tab-content fade-in flex-col-container">
-        <app-assistant 
-          [chatMessages]="chatMessages" 
-          [chatLoading]="chatLoading"
-          (send)="newMessageText = $event; sendMessage()">
-        </app-assistant>
-      </section>
-      
-      <!-- SEZIONE NON AUTENTICATO (FALLBACK PER TAB PROTETTI) -->
-      <section *ngIf="activeTab !== 'user' && !authService.isLoggedIn()" class="tab-content fade-in empty-auth-state">
-        <div class="glass-card empty-card text-center">
-          <span class="material-symbols-outlined locked-icon">lock</span>
-          <h2>Accesso Limitato</h2>
-          <p>Devi effettuare l'accesso per visualizzare questa sezione.</p>
-          <button class="btn btn-primary" (click)="activeTab = 'user'">Vai all'Accesso</button>
-        </div>
-      </section>
-      
+      <div class="tab-content fade-in">
+        <router-outlet></router-outlet>
+      </div>
     </main>
   </div>
 </div>
+
+<app-toast></app-toast>
+<app-loading></app-loading>

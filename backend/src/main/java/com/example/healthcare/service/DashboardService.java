@@ -25,8 +25,10 @@ public class DashboardService {
                 .totalPatients(patientRepository.count())
                 .totalDoctors(doctorRepository.count())
                 .openTickets(ticketRepository.countByStatus("OPEN"))
+                .closedTickets(ticketRepository.countByStatus("CLOSED"))
                 .completedAppointments(appointmentRepository.countByStatus(AppointmentStatus.COMPLETED))
                 .scheduledAppointments(appointmentRepository.countByStatus(AppointmentStatus.SCHEDULED))
+                .cancelledAppointments(appointmentRepository.countByStatus(AppointmentStatus.CANCELLED))
                 .build();
     }
 }

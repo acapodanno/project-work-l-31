@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginRequest, LoginResponse, RegistrationRequest } from '../models/healthcare.models';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private authUrl = 'http://localhost:8080/api/auth';
+  private authUrl = `${environment.backendUrl}/auth`;
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials).pipe(

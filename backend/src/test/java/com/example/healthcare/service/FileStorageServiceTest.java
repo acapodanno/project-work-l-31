@@ -39,28 +39,36 @@ class FileStorageServiceTest {
 
     @Test
     void storeFile_Success() {
-        MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "content".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "test.pdf", "application/pdf", "content".getBytes());
         String fileName = fileStorageService.storeFile(file);
-        
+
         assertNotNull(fileName);
-        assertTrue(fileName.endsWith("_test.txt"));
+        assertTrue(fileName.endsWith("_test.pdf"));
     }
 
     @Test
     void storeFile_InvalidPath() {
-        MockMultipartFile file = new MockMultipartFile("file", "../test.txt", "text/plain", "content".getBytes());
-        
+        MockMultipartFile file = new MockMultipartFile("file", "../test.pdf", "application/pdf", "content".getBytes());
+
         RuntimeException exception = assertThrows(RuntimeException.class, () -> fileStorageService.storeFile(file));
         assertTrue(exception.getMessage().contains("Il nome del file contiene una sequenza di percorsi non valida"));
     }
 
     @Test
-    void loadFileAsResource_Success() {
+    void storeFile_RejectsNonPdf() {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "content".getBytes());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> fileStorageService.storeFile(file));
+        assertTrue(exception.getMessage().contains("Sono ammessi solo referti in formato PDF"));
+    }
+
+    @Test
+    void loadFileAsResource_Success() {
+        MockMultipartFile file = new MockMultipartFile("file", "test.pdf", "application/pdf", "content".getBytes());
         String fileName = fileStorageService.storeFile(file);
-        
+
         Resource resource = fileStorageService.loadFileAsResource(fileName);
-        
+
         assertNotNull(resource);
         assertTrue(resource.exists());
     }

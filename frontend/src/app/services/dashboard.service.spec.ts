@@ -29,7 +29,13 @@ describe('DashboardService', () => {
   });
 
   it('should fetch stats', () => {
-    const mockStats: DashboardStats = { totalPatients: 10, totalAppointments: 5, pendingTickets: 2 };
+    const mockStats: DashboardStats = {
+      totalPatients: 10,
+      totalDoctors: 4,
+      openTickets: 2,
+      completedAppointments: 5,
+      scheduledAppointments: 3,
+    };
 
     service.getStats().subscribe(res => {
       expect(res).toEqual(mockStats);

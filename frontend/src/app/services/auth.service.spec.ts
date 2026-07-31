@@ -49,7 +49,7 @@ describe('AuthService', () => {
 
   it('should call login and not save session if requiring 2FA', () => {
     const mockCredentials: LoginRequest = { email: 'test@example.com', password: 'password' };
-    const mockResponse: LoginResponse = { token: '', email: '', role: '', requires2fa: true, message: 'Need 2FA' };
+    const mockResponse: LoginResponse = { token: '', email: '', role: '', requires2fa: true };
 
     service.login(mockCredentials).subscribe(res => {
       expect(res).toEqual(mockResponse);
@@ -75,7 +75,7 @@ describe('AuthService', () => {
   });
 
   it('should register a user', () => {
-    const mockReq: RegistrationRequest = { email: 'test@example.com', password: 'password', name: 'Test', role: 'PATIENT' };
+    const mockReq: RegistrationRequest = { email: 'test@example.com', password: 'password', name: 'Test' };
     
     service.register(mockReq).subscribe(res => {
       expect(res).toBeTruthy();

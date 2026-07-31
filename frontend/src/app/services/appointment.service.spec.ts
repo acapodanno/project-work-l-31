@@ -29,7 +29,7 @@ describe('AppointmentService', () => {
   });
 
   it('should get all appointments', () => {
-    const mockAppointments: Appointment[] = [{ id: 1, doctorId: 2, patientId: 3, date: '2026-01-01T10:00:00', status: 'SCHEDULED' }];
+    const mockAppointments: Appointment[] = [{ id: 1, doctorId: 2, patientId: 3, appointmentDate: '2026-01-01T10:00:00', reason: 'Visita di controllo', status: 'SCHEDULED' }];
 
     service.getAppointments().subscribe(res => {
       expect(res).toEqual(mockAppointments);
@@ -41,7 +41,7 @@ describe('AppointmentService', () => {
   });
 
   it('should get appointments by patient', () => {
-    const mockAppointments: Appointment[] = [{ id: 1, doctorId: 2, patientId: 3, date: '2026-01-01T10:00:00', status: 'SCHEDULED' }];
+    const mockAppointments: Appointment[] = [{ id: 1, doctorId: 2, patientId: 3, appointmentDate: '2026-01-01T10:00:00', reason: 'Visita di controllo', status: 'SCHEDULED' }];
 
     service.getAppointmentsByPatient(3).subscribe(res => {
       expect(res).toEqual(mockAppointments);
@@ -53,7 +53,7 @@ describe('AppointmentService', () => {
   });
 
   it('should create an appointment', () => {
-    const mockAppointment: Appointment = { id: 1, doctorId: 2, patientId: 3, date: '2026-01-01T10:00:00', status: 'SCHEDULED' };
+    const mockAppointment: Appointment = { id: 1, doctorId: 2, patientId: 3, appointmentDate: '2026-01-01T10:00:00', reason: 'Visita di controllo', status: 'SCHEDULED' };
 
     service.createAppointment(mockAppointment).subscribe(res => {
       expect(res).toEqual(mockAppointment);
@@ -66,7 +66,7 @@ describe('AppointmentService', () => {
   });
 
   it('should update appointment status', () => {
-    const mockAppointment: Appointment = { id: 1, doctorId: 2, patientId: 3, date: '2026-01-01T10:00:00', status: 'COMPLETED' };
+    const mockAppointment: Appointment = { id: 1, doctorId: 2, patientId: 3, appointmentDate: '2026-01-01T10:00:00', reason: 'Visita di controllo', status: 'COMPLETED' };
 
     service.updateAppointmentStatus(1, 'COMPLETED').subscribe(res => {
       expect(res).toEqual(mockAppointment);

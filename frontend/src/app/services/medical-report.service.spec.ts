@@ -30,7 +30,18 @@ describe('MedicalReportService', () => {
 
   it('should upload report', () => {
     const mockFile = new File([''], 'test.pdf');
-    const mockResponse: MedicalReportResponse = { id: 1, appointmentId: 1, fileName: 'test.pdf', patientEmail: 'p@e.com' };
+    const mockResponse: MedicalReportResponse = {
+      id: 1,
+      appointmentId: 1,
+      doctorName: 'Dr. Rossi',
+      patientName: 'Mario Bianchi',
+      appointmentDate: '2026-01-01T10:00:00',
+      fileName: 'test.pdf',
+      fileType: 'application/pdf',
+      downloadUrl: 'http://localhost:8080/api/reports/download/test.pdf',
+      extractedData: '',
+      createdAt: '2026-01-01T10:00:00',
+    };
 
     service.uploadReport(1, mockFile).subscribe(res => {
       expect(res).toEqual(mockResponse);
@@ -42,7 +53,19 @@ describe('MedicalReportService', () => {
   });
 
   it('should add doctor notes', () => {
-    const mockResponse: MedicalReportResponse = { id: 1, appointmentId: 1, fileName: 'test.pdf', doctorNotes: 'notes' };
+    const mockResponse: MedicalReportResponse = {
+      id: 1,
+      appointmentId: 1,
+      doctorName: 'Dr. Rossi',
+      patientName: 'Mario Bianchi',
+      appointmentDate: '2026-01-01T10:00:00',
+      fileName: 'test.pdf',
+      fileType: 'application/pdf',
+      downloadUrl: 'http://localhost:8080/api/reports/download/test.pdf',
+      extractedData: '',
+      doctorNotes: 'notes',
+      createdAt: '2026-01-01T10:00:00',
+    };
 
     service.addDoctorNotes(1, 'notes').subscribe(res => {
       expect(res).toEqual(mockResponse);
@@ -54,7 +77,18 @@ describe('MedicalReportService', () => {
   });
 
   it('should get report by appointment id', () => {
-    const mockResponse: MedicalReportResponse = { id: 1, appointmentId: 1, fileName: 'test.pdf' };
+    const mockResponse: MedicalReportResponse = {
+      id: 1,
+      appointmentId: 1,
+      doctorName: 'Dr. Rossi',
+      patientName: 'Mario Bianchi',
+      appointmentDate: '2026-01-01T10:00:00',
+      fileName: 'test.pdf',
+      fileType: 'application/pdf',
+      downloadUrl: 'http://localhost:8080/api/reports/download/test.pdf',
+      extractedData: '',
+      createdAt: '2026-01-01T10:00:00',
+    };
 
     service.getReportByAppointmentId(1).subscribe(res => {
       expect(res).toEqual(mockResponse);
@@ -66,7 +100,18 @@ describe('MedicalReportService', () => {
   });
 
   it('should get reports by patient id', () => {
-    const mockResponses: MedicalReportResponse[] = [{ id: 1, appointmentId: 1, fileName: 'test.pdf' }];
+    const mockResponses: MedicalReportResponse[] = [{
+      id: 1,
+      appointmentId: 1,
+      doctorName: 'Dr. Rossi',
+      patientName: 'Mario Bianchi',
+      appointmentDate: '2026-01-01T10:00:00',
+      fileName: 'test.pdf',
+      fileType: 'application/pdf',
+      downloadUrl: 'http://localhost:8080/api/reports/download/test.pdf',
+      extractedData: '',
+      createdAt: '2026-01-01T10:00:00',
+    }];
 
     service.getReportsByPatientId(1).subscribe(res => {
       expect(res).toEqual(mockResponses);

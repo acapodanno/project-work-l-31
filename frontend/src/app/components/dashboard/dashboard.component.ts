@@ -26,6 +26,7 @@ export class DashboardComponent {
   @Output() statusChange = new EventEmitter<{ id: number, status: string }>();
   @Output() ticketStatusChange = new EventEmitter<{ id: number, status: string }>();
   @Output() navigate = new EventEmitter<'booking' | 'assistant'>();
+  @Output() editAppointment = new EventEmitter<{ id: number, appointmentDate: string, reason: string, notes: string }>();
 
   selectedReport: MedicalReportResponse | null = null;
 
@@ -35,6 +36,14 @@ export class DashboardComponent {
 
   onStatusChange(event: { id: number, status: string }) {
     this.statusChange.emit(event);
+  }
+
+  onCancelAppointment(id: number) {
+    this.statusChange.emit({ id, status: 'CANCELLED' });
+  }
+
+  onEditAppointment(event: { id: number, appointmentDate: string, reason: string, notes: string }) {
+    this.editAppointment.emit(event);
   }
 
   onTicketStatusChange(event: { id: number, status: string }) {

@@ -14,8 +14,15 @@
         </span>
       </div>
     </div>
-    <div>
+    <div class="flex items-center gap-2">
       <span class="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1 font-medium">Supporto AI</span>
+      <button
+        type="button"
+        class="btn btn-secondary text-xs"
+        title="Cancella la cronologia della conversazione"
+        (click)="onClearHistory()">
+        <span class="material-symbols-outlined text-sm leading-none">delete_sweep</span>
+      </button>
     </div>
   </div>
 

@@ -18,7 +18,9 @@
     [tickets]="tickets"
     [currentPatient]="currentPatient"
     (navigate)="onNavigate($event)"
-    (viewReportEvent)="viewReport($event)">
+    (viewReportEvent)="viewReport($event)"
+    (cancelAppointment)="onCancelAppointment($event)"
+    (editAppointment)="onEditAppointment($event)">
   </app-dashboard-patient>
 
   <app-dashboard-doctor

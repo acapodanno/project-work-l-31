@@ -72,6 +72,9 @@ Thumbs.db
 .springBeans
 .factorypath
 
+# Claude Code local session settings (permessi specifici della sessione)
+.claude/settings.local.json
+
 # Databases / Environment
 *.sqlite
 *.db

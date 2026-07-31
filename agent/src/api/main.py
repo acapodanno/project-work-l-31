@@ -5,17 +5,31 @@ Espone:
 - `POST /api/chat` -> endpoint conversazionale usato dal frontend Angular
   (`agent.service.ts`), payload `{message, patientId}` -> `{response}`.
 """
-from fastapi import FastAPI
+import logging
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from ..config import settings
 from ..rag.rag_engine import build_query_engine
 from .agent_dependencies import get_agent
 
+logger = logging.getLogger(__name__)
+
 app = FastAPI(
     title="HealthCare Plus - AI Agent",
     description="Assistente virtuale RAG con apertura automatica di ticket di assistenza.",
     version="1.0.0",
+)
+
+# Consente le chiamate cross-origin dal frontend Angular (dev: localhost:4200).
+# Coerente con il CORS "*" già usato dal backend Spring Boot per questo progetto.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 query_engine = build_query_engine(settings.data_dir, settings.openai_api_key)
@@ -38,5 +52,12 @@ def health():
 
 @app.post("/api/chat", response_model=ChatResponse)
 def chat(payload: ChatRequest):
-    text = agent.run(payload.message, payload.patientId)
+    try:
+        text = agent.run(payload.message, payload.patientId)
+    except Exception:
+        logger.exception("Errore durante l'esecuzione dell'agente AI")
+        raise HTTPException(
+            status_code=502,
+            detail="L'assistente AI non è al momento disponibile. Riprova tra qualche istante.",
+        )
     return ChatResponse(response=text)

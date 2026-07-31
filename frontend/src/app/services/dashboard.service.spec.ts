@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 import { DashboardService } from './dashboard.service';
 import { DashboardStats } from '../models/dashboard-stats.model';
+import { environment } from '../../environments/environment';
 
 describe('DashboardService', () => {
   let service: DashboardService;
@@ -29,13 +30,21 @@ describe('DashboardService', () => {
   });
 
   it('should fetch stats', () => {
-    const mockStats: DashboardStats = { totalPatients: 10, totalAppointments: 5, pendingTickets: 2 };
+    const mockStats: DashboardStats = {
+      totalPatients: 10,
+      totalDoctors: 4,
+      openTickets: 2,
+      closedTickets: 6,
+      completedAppointments: 5,
+      scheduledAppointments: 3,
+      cancelledAppointments: 1,
+    };
 
     service.getStats().subscribe(res => {
       expect(res).toEqual(mockStats);
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/dashboard/stats');
+    const req = httpMock.expectOne(`${environment.backendUrl}/dashboard/stats`);
     expect(req.request.method).toBe('GET');
     req.flush(mockStats);
   });

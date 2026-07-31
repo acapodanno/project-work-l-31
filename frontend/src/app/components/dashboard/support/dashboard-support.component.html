@@ -1,6 +1,6 @@
 <div class="space-y-6">
   <!-- STATISTICHE -->
-  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4" *ngIf="stats">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="stats">
     <div class="glass-card p-4 text-center">
       <p class="text-2xl font-bold text-slate-800">{{ stats.totalPatients }}</p>
       <p class="text-xs text-slate-500 mt-1">Pazienti</p>
@@ -18,8 +18,22 @@
       <p class="text-xs text-slate-500 mt-1">Visite completate</p>
     </div>
     <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.cancelledAppointments }}</p>
+      <p class="text-xs text-slate-500 mt-1">Visite cancellate</p>
+    </div>
+    <div class="glass-card p-4 text-center">
       <p class="text-2xl font-bold text-slate-800">{{ stats.openTickets }}</p>
       <p class="text-xs text-slate-500 mt-1">Ticket aperti</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">{{ stats.closedTickets }}</p>
+      <p class="text-xs text-slate-500 mt-1">Ticket chiusi</p>
+    </div>
+    <div class="glass-card p-4 text-center">
+      <p class="text-2xl font-bold text-slate-800">
+        {{ stats.openTickets + stats.closedTickets > 0 ? ((stats.closedTickets / (stats.openTickets + stats.closedTickets)) * 100 | number:'1.0-0') : 0 }}%
+      </p>
+      <p class="text-xs text-slate-500 mt-1">Tasso risoluzione ticket</p>
     </div>
   </div>
 

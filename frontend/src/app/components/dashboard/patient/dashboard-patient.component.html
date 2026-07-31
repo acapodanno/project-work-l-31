@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-6 no-print">
   <div class="flex gap-3">
     <button class="btn btn-primary flex-1" (click)="onNavigate('booking')">
       <span class="material-symbols-outlined text-lg leading-none">event_available</span>
@@ -8,6 +8,10 @@
       <span class="material-symbols-outlined text-lg leading-none">chat_bubble</span>
       Assistente AI
     </button>
+    <button class="btn btn-secondary flex-1" (click)="exportClinicalSummary()">
+      <span class="material-symbols-outlined text-lg leading-none">picture_as_pdf</span>
+      Esporta cartella clinica
+    </button>
   </div>
 
   <!-- APPUNTAMENTI -->
@@ -15,28 +19,60 @@
     <h3 class="text-base font-bold text-slate-800 mb-4">I miei appuntamenti</h3>
 
     <div class="space-y-3">
-      <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let app of appointments">
-        <div>
-          <h4 class="text-sm font-bold text-slate-800">{{ app.doctor?.name }}</h4>
-          <p class="text-xs text-slate-500">{{ app.doctor?.specialization }} · {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p class="text-xs text-slate-600 mt-1">{{ app.reason }}</p>
+      <div class="p-4 rounded-xl border border-slate-200" *ngFor="let app of appointments">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h4 class="text-sm font-bold text-slate-800">{{ app.doctor?.name }}</h4>
+            <p class="text-xs text-slate-500">{{ app.doctor?.specialization }} · {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="text-xs text-slate-600 mt-1">{{ app.reason }}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="badge" [ngClass]="{
+              'badge-scheduled': app.status === 'SCHEDULED',
+              'badge-completed': app.status === 'COMPLETED',
+              'badge-cancelled': app.status === 'CANCELLED'
+            }">{{ app.status }}</span>
+
+            <button class="btn btn-secondary text-xs" *ngIf="reportsMap.has(app.id!)" (click)="viewReport(app.id!)">
+              Referto
+            </button>
+
+            <label class="btn btn-secondary text-xs cursor-pointer" *ngIf="!reportsMap.has(app.id!) && app.status === 'COMPLETED'">
+              <span *ngIf="!isUploadingMap.get(app.id!)">Carica referto</span>
+              <span *ngIf="isUploadingMap.get(app.id!)">Caricamento...</span>
+              <input type="file" class="hidden" (change)="onFileSelected($event, app.id!)" [disabled]="isUploadingMap.get(app.id!)" />
+            </label>
+
+            <button class="btn btn-secondary text-xs" *ngIf="app.status === 'SCHEDULED' && editingAppointmentId !== app.id" (click)="startEdit(app)">
+              Modifica
+            </button>
+
+            <button class="btn btn-danger text-xs" *ngIf="app.status === 'SCHEDULED'" (click)="onCancel(app)">
+              Cancella
+            </button>
+          </div>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="badge" [ngClass]="{
-            'badge-scheduled': app.status === 'SCHEDULED',
-            'badge-completed': app.status === 'COMPLETED',
-            'badge-cancelled': app.status === 'CANCELLED'
-          }">{{ app.status }}</span>
 
-          <button class="btn btn-secondary text-xs" *ngIf="reportsMap.has(app.id!)" (click)="viewReport(app.id!)">
-            Referto
-          </button>
-
-          <label class="btn btn-secondary text-xs cursor-pointer" *ngIf="!reportsMap.has(app.id!) && app.status === 'COMPLETED'">
-            <span *ngIf="!isUploadingMap.get(app.id!)">Carica referto</span>
-            <span *ngIf="isUploadingMap.get(app.id!)">Caricamento...</span>
-            <input type="file" class="hidden" (change)="onFileSelected($event, app.id!)" [disabled]="isUploadingMap.get(app.id!)" />
-          </label>
+        <!-- FORM DI MODIFICA -->
+        <div class="mt-4 pt-4 border-t border-slate-200 space-y-3" *ngIf="editingAppointmentId === app.id">
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-medium text-slate-600">Data e ora</label>
+              <input type="datetime-local" [(ngModel)]="editForm.appointmentDate" name="editAppointmentDate" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600">Motivo</label>
+              <input type="text" [(ngModel)]="editForm.reason" name="editReason" />
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-slate-600">Note</label>
+            <textarea rows="2" [(ngModel)]="editForm.notes" name="editNotes"></textarea>
+          </div>
+          <div class="flex gap-2 justify-end">
+            <button class="btn btn-secondary text-xs" (click)="cancelEdit()">Annulla</button>
+            <button class="btn btn-primary text-xs" (click)="saveEdit(app.id!)">Salva modifiche</button>
+          </div>
         </div>
       </div>
 
@@ -66,4 +102,56 @@
       </p>
     </div>
   </div>
+</div>
+
+<!-- VISTA STAMPABILE (visibile solo in fase di stampa/esportazione PDF) -->
+<div class="print-only">
+  <h1>Cartella Clinica — {{ currentPatient?.name }}</h1>
+  <p>Email: {{ currentPatient?.email }} · Generata il {{ printDate | date:'dd/MM/yyyy HH:mm' }}</p>
+
+  <h2>Storico appuntamenti</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Medico</th>
+        <th>Motivo</th>
+        <th>Stato</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let app of appointments">
+        <td>{{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ app.doctor?.name }} ({{ app.doctor?.specialization }})</td>
+        <td>{{ app.reason }}</td>
+        <td>{{ app.status }}</td>
+      </tr>
+      <tr *ngIf="appointments.length === 0">
+        <td colspan="4">Nessun appuntamento registrato.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Terapie prescritte</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Descrizione</th>
+        <th>Medico</th>
+        <th>Dal</th>
+        <th>Al</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of therapies">
+        <td>{{ t.description }}</td>
+        <td>{{ t.doctor?.name }}</td>
+        <td>{{ t.startDate | date:'dd/MM/yyyy' }}</td>
+        <td>{{ t.endDate | date:'dd/MM/yyyy' }}</td>
+      </tr>
+      <tr *ngIf="therapies.length === 0">
+        <td colspan="4">Nessuna terapia prescritta.</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

@@ -16,7 +16,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       // Se l'errore è 401 (Non Autorizzato), il token è probabilmente scaduto
       if (error.status === 401) {
         authService.logout();
-        router.navigate(['/login']);
+        router.navigate(['/account']);
         toastService.showInfo('La tua sessione è scaduta. Effettua nuovamente il login.');
         return throwError(() => error);
       }

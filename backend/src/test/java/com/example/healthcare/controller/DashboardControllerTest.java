@@ -38,8 +38,10 @@ class DashboardControllerTest {
                 .totalPatients(100L)
                 .totalDoctors(20L)
                 .openTickets(5L)
+                .closedTickets(15L)
                 .completedAppointments(50L)
                 .scheduledAppointments(10L)
+                .cancelledAppointments(3L)
                 .build();
 
         when(dashboardService.getStats()).thenReturn(stats);
@@ -49,7 +51,9 @@ class DashboardControllerTest {
                 .andExpect(jsonPath("$.totalPatients").value(100L))
                 .andExpect(jsonPath("$.totalDoctors").value(20L))
                 .andExpect(jsonPath("$.openTickets").value(5L))
+                .andExpect(jsonPath("$.closedTickets").value(15L))
                 .andExpect(jsonPath("$.completedAppointments").value(50L))
-                .andExpect(jsonPath("$.scheduledAppointments").value(10L));
+                .andExpect(jsonPath("$.scheduledAppointments").value(10L))
+                .andExpect(jsonPath("$.cancelledAppointments").value(3L));
     }
 }

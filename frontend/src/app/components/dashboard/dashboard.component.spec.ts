@@ -60,7 +60,7 @@ describe('DashboardComponent', () => {
     const updatedReport = { id: 1, appointmentId: 2, doctorNotes: 'test' };
     mockReportService.addDoctorNotes.and.returnValue(of(updatedReport));
     
-    component.appointments = [{ id: 2, doctorId: 1, patientId: 1, date: '2026-01-01', status: 'SCHEDULED' }];
+    component.appointments = [{ id: 2, doctorId: 1, patientId: 1, appointmentDate: '2026-01-01', reason: 'Visita di controllo', status: 'SCHEDULED' }];
     component.selectedReport = { id: 1, appointmentId: 2 } as any;
 
     component.saveDoctorNotes('test');

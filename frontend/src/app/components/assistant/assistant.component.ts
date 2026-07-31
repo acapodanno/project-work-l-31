@@ -18,8 +18,15 @@ export class AssistantComponent {
   @Input() chatLoading = false;
 
   @Output() send = new EventEmitter<string>();
+  @Output() clearHistory = new EventEmitter<void>();
 
   onSend(message: string) {
     this.send.emit(message);
+  }
+
+  onClearHistory() {
+    if (confirm('Cancellare la cronologia della conversazione?')) {
+      this.clearHistory.emit();
+    }
   }
 }

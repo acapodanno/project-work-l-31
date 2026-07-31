@@ -26,6 +26,8 @@ public class FileStorageService {
         }
     }
 
+    private static final String ALLOWED_CONTENT_TYPE = "application/pdf";
+
     public String storeFile(MultipartFile file) {
         String originalFileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
         String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
@@ -33,6 +35,10 @@ public class FileStorageService {
         try {
             if (fileName.contains("..")) {
                 throw new RuntimeException("Il nome del file contiene una sequenza di percorsi non valida " + fileName);
+            }
+
+            if (!ALLOWED_CONTENT_TYPE.equals(file.getContentType()) || !originalFileName.toLowerCase().endsWith(".pdf")) {
+                throw new RuntimeException("Sono ammessi solo referti in formato PDF");
             }
 
             Path targetLocation = this.fileStorageLocation.resolve(fileName);

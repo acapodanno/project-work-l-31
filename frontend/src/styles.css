@@ -211,3 +211,55 @@ h1, h2, h3, h4 {
   border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
+/* Esportazione PDF via stampa del browser: .print-only è nascosto durante la
+   navigazione normale e viene mostrato esclusivamente in fase di stampa,
+   mentre l'interfaccia interattiva (header, sidebar, pulsanti) viene nascosta. */
+.print-only {
+  display: none;
+}
+
+.print-only table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.print-only th,
+.print-only td {
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.print-only h1 {
+  font-size: 1.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.print-only h2 {
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem;
+}
+
+@media print {
+  .top-header,
+  .sidebar,
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .content-area,
+  .main-wrapper,
+  .app-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+}
+

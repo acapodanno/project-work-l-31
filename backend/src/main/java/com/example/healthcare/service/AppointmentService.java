@@ -61,6 +61,37 @@ public class AppointmentService {
     }
 
     @Transactional
+    public AppointmentDTO updateAppointment(Long id, AppointmentDTO appointmentDTO) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appuntamento non trovato con ID: " + id));
+
+        if (appointment.getStatus() != AppointmentStatus.SCHEDULED) {
+            throw new RuntimeException("Impossibile modificare un appuntamento non più programmato");
+        }
+
+        if (appointmentDTO.appointmentDate() != null) {
+            appointment.setAppointmentDate(appointmentDTO.appointmentDate());
+        }
+        if (appointmentDTO.reason() != null && !appointmentDTO.reason().isBlank()) {
+            appointment.setReason(appointmentDTO.reason());
+        }
+        if (appointmentDTO.notes() != null) {
+            appointment.setNotes(appointmentDTO.notes());
+        }
+
+        Appointment saved = appointmentRepository.save(appointment);
+        return appointmentMapper.toDto(saved);
+    }
+
+    @Transactional
+    public void deleteAppointment(Long id) {
+        if (!appointmentRepository.existsById(id)) {
+            throw new RuntimeException("Appuntamento non trovato con ID: " + id);
+        }
+        appointmentRepository.deleteById(id);
+    }
+
+    @Transactional
     public AppointmentDTO updateStatus(Long id, String status) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appuntamento non trovato con ID: " + id));

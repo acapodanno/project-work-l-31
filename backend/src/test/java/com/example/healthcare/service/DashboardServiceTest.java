@@ -38,15 +38,19 @@ class DashboardServiceTest {
         when(patientRepository.count()).thenReturn(100L);
         when(doctorRepository.count()).thenReturn(20L);
         when(ticketRepository.countByStatus("OPEN")).thenReturn(5L);
+        when(ticketRepository.countByStatus("CLOSED")).thenReturn(15L);
         when(appointmentRepository.countByStatus(AppointmentStatus.COMPLETED)).thenReturn(50L);
         when(appointmentRepository.countByStatus(AppointmentStatus.SCHEDULED)).thenReturn(10L);
+        when(appointmentRepository.countByStatus(AppointmentStatus.CANCELLED)).thenReturn(3L);
 
         DashboardStatsDTO stats = dashboardService.getStats();
 
         assertEquals(100L, stats.totalPatients());
         assertEquals(20L, stats.totalDoctors());
         assertEquals(5L, stats.openTickets());
+        assertEquals(15L, stats.closedTickets());
         assertEquals(50L, stats.completedAppointments());
         assertEquals(10L, stats.scheduledAppointments());
+        assertEquals(3L, stats.cancelledAppointments());
     }
 }

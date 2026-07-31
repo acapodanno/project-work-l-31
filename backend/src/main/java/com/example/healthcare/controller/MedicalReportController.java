@@ -47,19 +47,19 @@ public class MedicalReportController {
     }
 
     @GetMapping("/appointment/{appointmentId}")
-    @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
+    @PreAuthorize("hasRole('SUPPORT') or @ownership.canAccessReport(#appointmentId, authentication)")
     public ResponseEntity<MedicalReportResponse> getReportByAppointmentId(@PathVariable Long appointmentId) {
         return ResponseEntity.ok(medicalReportService.getReportByAppointmentId(appointmentId));
     }
 
     @GetMapping("/patient/{patientId}")
-    @PreAuthorize("hasRole('PATIENT')")
+    @PreAuthorize("hasRole('PATIENT') and @ownership.isSelfPatient(#patientId, authentication)")
     public ResponseEntity<List<MedicalReportResponse>> getReportsByPatientId(@PathVariable Long patientId) {
         return ResponseEntity.ok(medicalReportService.getReportsByPatientId(patientId));
     }
 
     @GetMapping("/download/{fileName:.+}")
-    @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
+    @PreAuthorize("@ownership.canDownloadReport(#fileName, authentication)")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         Resource resource = fileStorageService.loadFileAsResource(fileName);
         

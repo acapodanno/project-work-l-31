@@ -31,8 +31,10 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAppointmentsByPatientId(patientId));
     }
 
+    // Un paziente prenota solo per sé; Medico/Supporto possono fissare un
+    // appuntamento per conto di un paziente (es. follow-up, walk-in).
     @PostMapping
-    @PreAuthorize("hasRole('PATIENT') and @ownership.isSelfPatient(#appointmentDTO.patientId(), authentication)")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'SUPPORT') or (hasRole('PATIENT') and @ownership.isSelfPatient(#appointmentDTO.patientId(), authentication))")
     public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody AppointmentDTO appointmentDTO) {
         return new ResponseEntity<>(appointmentService.createAppointment(appointmentDTO), HttpStatus.CREATED);
     }

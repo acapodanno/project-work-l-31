@@ -7,13 +7,14 @@ Espone:
 """
 import logging
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from ..config import settings
 from ..rag.rag_engine import build_query_engine
 from .agent_dependencies import get_agent
+from .auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ def health():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-def chat(payload: ChatRequest):
+def chat(payload: ChatRequest, current_user: str = Depends(get_current_user)):
     try:
         text = agent.run(payload.message, payload.patientId)
     except Exception:

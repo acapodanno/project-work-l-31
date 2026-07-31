@@ -17,6 +17,7 @@ import { DashboardComponent } from '../../components/dashboard/dashboard.compone
       (statusChange)="onStatusChange($event)"
       (ticketStatusChange)="onTicketStatusChange($event)"
       (editAppointment)="onEditAppointment($event)"
+      (refreshRequested)="appState.loadAllData()"
       (navigate)="onNavigate($event)">
     </app-dashboard>
   `

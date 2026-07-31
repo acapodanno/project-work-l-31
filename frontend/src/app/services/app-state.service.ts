@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { tap } from 'rxjs';
 import { PatientService } from './patient.service';
 import { DoctorService } from './doctor.service';
 import { AppointmentService } from './appointment.service';
@@ -29,6 +30,7 @@ export class AppStateService {
   private authService = inject(AuthService);
 
   currentPatient?: Patient;
+  currentDoctor?: Doctor;
   doctors: Doctor[] = [];
   appointments: Appointment[] = [];
   tickets: Ticket[] = [];
@@ -43,6 +45,7 @@ export class AppStateService {
     this.appointments = [];
     this.tickets = [];
     this.currentPatient = undefined;
+    this.currentDoctor = undefined;
   }
 
   // --- Caricamento dati basato sul ruolo ---
@@ -57,6 +60,9 @@ export class AppStateService {
       this.loadAppointmentsForPatient(profileId);
       this.loadTicketsForPatient(profileId);
     } else if (role === 'DOCTOR') {
+      if (profileId) {
+        this.loadDoctorDetails(profileId);
+      }
       this.loadAllAppointments();
       this.loadAllTickets();
     } else if (role === 'SUPPORT') {
@@ -69,6 +75,13 @@ export class AppStateService {
     this.patientService.getPatientById(patientId).subscribe({
       next: (data) => this.currentPatient = data,
       error: (err) => console.error('Errore nel caricamento del paziente:', err)
+    });
+  }
+
+  loadDoctorDetails(doctorId: number) {
+    this.doctorService.getDoctorById(doctorId).subscribe({
+      next: (data) => this.currentDoctor = data,
+      error: (err) => console.error('Errore nel caricamento del medico:', err)
     });
   }
 
@@ -149,6 +162,11 @@ export class AppStateService {
     });
   }
 
+  // --- Prenotazione per conto di un paziente (Medico/Supporto) ---
+  bookAppointmentForPatient(data: { patientId: number, doctorId: number, appointmentDate: string, reason: string, notes?: string }) {
+    return this.appointmentService.createAppointment(data);
+  }
+
   private showBookingSuccess() {
     this.bookingSuccess = true;
     this.bookingError = '';
@@ -166,9 +184,16 @@ export class AppStateService {
     });
   }
 
-  // --- Modifica appuntamento (paziente, mentre è ancora SCHEDULED) ---
+  // --- Modifica appuntamento (paziente/medico, mentre è ancora SCHEDULED) ---
   updateAppointment(id: number, data: { appointmentDate: string, reason: string, notes: string }) {
     return this.appointmentService.updateAppointment(id, data);
+  }
+
+  // --- Modifica profilo professionale del medico ---
+  updateDoctorProfile(id: number, data: Partial<Doctor>) {
+    return this.doctorService.updateDoctor(id, data).pipe(
+      tap((updated) => this.currentDoctor = updated)
+    );
   }
 
   // --- Aggiornamento stato ticket (Supporto) ---

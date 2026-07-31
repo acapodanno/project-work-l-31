@@ -27,6 +27,7 @@ export class DashboardComponent {
   @Output() ticketStatusChange = new EventEmitter<{ id: number, status: string }>();
   @Output() navigate = new EventEmitter<'booking' | 'assistant'>();
   @Output() editAppointment = new EventEmitter<{ id: number, appointmentDate: string, reason: string, notes: string }>();
+  @Output() refreshRequested = new EventEmitter<void>();
 
   selectedReport: MedicalReportResponse | null = null;
 
@@ -44,6 +45,10 @@ export class DashboardComponent {
 
   onEditAppointment(event: { id: number, appointmentDate: string, reason: string, notes: string }) {
     this.editAppointment.emit(event);
+  }
+
+  onRefreshRequested() {
+    this.refreshRequested.emit();
   }
 
   onTicketStatusChange(event: { id: number, status: string }) {

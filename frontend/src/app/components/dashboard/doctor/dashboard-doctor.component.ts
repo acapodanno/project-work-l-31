@@ -25,13 +25,15 @@ export class DashboardDoctorComponent implements OnInit, OnChanges {
   private dashboardService = inject(DashboardService);
 
   @Input() appointments: Appointment[] = [];
-  
+
   @Output() statusChange = new EventEmitter<{ id: number, status: string }>();
   @Output() viewReportEvent = new EventEmitter<MedicalReportResponse>();
+  @Output() editAppointment = new EventEmitter<{ id: number, appointmentDate: string, reason: string, notes: string }>();
+  @Output() refreshRequested = new EventEmitter<void>();
 
   stats: DashboardStats | null = null;
   reportsMap = new Map<number, MedicalReportResponse>();
-  
+
   allPatients: Patient[] = [];
   selectedHistoryPatientId: number | null = null;
   patientHistoryAppointments: Appointment[] = [];
@@ -47,6 +49,14 @@ export class DashboardDoctorComponent implements OnInit, OnChanges {
     startDate: '',
     endDate: ''
   };
+
+  editingAppointmentId: number | null = null;
+  editForm = { appointmentDate: '', reason: '', notes: '' };
+
+  showNewAppointmentForm = false;
+  newAppointmentForm = { patientId: null as number | null, appointmentDate: '', reason: '', notes: '' };
+  newAppointmentError = '';
+  newAppointmentSuccess = false;
 
   ngOnInit() {
     this.dashboardService.getStats().subscribe({
@@ -81,6 +91,61 @@ export class DashboardDoctorComponent implements OnInit, OnChanges {
 
   onStatusChange(id: number, status: string) {
     this.statusChange.emit({ id, status });
+  }
+
+  startEdit(appointment: Appointment) {
+    this.editingAppointmentId = appointment.id!;
+    this.editForm = {
+      appointmentDate: appointment.appointmentDate ? appointment.appointmentDate.substring(0, 16) : '',
+      reason: appointment.reason,
+      notes: appointment.notes || ''
+    };
+  }
+
+  cancelEdit() {
+    this.editingAppointmentId = null;
+  }
+
+  saveEdit(appointmentId: number) {
+    if (!this.editForm.appointmentDate || !this.editForm.reason) {
+      return;
+    }
+    this.editAppointment.emit({ id: appointmentId, ...this.editForm });
+    this.editingAppointmentId = null;
+  }
+
+  toggleNewAppointmentForm() {
+    this.showNewAppointmentForm = !this.showNewAppointmentForm;
+    this.newAppointmentForm = { patientId: null, appointmentDate: '', reason: '', notes: '' };
+    this.newAppointmentError = '';
+  }
+
+  submitNewAppointment() {
+    const doctorId = this.authService.getProfileId();
+    if (!doctorId || !this.newAppointmentForm.patientId || !this.newAppointmentForm.appointmentDate || !this.newAppointmentForm.reason) {
+      this.newAppointmentError = 'Compila paziente, data e motivo della visita.';
+      return;
+    }
+
+    this.appointmentService.createAppointment({
+      patientId: this.newAppointmentForm.patientId,
+      doctorId,
+      appointmentDate: this.newAppointmentForm.appointmentDate,
+      reason: this.newAppointmentForm.reason,
+      notes: this.newAppointmentForm.notes
+    }).subscribe({
+      next: () => {
+        this.newAppointmentSuccess = true;
+        this.newAppointmentError = '';
+        this.showNewAppointmentForm = false;
+        this.refreshRequested.emit();
+        setTimeout(() => this.newAppointmentSuccess = false, 4000);
+      },
+      error: (err) => {
+        console.error('Errore nella creazione dell\'appuntamento:', err);
+        this.newAppointmentError = 'Si è verificato un errore. Riprova.';
+      }
+    });
   }
 
   openTherapyModal(appointment: Appointment) {

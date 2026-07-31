@@ -2,13 +2,12 @@ import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
-import { AlertComponent } from '../../../shared/ui/alert/alert.component';
 import { ModalComponent } from '../../../shared/ui/modal/modal.component';
 
 @Component({
   selector: 'app-profile-security',
   standalone: true,
-  imports: [CommonModule, FormsModule, AlertComponent, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './profile-security.component.html'
 })
 export class ProfileSecurityComponent {

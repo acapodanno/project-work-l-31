@@ -29,7 +29,7 @@ describe('TherapyService', () => {
   });
 
   it('should get therapies by patient', () => {
-    const mockTherapies: Therapy[] = [{ id: 1, patientId: 1, doctorId: 2, description: 'Test', startDate: '2026-01-01', endDate: '2026-01-10' }];
+    const mockTherapies: Therapy[] = [{ id: 1, description: 'Test', startDate: '2026-01-01', endDate: '2026-01-10' }];
 
     service.getTherapiesByPatient(1).subscribe(res => {
       expect(res).toEqual(mockTherapies);
@@ -41,7 +41,7 @@ describe('TherapyService', () => {
   });
 
   it('should get therapies by doctor', () => {
-    const mockTherapies: Therapy[] = [{ id: 1, patientId: 1, doctorId: 2, description: 'Test', startDate: '2026-01-01', endDate: '2026-01-10' }];
+    const mockTherapies: Therapy[] = [{ id: 1, description: 'Test', startDate: '2026-01-01', endDate: '2026-01-10' }];
 
     service.getTherapiesByDoctor(2).subscribe(res => {
       expect(res).toEqual(mockTherapies);

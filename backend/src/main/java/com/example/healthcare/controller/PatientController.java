@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,21 +20,25 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('DOCTOR', 'SUPPORT')")
     public ResponseEntity<List<PatientDTO>> getAllPatients() {
         return ResponseEntity.ok(patientService.getAllPatients());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'SUPPORT') or @ownership.isSelfPatient(#id, authentication)")
     public ResponseEntity<PatientDTO> getPatientById(@PathVariable Long id) {
         return ResponseEntity.ok(patientService.getPatientById(id));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('SUPPORT')")
     public ResponseEntity<PatientDTO> createPatient(@Valid @RequestBody PatientDTO patientDTO) {
         return new ResponseEntity<>(patientService.createPatient(patientDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SUPPORT') or @ownership.isSelfPatient(#id, authentication)")
     public ResponseEntity<PatientDTO> updatePatient(
             @PathVariable Long id,
             @Valid @RequestBody PatientDTO patientDTO) {

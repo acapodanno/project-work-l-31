@@ -11,8 +11,6 @@ import com.example.healthcare.service.strategy.ticket.TicketStrategyFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,19 +54,43 @@ public class TicketService {
     }
 
     @Transactional
+    public TicketDTO updateTicket(Long id, TicketDTO ticketDTO) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket non trovato con ID: " + id));
+
+        if (ticketDTO.title() != null && !ticketDTO.title().isBlank()) {
+            ticket.setTitle(ticketDTO.title());
+        }
+        if (ticketDTO.description() != null && !ticketDTO.description().isBlank()) {
+            ticket.setDescription(ticketDTO.description());
+        }
+
+        Ticket saved = ticketRepository.save(ticket);
+        return ticketMapper.toDto(saved);
+    }
+
+    @Transactional
     public TicketDTO updateStatus(Long id, String status) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket non trovato con ID: " + id));
-                
+
         String newStatus = status.toUpperCase();
         ticket.setStatus(newStatus);
-        
+
         TicketStatusStrategy strategy = strategyFactory.getStrategy(newStatus);
         if (strategy != null) {
             strategy.handleStatusChange(ticket);
         }
-        
+
         Ticket saved = ticketRepository.save(ticket);
         return ticketMapper.toDto(saved);
+    }
+
+    @Transactional
+    public void deleteTicket(Long id) {
+        if (!ticketRepository.existsById(id)) {
+            throw new RuntimeException("Ticket non trovato con ID: " + id);
+        }
+        ticketRepository.deleteById(id);
     }
 }

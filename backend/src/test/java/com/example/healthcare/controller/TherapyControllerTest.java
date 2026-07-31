@@ -1,7 +1,7 @@
 package com.example.healthcare.controller;
 
 import com.example.healthcare.dto.TherapyRequest;
-import com.example.healthcare.entity.Therapy;
+import com.example.healthcare.dto.TherapyResponse;
 import com.example.healthcare.security.JwtUtils;
 import com.example.healthcare.security.UserDetailsServiceImpl;
 import com.example.healthcare.service.TherapyService;
@@ -46,11 +46,9 @@ class TherapyControllerTest {
     @Test
     void createTherapy_Success() throws Exception {
         TherapyRequest req = new TherapyRequest(1L, 2L, "Fisioterapia", LocalDate.now(), LocalDate.now().plusDays(10));
-        Therapy therapy = new Therapy();
-        therapy.setId(1L);
-        therapy.setDescription("Fisioterapia");
+        TherapyResponse response = TherapyResponse.builder().id(1L).description("Fisioterapia").build();
 
-        when(therapyService.createTherapy(any(TherapyRequest.class))).thenReturn(therapy);
+        when(therapyService.createTherapy(any(TherapyRequest.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/therapies")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,11 +60,9 @@ class TherapyControllerTest {
 
     @Test
     void getTherapiesByPatient_Success() throws Exception {
-        Therapy therapy = new Therapy();
-        therapy.setId(1L);
-        therapy.setDescription("Fisioterapia");
+        TherapyResponse response = TherapyResponse.builder().id(1L).description("Fisioterapia").build();
 
-        when(therapyService.getTherapiesByPatient(1L)).thenReturn(List.of(therapy));
+        when(therapyService.getTherapiesByPatient(1L)).thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/therapies/patient/1"))
                 .andExpect(status().isOk())
@@ -75,11 +71,9 @@ class TherapyControllerTest {
 
     @Test
     void getTherapiesByDoctor_Success() throws Exception {
-        Therapy therapy = new Therapy();
-        therapy.setId(1L);
-        therapy.setDescription("Fisioterapia");
+        TherapyResponse response = TherapyResponse.builder().id(1L).description("Fisioterapia").build();
 
-        when(therapyService.getTherapiesByDoctor(2L)).thenReturn(List.of(therapy));
+        when(therapyService.getTherapiesByDoctor(2L)).thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/therapies/doctor/2"))
                 .andExpect(status().isOk())

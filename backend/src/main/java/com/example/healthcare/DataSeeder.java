@@ -8,12 +8,14 @@ import com.example.healthcare.repository.DoctorRepository;
 import com.example.healthcare.repository.PatientRepository;
 import com.example.healthcare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DataSeeder implements CommandLineRunner {
 
     private final DoctorRepository doctorRepository;
@@ -49,7 +51,7 @@ public class DataSeeder implements CommandLineRunner {
                     .role(Role.PATIENT)
                     .build());
 
-            System.out.println("Pazienti di test creati con credenziali.");
+            log.info("Pazienti di test creati con credenziali.");
         }
 
         // Popola medici
@@ -129,7 +131,7 @@ public class DataSeeder implements CommandLineRunner {
                     .role(Role.DOCTOR)
                     .build());
 
-            System.out.println("Medici clinici creati con credenziali.");
+            log.info("Medici clinici creati con credenziali.");
         }
 
         // Popola support user
@@ -139,7 +141,7 @@ public class DataSeeder implements CommandLineRunner {
                     .password(passwordEncoder.encode("support123"))
                     .role(Role.SUPPORT)
                     .build());
-            System.out.println("Utente Supporto creato.");
+            log.info("Utente Supporto creato.");
         }
     }
 }

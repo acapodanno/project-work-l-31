@@ -1,9 +1,14 @@
 package com.example.healthcare.service;
 
+import com.example.healthcare.dto.DoctorDTO;
+import com.example.healthcare.dto.PatientDTO;
 import com.example.healthcare.dto.TherapyRequest;
+import com.example.healthcare.dto.TherapyResponse;
 import com.example.healthcare.entity.Doctor;
 import com.example.healthcare.entity.Patient;
 import com.example.healthcare.entity.Therapy;
+import com.example.healthcare.mapper.DoctorMapper;
+import com.example.healthcare.mapper.PatientMapper;
 import com.example.healthcare.repository.DoctorRepository;
 import com.example.healthcare.repository.PatientRepository;
 import com.example.healthcare.repository.TherapyRepository;
@@ -33,6 +38,12 @@ class TherapyServiceTest {
     @Mock
     private DoctorRepository doctorRepository;
 
+    @Mock
+    private PatientMapper patientMapper;
+
+    @Mock
+    private DoctorMapper doctorMapper;
+
     @InjectMocks
     private TherapyService therapyService;
 
@@ -42,15 +53,28 @@ class TherapyServiceTest {
         Patient patient = new Patient();
         Doctor doctor = new Doctor();
         Therapy saved = new Therapy();
-        
+        saved.setPatient(patient);
+        saved.setDoctor(doctor);
+
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
         when(doctorRepository.findById(2L)).thenReturn(Optional.of(doctor));
         when(therapyRepository.save(any(Therapy.class))).thenReturn(saved);
+        when(patientMapper.toDto(patient)).thenReturn(PatientDTO.builder().id(1L).build());
+        when(doctorMapper.toDto(doctor)).thenReturn(DoctorDTO.builder().id(2L).build());
 
-        Therapy result = therapyService.createTherapy(req);
+        TherapyResponse result = therapyService.createTherapy(req);
 
         assertNotNull(result);
         verify(therapyRepository, times(1)).save(any(Therapy.class));
+    }
+
+    @Test
+    void createTherapy_EndDateBeforeStartDate() {
+        TherapyRequest req = new TherapyRequest(1L, 2L, "Fisioterapia", LocalDate.now(), LocalDate.now().minusDays(1));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> therapyService.createTherapy(req));
+        assertEquals("La data di fine terapia non può precedere la data di inizio", exception.getMessage());
+        verifyNoInteractions(therapyRepository);
     }
 
     @Test
@@ -59,27 +83,29 @@ class TherapyServiceTest {
         when(patientRepository.findById(1L)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> therapyService.createTherapy(req));
-        assertEquals("Patient not found", exception.getMessage());
+        assertEquals("Paziente non trovato con ID: 1", exception.getMessage());
     }
 
     @Test
     void createTherapy_DoctorNotFound() {
         TherapyRequest req = new TherapyRequest(1L, 2L, "Fisioterapia", LocalDate.now(), LocalDate.now().plusDays(10));
         Patient patient = new Patient();
-        
+
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
         when(doctorRepository.findById(2L)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> therapyService.createTherapy(req));
-        assertEquals("Doctor not found", exception.getMessage());
+        assertEquals("Medico non trovato con ID: 2", exception.getMessage());
     }
 
     @Test
     void getTherapiesByPatient() {
         Therapy therapy = new Therapy();
+        therapy.setPatient(new Patient());
+        therapy.setDoctor(new Doctor());
         when(therapyRepository.findByPatientId(1L)).thenReturn(List.of(therapy));
 
-        List<Therapy> result = therapyService.getTherapiesByPatient(1L);
+        List<TherapyResponse> result = therapyService.getTherapiesByPatient(1L);
 
         assertEquals(1, result.size());
         verify(therapyRepository).findByPatientId(1L);
@@ -88,9 +114,11 @@ class TherapyServiceTest {
     @Test
     void getTherapiesByDoctor() {
         Therapy therapy = new Therapy();
+        therapy.setPatient(new Patient());
+        therapy.setDoctor(new Doctor());
         when(therapyRepository.findByDoctorId(2L)).thenReturn(List.of(therapy));
 
-        List<Therapy> result = therapyService.getTherapiesByDoctor(2L);
+        List<TherapyResponse> result = therapyService.getTherapiesByDoctor(2L);
 
         assertEquals(1, result.size());
         verify(therapyRepository).findByDoctorId(2L);

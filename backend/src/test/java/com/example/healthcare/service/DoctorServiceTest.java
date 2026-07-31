@@ -81,4 +81,39 @@ class DoctorServiceTest {
         assertNotNull(result);
         verify(doctorRepository).save(doc);
     }
+
+    @Test
+    void updateDoctor_Success() {
+        Doctor doc = new Doctor();
+        Doctor saved = new Doctor();
+        DoctorDTO update = DoctorDTO.builder()
+                .specialization("Cardiologia interventistica")
+                .bio("Nuova bio")
+                .experienceYears(16)
+                .workingHours("Lun-Ven 09-17")
+                .build();
+        DoctorDTO responseDto = DoctorDTO.builder().id(1L).build();
+
+        when(doctorRepository.findById(1L)).thenReturn(Optional.of(doc));
+        when(doctorRepository.save(doc)).thenReturn(saved);
+        when(doctorMapper.toDto(saved)).thenReturn(responseDto);
+
+        DoctorDTO result = doctorService.updateDoctor(1L, update);
+
+        assertNotNull(result);
+        assertEquals("Cardiologia interventistica", doc.getSpecialization());
+        assertEquals("Nuova bio", doc.getBio());
+        assertEquals(16, doc.getExperienceYears());
+        assertEquals("Lun-Ven 09-17", doc.getWorkingHours());
+        verify(doctorRepository).save(doc);
+    }
+
+    @Test
+    void updateDoctor_NotFound() {
+        when(doctorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> doctorService.updateDoctor(1L, DoctorDTO.builder().build()));
+        assertEquals("Medico non trovato con ID: 1", exception.getMessage());
+    }
 }

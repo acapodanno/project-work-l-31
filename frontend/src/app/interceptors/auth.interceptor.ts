@@ -8,7 +8,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.getToken();
 
   // Appende il token se disponibile e se l'URL appartiene al backend principale
-  if (token && req.url.startsWith(environment.backendUrl)) {
+  // o all'agente AI (che valida lo stesso JWT per proteggere /api/chat).
+  if (token && (req.url.startsWith(environment.backendUrl) || req.url.startsWith(environment.agentUrl))) {
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

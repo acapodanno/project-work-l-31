@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -77,5 +78,20 @@ class DoctorControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Doc1"));
+    }
+
+    @Test
+    void updateDoctor_Success() throws Exception {
+        DoctorDTO requestDto = DoctorDTO.builder().bio("Nuova bio").workingHours("Lun-Ven 09-17").build();
+        DoctorDTO responseDto = DoctorDTO.builder().id(1L).name("Doc1").bio("Nuova bio").workingHours("Lun-Ven 09-17").build();
+
+        when(doctorService.updateDoctor(org.mockito.ArgumentMatchers.eq(1L), any(DoctorDTO.class))).thenReturn(responseDto);
+
+        mockMvc.perform(put("/api/doctors/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bio").value("Nuova bio"))
+                .andExpect(jsonPath("$.workingHours").value("Lun-Ven 09-17"));
     }
 }

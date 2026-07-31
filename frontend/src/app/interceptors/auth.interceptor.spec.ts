@@ -36,6 +36,15 @@ describe('authInterceptor', () => {
     expect(req.request.headers.get('Authorization')).toBe('Bearer jwt-token');
   });
 
+  it('attaches the Authorization header for requests to the AI agent', () => {
+    spyOn(authService, 'getToken').and.returnValue('jwt-token');
+
+    httpClient.post(`${environment.agentUrl}/chat`, { message: 'ciao', patientId: 1 }).subscribe();
+
+    const req = httpMock.expectOne(`${environment.agentUrl}/chat`);
+    expect(req.request.headers.get('Authorization')).toBe('Bearer jwt-token');
+  });
+
   it('does not attach the Authorization header for requests to other origins', () => {
     spyOn(authService, 'getToken').and.returnValue('jwt-token');
 

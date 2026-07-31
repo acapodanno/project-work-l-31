@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -67,6 +68,32 @@ class SecurityRbacIntegrationTest {
         // /api/auth/2fa/setup legge l'utente dal SecurityContext: senza JWT deve
         // essere negato (non più un 400 "Utente non trovato" come prima del fix).
         mockMvc.perform(get("/api/auth/2fa/setup"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "giovanni.neri@healthcare.com", roles = "DOCTOR")
+    void createAppointment_asDoctorForAnyPatient_isAllowed() throws Exception {
+        // Il DataSeeder crea Mario Rossi come primo paziente (id 1) e il Dr. Neri
+        // come primo medico (id 1): un DOCTOR deve poter fissare un appuntamento
+        // per conto di un paziente, non solo il paziente per sé stesso.
+        String body = "{\"patientId\":1,\"doctorId\":1,\"appointmentDate\":\"2027-01-15T10:00:00\",\"reason\":\"Follow-up\"}";
+
+        mockMvc.perform(post("/api/appointments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(username = "laura.bianchi@example.com", roles = "PATIENT")
+    void createAppointment_asPatientForSomeoneElse_isForbidden() throws Exception {
+        // Laura Bianchi (id 2 nel DataSeeder) non può prenotare per il paziente 1.
+        String body = "{\"patientId\":1,\"doctorId\":1,\"appointmentDate\":\"2027-01-15T10:00:00\",\"reason\":\"Follow-up\"}";
+
+        mockMvc.perform(post("/api/appointments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
                 .andExpect(status().isForbidden());
     }
 

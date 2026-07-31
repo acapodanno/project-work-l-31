@@ -22,7 +22,10 @@
   <!-- APPUNTAMENTI DEL MEDICO -->
   <div class="glass-card p-6">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-base font-bold text-slate-800">I miei appuntamenti</h3>
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-blue-700">calendar_month</span>
+        <h3 class="text-base font-bold text-slate-800">I miei appuntamenti</h3>
+      </div>
       <button class="btn btn-primary text-xs" (click)="toggleNewAppointmentForm()">
         <span class="material-symbols-outlined text-lg leading-none">add</span>
         {{ showNewAppointmentForm ? 'Chiudi' : 'Nuovo appuntamento' }}
@@ -115,15 +118,19 @@
         </div>
       </div>
 
-      <p class="text-sm text-slate-500 text-center py-6" *ngIf="appointments.length === 0">
-        Nessun appuntamento in programma.
-      </p>
+      <div class="empty-state" *ngIf="appointments.length === 0">
+        <span class="material-symbols-outlined empty-state-icon">event_busy</span>
+        <p>Nessun appuntamento in programma.</p>
+      </div>
     </div>
   </div>
 
   <!-- STORICO PAZIENTE -->
   <div class="glass-card p-6">
-    <h3 class="text-base font-bold text-slate-800 mb-4">Storico clinico paziente</h3>
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-blue-700">history</span>
+      <h3 class="text-base font-bold text-slate-800">Storico clinico paziente</h3>
+    </div>
 
     <select name="historyPatient" (change)="onHistoryPatientSelect($event)">
       <option value="null">Seleziona un paziente...</option>

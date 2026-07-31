@@ -32,7 +32,8 @@
     </div>
   </div>
 
-  <p class="text-sm text-slate-500 text-center py-8" *ngIf="filteredDoctors.length === 0">
-    Nessun medico trovato per "{{ searchQuery }}".
-  </p>
+  <div class="empty-state" *ngIf="filteredDoctors.length === 0">
+    <span class="material-symbols-outlined empty-state-icon">search_off</span>
+    <p>Nessun medico trovato per "{{ searchQuery }}".</p>
+  </div>
 </div>

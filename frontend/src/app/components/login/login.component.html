@@ -1,5 +1,11 @@
 <div class="flex items-center justify-center min-h-[70vh] p-4">
   <div class="w-full max-w-md space-y-4">
+    <div class="flex flex-col items-center text-center gap-2 mb-2" *ngIf="!show2faForm">
+      <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center">
+        <span class="material-symbols-outlined text-3xl">{{ showRegisterForm ? 'person_add' : 'local_hospital' }}</span>
+      </div>
+    </div>
+
     <app-alert type="success" [message]="registerSuccessMsg" *ngIf="registerSuccessMsg && !show2faForm && !showRegisterForm"></app-alert>
 
     <app-two-fa-form

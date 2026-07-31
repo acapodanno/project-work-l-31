@@ -36,4 +36,12 @@ public class DoctorController {
     public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO) {
         return new ResponseEntity<>(doctorService.createDoctor(doctorDTO), HttpStatus.CREATED);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SUPPORT') or @ownership.isSelfDoctor(#id, authentication)")
+    public ResponseEntity<DoctorDTO> updateDoctor(
+            @PathVariable Long id,
+            @RequestBody DoctorDTO doctorDTO) {
+        return ResponseEntity.ok(doctorService.updateDoctor(id, doctorDTO));
+    }
 }

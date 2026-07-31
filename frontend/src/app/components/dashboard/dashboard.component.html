@@ -27,7 +27,9 @@
     *ngIf="authService.getRole() === 'DOCTOR'"
     [appointments]="appointments"
     (statusChange)="onStatusChange($event)"
-    (viewReportEvent)="viewReport($event)">
+    (viewReportEvent)="viewReport($event)"
+    (editAppointment)="onEditAppointment($event)"
+    (refreshRequested)="onRefreshRequested()">
   </app-dashboard-doctor>
 
   <app-dashboard-support

@@ -14,4 +14,12 @@ export class DoctorService {
   getDoctors(): Observable<Doctor[]> {
     return this.http.get<Doctor[]>(`${this.backendUrl}/doctors`);
   }
+
+  getDoctorById(id: number): Observable<Doctor> {
+    return this.http.get<Doctor>(`${this.backendUrl}/doctors/${id}`);
+  }
+
+  updateDoctor(id: number, doctor: Partial<Doctor>): Observable<Doctor> {
+    return this.http.put<Doctor>(`${this.backendUrl}/doctors/${id}`, doctor);
+  }
 }

@@ -5,6 +5,9 @@ pydantic==2.9.2
 python-dotenv==1.0.1
 requests==2.32.3
 
+# --- Autenticazione (validazione JWT emesso dal backend Spring Boot) ---
+pyjwt==2.9.0
+
 # --- Orchestrazione Agente (LangChain) ---
 langchain==0.3.7
 langchain-core==0.3.15

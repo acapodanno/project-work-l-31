@@ -20,6 +20,11 @@ class Settings:
     data_dir: str = os.getenv("DATA_DIR", str(BASE_DIR / "data"))
     backend_url: str = os.getenv("BACKEND_URL", "http://localhost:8080/api")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
+    # Deve coincidere con healthcare.jwt.secret del backend Spring Boot: l'agente
+    # non emette token propri, valida quelli emessi al login dal backend.
+    jwt_secret: str = os.getenv(
+        "JWT_SECRET", "SecretKeyForHealthcarePlusAppMustBeAtLeast32BytesLongForSecurityReasons"
+    )
 
     @property
     def has_openai_key(self) -> bool:

@@ -38,4 +38,26 @@ public class DoctorService {
         Doctor saved = doctorRepository.save(doctor);
         return doctorMapper.toDto(saved);
     }
+
+    @Transactional
+    public DoctorDTO updateDoctor(Long id, DoctorDTO doctorDTO) {
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Medico non trovato con ID: " + id));
+
+        if (doctorDTO.specialization() != null && !doctorDTO.specialization().isBlank()) {
+            doctor.setSpecialization(doctorDTO.specialization());
+        }
+        if (doctorDTO.bio() != null) {
+            doctor.setBio(doctorDTO.bio());
+        }
+        if (doctorDTO.experienceYears() != null) {
+            doctor.setExperienceYears(doctorDTO.experienceYears());
+        }
+        if (doctorDTO.workingHours() != null) {
+            doctor.setWorkingHours(doctorDTO.workingHours());
+        }
+
+        Doctor saved = doctorRepository.save(doctor);
+        return doctorMapper.toDto(saved);
+    }
 }

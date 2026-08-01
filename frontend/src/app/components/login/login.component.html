@@ -1,8 +1,14 @@
-<div class="flex items-center justify-center min-h-[70vh] p-4">
+<div class="min-h-screen flex items-center justify-center p-4">
   <div class="w-full max-w-md space-y-4">
-    <div class="flex flex-col items-center text-center gap-2 mb-2" *ngIf="!show2faForm">
-      <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center">
-        <span class="material-symbols-outlined text-3xl">{{ showRegisterForm ? 'person_add' : 'local_hospital' }}</span>
+    <div class="flex flex-col items-center text-center gap-3 mb-2">
+      <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center">
+        <span class="material-symbols-outlined text-4xl">{{ showRegisterForm ? 'person_add' : 'local_hospital' }}</span>
+      </div>
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800 leading-tight">
+          HealthCare <span class="text-blue-700">Plus</span>
+        </h1>
+        <p class="text-sm text-slate-500">Clinica Polispecialistica</p>
       </div>
     </div>
 

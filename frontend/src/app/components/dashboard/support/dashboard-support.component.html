@@ -39,7 +39,10 @@
 
   <!-- APPUNTAMENTI -->
   <div class="glass-card p-6">
-    <h3 class="text-base font-bold text-slate-800 mb-4">Gestione appuntamenti</h3>
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-blue-700">calendar_month</span>
+      <h3 class="text-base font-bold text-slate-800">Gestione appuntamenti</h3>
+    </div>
     <div class="space-y-3">
       <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let app of appointments">
         <div>
@@ -61,15 +64,19 @@
         </div>
       </div>
 
-      <p class="text-sm text-slate-500 text-center py-6" *ngIf="appointments.length === 0">
-        Nessun appuntamento presente.
-      </p>
+      <div class="empty-state" *ngIf="appointments.length === 0">
+        <span class="material-symbols-outlined empty-state-icon">event_busy</span>
+        <p>Nessun appuntamento presente.</p>
+      </div>
     </div>
   </div>
 
   <!-- TICKET -->
   <div class="glass-card p-6">
-    <h3 class="text-base font-bold text-slate-800 mb-4">Gestione ticket di supporto</h3>
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-amber-600">support_agent</span>
+      <h3 class="text-base font-bold text-slate-800">Gestione ticket di supporto</h3>
+    </div>
     <div class="space-y-3">
       <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let tkt of tickets">
         <div>
@@ -85,9 +92,10 @@
         </div>
       </div>
 
-      <p class="text-sm text-slate-500 text-center py-6" *ngIf="tickets.length === 0">
-        Nessun ticket aperto.
-      </p>
+      <div class="empty-state" *ngIf="tickets.length === 0">
+        <span class="material-symbols-outlined empty-state-icon">task_alt</span>
+        <p>Nessun ticket aperto.</p>
+      </div>
     </div>
   </div>
 </div>

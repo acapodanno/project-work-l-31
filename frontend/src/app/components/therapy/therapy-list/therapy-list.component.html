@@ -13,7 +13,8 @@
     </div>
   </div>
 
-  <p class="text-sm text-slate-500 text-center py-8" *ngIf="therapies.length === 0">
-    Nessuna terapia prescritta al momento.
-  </p>
+  <div class="empty-state" *ngIf="therapies.length === 0">
+    <span class="material-symbols-outlined empty-state-icon">medication</span>
+    <p>Nessuna terapia prescritta al momento.</p>
+  </div>
 </div>

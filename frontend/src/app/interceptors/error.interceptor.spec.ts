@@ -59,6 +59,21 @@ describe('errorInterceptor', () => {
     expect(toastService.showError).toHaveBeenCalledWith('Paziente non trovato');
   });
 
+  it('appends the current identity to the message on a 403', () => {
+    spyOn(toastService, 'showError');
+    spyOn(authService, 'getRoleLabel').and.returnValue('Medico');
+    spyOn(authService, 'getEmail').and.returnValue('giovanni.neri@healthcare.com');
+
+    httpClient.get('/api/whatever').subscribe({ error: () => {} });
+
+    const req = httpMock.expectOne('/api/whatever');
+    req.flush({ detail: 'Non hai i permessi per accedere a questa risorsa' }, { status: 403, statusText: 'Forbidden' });
+
+    expect(toastService.showError).toHaveBeenCalledWith(
+      'Non hai i permessi per accedere a questa risorsa (sei loggato come Medico — giovanni.neri@healthcare.com)'
+    );
+  });
+
   it('falls back to a generic message when the error body is empty', () => {
     spyOn(toastService, 'showError');
 

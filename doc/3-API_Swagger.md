@@ -40,6 +40,18 @@ I seguenti endpoint formano la struttura portante del sistema:
 - `GET /download/{fileName}`: Recupero del file, consentito solo a chi può accedere all'appuntamento collegato (paziente/medico coinvolti, o Supporto).
 
 ### 4. **TicketController** (`/api/tickets`)
-- `POST /`: Creazione di un ticket IT in caso di malfunzionamento, integrato anche con l'Assistente AI se non riesce a fornire supporto adeguato all'utente. Endpoint volutamente senza restrizione di ruolo, dato che è chiamato anche server-to-server dal tool `create_ticket_tool` dell'agente AI (nessun JWT delegato).
+- `POST /`: Creazione di un ticket IT in caso di malfunzionamento. Riservato al Paziente proprietario (`patientId` nel payload deve coincidere con l'utente autenticato).
 - `GET /`, `PUT /{id}`, `PATCH /{id}/status`, `DELETE /{id}`: Gestione e chiusura del ticket, riservata al ruolo Supporto.
 - `GET /patient/{patientId}`: Supporto, oppure il paziente proprietario.
+
+### 5. **SlotController** (`/api/slots`)
+- `GET /doctor/{doctorId}?date=YYYY-MM-DD`: Elenco degli slot dichiarati da un medico per una data, ciascuno con il flag `booked` calcolato incrociando gli appuntamenti esistenti (non è una colonna persistita). Nessuna restrizione di ruolo: il paziente deve poterli vedere per prenotare.
+- `GET /next-available?doctorIds=1,2,3&days=14`: Primo slot libero per ciascun medico della lista entro la finestra indicata (default 14 giorni), in un'unica chiamata — usato dalla lista medici per confrontare la disponibilità senza doverli aprire uno alla volta. Nessuna restrizione di ruolo.
+- `POST /`: Crea un singolo slot. Solo il medico proprietario (`doctorId` nel payload deve coincidere con l'utente autenticato).
+- `POST /batch`: Genera più slot consecutivi della stessa durata in una finestra oraria, saltando quelli che si sovrapporrebbero a slot già dichiarati. Risponde con `{ created: SlotResponse[], skipped: { startTime, endTime }[] }`: `skipped` elenca esattamente gli intervalli esclusi per conflitto, cosicché il chiamante non debba dedurli confrontando a occhio l'elenco degli slot creati. Stesso vincolo di ownership di `POST /`.
+- `DELETE /{id}`: Elimina uno slot, rifiutato (400) se risulta già prenotato. Solo il medico proprietario dello slot.
+
+### 6. **TherapyController** (`/api/therapies`)
+- `POST /`: Crea una terapia. `appointmentId` è facoltativo: se presente, deve appartenere allo stesso paziente e medico della richiesta (altrimenti 400), e la risposta include data/motivo della visita collegata per mostrarne il riferimento in UI senza una chiamata separata. Solo il medico proprietario (`doctorId` deve coincidere con l'utente autenticato).
+- `GET /patient/{patientId}`: Medico/Supporto, oppure il paziente proprietario.
+- `GET /doctor/{doctorId}`: Supporto, oppure il medico proprietario.

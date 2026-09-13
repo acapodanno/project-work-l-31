@@ -9,6 +9,10 @@ export interface Therapy {
     startDate: string;
     endDate: string;
     createdAt?: string;
+    // Presenti solo se la terapia è stata prescritta durante una visita specifica.
+    appointmentId?: number;
+    appointmentDate?: string;
+    appointmentReason?: string;
 }
 
 export interface TherapyRequest {
@@ -17,4 +21,5 @@ export interface TherapyRequest {
     description: string;
     startDate: string;
     endDate: string;
+    appointmentId?: number;
 }

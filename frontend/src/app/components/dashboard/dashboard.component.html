@@ -1,22 +1,6 @@
-<div class="space-y-6">
-  <div class="glass-card p-6 flex items-center gap-4">
-    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
-      <span class="material-symbols-outlined text-2xl">waving_hand</span>
-    </div>
-    <div>
-      <h2 class="text-xl font-bold text-slate-800 mb-1">Benvenuto, {{ currentPatient?.name || authService.getEmail() }}!</h2>
-      <p class="text-sm text-slate-500" *ngIf="authService.getRole() === 'PATIENT'">
-        Gestisci la tua cronologia visite e contatta l'assistente AI in caso di problemi tecnici.
-      </p>
-      <p class="text-sm text-slate-500" *ngIf="authService.getRole() === 'DOCTOR'">
-        Consulta i tuoi appuntamenti clinici e gestisci lo stato delle visite dei pazienti.
-      </p>
-      <p class="text-sm text-slate-500" *ngIf="authService.getRole() === 'SUPPORT'">
-        Pannello di controllo per la gestione globale degli appuntamenti e delle segnalazioni tecniche.
-      </p>
-    </div>
-  </div>
-
+<div class="space-y-9">
+  <!-- Ogni sotto-dashboard (Patient/Doctor/Support) ha ormai una propria intestazione in stile CareOps:
+       il saluto condiviso che stava qui è stato rimosso perché sarebbe sempre duplicato. -->
   <app-dashboard-patient
     *ngIf="authService.getRole() === 'PATIENT'"
     [appointments]="appointments"

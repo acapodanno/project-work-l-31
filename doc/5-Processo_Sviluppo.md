@@ -5,20 +5,19 @@
 Lo sviluppo è stato guidato da una metodologia "Agile", con focus sulla stesura incrementale di feature e un frequente refactoring per migliorare User Experience, Modularità e Sicurezza. 
 
 ## Il Flusso Operativo
-Il progetto è partito con la modellazione architetturale del database relazionale (H2) e la stesura delle API REST in Java/Spring Boot. Successivamente, è stata costruita una SPA in Angular, integrando meccanismi avanzati come il routing, l'iniezione delle dipendenze per l'autenticazione (JWT) e l'interfacciamento con servizi IA.
+Il progetto è partito con la modellazione architetturale del database relazionale (H2) e la stesura delle API REST in Java/Spring Boot. Successivamente, è stata costruita una SPA in Angular, integrando meccanismi avanzati come il routing e l'iniezione delle dipendenze per l'autenticazione (JWT).
 
 Durante l'integrazione, si sono verificati colli di bottiglia prestazionali relativi ad un'interfaccia "lenta" a causa di chiamate asincrone. Grazie all'iterazione continua, il problema è stato risolto aggiungendo **Interceptors HTTP globali** dotati di logiche di ritardo (debounce) per la UI.
 
 ---
 
 ## CI Pipeline e Automazione
-Il progetto adotta l'integrazione continua (CI) tramite **GitHub Actions**, definita in `.github/workflows/ci.yml` ed eseguita ad ogni `push` o `pull request` sul branch principale (`main`). La pipeline è composta da cinque job:
+Il progetto adotta l'integrazione continua (CI) tramite **GitHub Actions**, definita in `.github/workflows/ci.yml` ed eseguita ad ogni `push` o `pull request` sul branch principale (`main`). Un job iniziale (`changes`, basato su `dorny/paths-filter`) rileva quali moduli sono stati modificati, così backend e frontend procedono in modo indipendente (build → test → release) solo se contengono file cambiati nel push/PR:
 
-1. **`backend`**: setup JDK 21, build e test del backend Spring Boot con `mvn clean verify` (esegue automaticamente i test **JUnit** e genera il report di copertura **JaCoCo**). I report dei test e di copertura vengono pubblicati come *Artifacts* scaricabili dalla Action.
-2. **`agent`**: setup Python 3.11, installazione delle dipendenze e `pytest --cov` sull'agente AI in **modalità offline** (nessuna `OPENAI_API_KEY` richiesta), seguito dallo script di valutazione della qualità RAG (`evaluation/eval_faq.py`). Anche qui il report di copertura (`pytest-cov`) viene pubblicato come artifact.
-3. **`frontend`**: setup Node 20, `npm ci`, test headless con coverage (**Karma + Istanbul**, launcher `ChromeHeadlessCI` definito in `karma.conf.js`) e build di produzione Angular.
-4. **`security-scan`**: scansione delle vulnerabilità delle dipendenze con **Snyk**, usando direttamente le immagini Docker ufficiali `snyk/snyk:<toolchain>` (una per Maven, npm e pip, coerenti con le versioni usate nei rispettivi Dockerfile) più una scansione delle immagini container già costruite (`snyk/snyk:docker`). Richiede il secret `SNYK_TOKEN`; senza il token gli step falliscono singolarmente ma non bloccano la pipeline.
-5. **`sonarqube-scan`**: analisi statica multi-modulo (backend + frontend + agent, configurata in `sonar-project.properties`) con **SonarQube Community Build** (immagine ufficiale `sonarqube:community`), riutilizzando i report di coverage già prodotti dagli altri job (nessuna doppia esecuzione dei test). L'istanza SonarQube viene avviata ed eliminata ad ogni run: è un'analisi "usa e getta" senza storico persistente tra le esecuzioni, sufficiente come quality gate su ogni push/PR ma non per un tracciamento di trend nel tempo (per quello servirebbe SonarCloud o un'istanza self-hosted permanente).
+1. **`backend`** (build / test / release): setup JDK 21, build con `mvn clean package -DskipTests`, poi test con `mvn test` (**JUnit**). Il jar viene pubblicato come *Artifact* e, sui push a `main`, rilasciato come GitHub Release.
+2. **`frontend`** (build / test / release): setup Node 22, `npm install`, build di produzione Angular e test headless (**Karma**, launcher `ChromeHeadlessCI`). L'artefatto `dist/` viene pubblicato e, sui push a `main`, rilasciato come GitHub Release zippata.
+
+Analisi statica (SonarQube) e scansione delle vulnerabilità (Snyk) sono configurate rispettivamente in `sonar-project.properties` (moduli `backend`, `frontend`) e restano disponibili come step da eseguire on-demand, ma non sono attualmente job automatici della pipeline `ci.yml`.
 
 Se un job fallisce, la pipeline segnala l'errore su GitHub prevenendo l'integrazione di codice difettoso. **Continuous Deployment (CD)** verso un ambiente di staging/produzione non è stato implementato in questa versione del progetto (didattico, senza infrastruttura di hosting dedicata): è indicato come possibile estensione futura in [9. Valutazione dei Risultati](./9-Valutazione_Risultati.md).
 

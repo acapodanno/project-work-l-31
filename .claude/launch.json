@@ -6,6 +6,20 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "frontend", "start"],
       "port": 4200
+    },
+    {
+      "name": "napolileaks-backend",
+      "runtimeExecutable": "/Users/acapodanno/generatore-post-tiktok-sscnapoli/venv/bin/uvicorn",
+      "runtimeArgs": ["main:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "/Users/acapodanno/generatore-post-tiktok-sscnapoli/backend"],
+      "port": 8000,
+      "autoPort": true
+    },
+    {
+      "name": "napolileaks-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/acapodanno/generatore-post-tiktok-sscnapoli/frontend", "start"],
+      "port": 4200,
+      "autoPort": true
     }
   ]
 }

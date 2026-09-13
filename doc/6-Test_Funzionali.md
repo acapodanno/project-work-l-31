@@ -23,12 +23,7 @@ Il medico accede con i propri privilegi (RBAC in Spring Security) e visualizza s
 
 ![Calendario del Medico](./img/calendario_medico.png)
 
-## 4. Test Assistente AI (Chat RAG)
-Verifica dell'integrazione del motore RAG. L'utente pone una domanda relativa al proprio piano terapeutico e il sistema formula una risposta accurata estraendo i dati dal Database, accompagnato dallo spinner visivo globale.
-
-![Chatbot Intelligenza Artificiale](./img/chatbot_ai.png)
-
-## 5. Test delle API (Swagger UI)
+## 4. Test delle API (Swagger UI)
 Le API sono state testate estensivamente tramite endpoint `/swagger-ui.html`. Il test dimostra l'avvenuta creazione di un utente ed il recupero di referti.
 
 ![Test Endpoints in Swagger](./img/swagger_test.png)

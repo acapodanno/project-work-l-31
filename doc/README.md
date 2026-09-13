@@ -1,13 +1,13 @@
 # Relazione Progetto: HealthCare Plus
 
-Benvenuti nella documentazione ufficiale del progetto **HealthCare Plus**, la piattaforma per la gestione avanzata di una clinica polispecialistica supportata da Intelligenza Artificiale.
+Benvenuti nella documentazione ufficiale del progetto **HealthCare Plus**, la piattaforma per la gestione avanzata di una clinica polispecialistica.
 
 Questa directory contiene la relazione richiesta, suddivisa modularmente per facilitare la navigazione e la lettura.
 
 ## Indice dei Contenuti
 
 1. 📄 **[Contesto dell'Organizzazione e Servizi](./1-Contesto_e_Servizi.md)**
-   Scopri chi siamo, cosa offriamo e come si posiziona il nostro servizio AI.
+   Scopri chi siamo e cosa offriamo.
 
 2. 📐 **[Design Architetturale (UML ed ER)](./2-Design_Architetturale.md)**
    Modellazione dei dati (ER), Diagrammi di Sequenza (UML) e architettura di sistema (C4).

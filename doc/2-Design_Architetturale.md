@@ -61,6 +61,7 @@ erDiagram
         Long id PK
         Long patient_id FK
         Long doctor_id FK
+        Long appointment_id FK "nullable"
         String description
         LocalDate startDate
         LocalDate endDate
@@ -76,13 +77,27 @@ erDiagram
         LocalDateTime createdAt
     }
 
+    Slot {
+        Long id PK
+        Long doctor_id FK
+        LocalDate date
+        LocalTime startTime
+        LocalTime endTime
+    }
+
     Patient ||--o{ Appointment : "prenota"
     Doctor ||--o{ Appointment : "conduce"
     Appointment ||--o| MedicalReport : "genera"
     Patient ||--o{ Therapy : "segue"
     Doctor ||--o{ Therapy : "prescrive"
+    Appointment |o--o{ Therapy : "genera (facoltativo)"
     Patient ||--o{ Ticket : "apre"
+    Doctor ||--o{ Slot : "dichiara disponibile"
 ```
+
+`Slot` non ha una colonna di stato "prenotato/libero": la disponibilità viene calcolata a lettura incrociando gli `Appointment` del medico su quella data/orario (`SlotService.isBooked`), così un appuntamento cancellato libera lo slot automaticamente senza bisogno di sincronizzare due tabelle.
+
+Il collegamento `Therapy → Appointment` è facoltativo (`appointment_id` nullable): una terapia prescritta dalla riga di un appuntamento specifico lo referenzia, ma una terapia assegnata direttamente da un paziente (senza passare da una visita puntuale) resta valida senza il collegamento. `TherapyService` valida che l'appuntamento indicato appartenga effettivamente allo stesso paziente e medico della terapia, per evitare collegamenti incoerenti.
 
 ## 2.2 UML Sequence Diagram (Flusso di Prenotazione)
 Il seguente diagramma di sequenza illustra il flusso per la prenotazione di una visita medica, evidenziando il ruolo del sistema di autenticazione (JWT).
@@ -122,8 +137,6 @@ C4Context
     System(frontend, "Frontend SPA", "Angular 19, UI Reattiva")
     System(backend, "Backend API", "Spring Boot 3, RESTful, Spring Security JWT")
     SystemDb(database, "H2 Database", "Database Relazionale (In-Memory/Persistente)")
-    
-    SystemExt(ai_agent, "OpenAI / AI RAG", "Motore LLM per l'assistente virtuale (fallback offline se assente API key)")
 
     Rel(patient, frontend, "Interagisce tramite Browser")
     Rel(doctor, frontend, "Gestisce clinica tramite Browser")
@@ -131,5 +144,4 @@ C4Context
 
     Rel(frontend, backend, "Effettua chiamate REST / JSON")
     Rel(backend, database, "Legge/Scrive dati (JPA/Hibernate)")
-    Rel(backend, ai_agent, "Interroga tramite API l'agente per il recupero dati (RAG)")
 ```

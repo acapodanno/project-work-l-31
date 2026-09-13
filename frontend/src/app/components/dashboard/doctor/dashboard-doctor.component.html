@@ -1,44 +1,50 @@
-<div class="space-y-6">
+<div class="co-page">
+
+  <!-- HEADER -->
+  <div class="co-header">
+    <div>
+      <h1 class="co-title">Bentornato, {{ appState.currentDoctor?.name || authService.getEmail() }}</h1>
+      <p class="co-subtitle">Ecco il quadro dei tuoi appuntamenti e pazienti per oggi.</p>
+    </div>
+    <button class="co-btn-primary" (click)="toggleNewAppointmentForm()">
+      <span class="material-symbols-outlined">add</span>
+      {{ showNewAppointmentForm ? 'Chiudi' : 'Nuovo appuntamento' }}
+    </button>
+  </div>
+
   <!-- STATISTICHE -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="stats">
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.totalPatients }}</p>
-      <p class="text-xs text-slate-500 mt-1">Pazienti totali</p>
+  <div class="co-stats" *ngIf="stats">
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.totalPatients }}</div>
+      <div class="co-stat-label">Pazienti totali</div>
     </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.scheduledAppointments }}</p>
-      <p class="text-xs text-slate-500 mt-1">Visite programmate</p>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.scheduledAppointments }}</div>
+      <div class="co-stat-label">Visite programmate</div>
     </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.completedAppointments }}</p>
-      <p class="text-xs text-slate-500 mt-1">Visite completate</p>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.completedAppointments }}</div>
+      <div class="co-stat-label">Visite completate</div>
     </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.openTickets }}</p>
-      <p class="text-xs text-slate-500 mt-1">Ticket aperti</p>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.openTickets }}</div>
+      <div class="co-stat-label">Ticket aperti</div>
     </div>
   </div>
 
   <!-- APPUNTAMENTI DEL MEDICO -->
-  <div class="glass-card p-6">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-blue-700">calendar_month</span>
-        <h3 class="text-base font-bold text-slate-800">I miei appuntamenti</h3>
-      </div>
-      <button class="btn btn-primary text-xs" (click)="toggleNewAppointmentForm()">
-        <span class="material-symbols-outlined text-lg leading-none">add</span>
-        {{ showNewAppointmentForm ? 'Chiudi' : 'Nuovo appuntamento' }}
-      </button>
+  <div class="co-section">
+    <div class="co-section-head">
+      <h2><span class="material-symbols-outlined">calendar_month</span>I miei appuntamenti</h2>
     </div>
 
-    <div class="rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-3 text-sm font-medium mb-4" *ngIf="newAppointmentSuccess">
+    <div class="co-form-alert success fade-in" *ngIf="newAppointmentSuccess">
       Appuntamento creato con successo.
     </div>
 
     <!-- NUOVO APPUNTAMENTO PER UN PAZIENTE -->
-    <div class="p-4 rounded-xl border border-slate-200 mb-4 space-y-3" *ngIf="showNewAppointmentForm">
-      <div class="rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm font-medium" *ngIf="newAppointmentError">
+    <div class="co-form" *ngIf="showNewAppointmentForm">
+      <div class="co-form-alert error fade-in" *ngIf="newAppointmentError">
         {{ newAppointmentError }}
       </div>
       <div class="grid sm:grid-cols-2 gap-3">
@@ -46,7 +52,7 @@
           <label for="newApptPatient">Paziente</label>
           <select id="newApptPatient" name="newApptPatient" [(ngModel)]="newAppointmentForm.patientId">
             <option [ngValue]="null">Seleziona un paziente...</option>
-            <option *ngFor="let p of allPatients" [ngValue]="p.id">{{ p.name }}</option>
+            <option *ngFor="let p of appState.doctorPatients" [ngValue]="p.id">{{ p.name }}</option>
           </select>
         </div>
         <div>
@@ -63,111 +69,141 @@
         <textarea id="newApptNotes" name="newApptNotes" rows="2" [(ngModel)]="newAppointmentForm.notes"></textarea>
       </div>
       <div class="flex justify-end">
-        <button class="btn btn-primary text-xs" (click)="submitNewAppointment()">Crea appuntamento</button>
+        <button class="co-btn-primary" (click)="submitNewAppointment()">Crea appuntamento</button>
       </div>
     </div>
 
-    <div class="space-y-3">
-      <div class="p-4 rounded-xl border border-slate-200" *ngFor="let app of appointments">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h4 class="text-sm font-bold text-slate-800">{{ app.patient?.name || ('Paziente #' + app.patientId) }}</h4>
-            <p class="text-xs text-slate-500">{{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p class="text-xs text-slate-600 mt-1">{{ app.reason }}</p>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap justify-end">
-            <span class="badge" [ngClass]="{
-              'badge-scheduled': app.status === 'SCHEDULED',
-              'badge-completed': app.status === 'COMPLETED',
-              'badge-cancelled': app.status === 'CANCELLED'
-            }">{{ app.status }}</span>
+    <div class="co-card-grid" *ngIf="appointments.length > 0">
+      <div class="co-person-card" *ngFor="let app of appointments">
+        <div class="co-card-top">
+          <div class="co-avatar" [style.background]="avatarColor(app.patient?.name)">{{ initials(app.patient?.name) }}</div>
+          <span class="co-status-badge" [ngClass]="{
+            'scheduled': app.status === 'SCHEDULED',
+            'completed': app.status === 'COMPLETED',
+            'cancelled': app.status === 'CANCELLED'
+          }"><span class="co-status-dot"></span>{{ statusLabel(app.status) }}</span>
+        </div>
+        <h4 class="co-card-name">{{ app.patient?.name || ('Paziente #' + app.patientId) }}</h4>
+        <p class="co-card-meta">{{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p class="co-card-reason">{{ app.reason }}</p>
 
-            <ng-container *ngIf="app.status === 'SCHEDULED'">
-              <button class="btn btn-secondary text-xs" (click)="onStatusChange(app.id!, 'COMPLETED')">Completa</button>
-              <button class="btn btn-danger text-xs" (click)="onStatusChange(app.id!, 'CANCELLED')">Annulla</button>
-              <button class="btn btn-secondary text-xs" (click)="openTherapyModal(app)">Prescrivi terapia</button>
-              <button class="btn btn-secondary text-xs" *ngIf="editingAppointmentId !== app.id" (click)="startEdit(app)">Modifica</button>
-            </ng-container>
+        <div class="co-card-actions">
+          <ng-container *ngIf="app.status === 'SCHEDULED'">
+            <button class="co-btn-secondary" (click)="onStatusChange(app.id!, 'COMPLETED')">Completa</button>
+            <button class="co-btn-secondary co-btn-danger" (click)="onStatusChange(app.id!, 'CANCELLED')">Annulla</button>
+            <button class="co-btn-secondary" *ngIf="editingAppointmentId !== app.id" (click)="startEdit(app)">Modifica</button>
+          </ng-container>
 
-            <button class="btn btn-secondary text-xs" *ngIf="reportsMap.has(app.id!)" (click)="viewReport(app.id!)">
-              Referto
-            </button>
-          </div>
+          <button class="co-btn-secondary" *ngIf="app.status === 'SCHEDULED' || app.status === 'COMPLETED'" (click)="openTherapyModal(app)">
+            Prescrivi terapia
+          </button>
+
+          <button class="co-btn-secondary" *ngIf="reportsMap.has(app.id!)" (click)="viewReport(app.id!)">
+            Referto
+          </button>
         </div>
 
         <!-- FORM DI MODIFICA (RESCHEDULE) -->
-        <div class="mt-4 pt-4 border-t border-slate-200 space-y-3" *ngIf="editingAppointmentId === app.id">
+        <div class="co-edit-form" *ngIf="editingAppointmentId === app.id">
           <div class="grid sm:grid-cols-2 gap-3">
             <div>
-              <label class="text-xs font-medium text-slate-600">Data e ora</label>
+              <label>Data e ora</label>
               <input type="datetime-local" [(ngModel)]="editForm.appointmentDate" name="editAppointmentDate" />
             </div>
             <div>
-              <label class="text-xs font-medium text-slate-600">Motivo</label>
+              <label>Motivo</label>
               <input type="text" [(ngModel)]="editForm.reason" name="editReason" />
             </div>
           </div>
           <div>
-            <label class="text-xs font-medium text-slate-600">Note</label>
+            <label>Note</label>
             <textarea rows="2" [(ngModel)]="editForm.notes" name="editNotes"></textarea>
           </div>
           <div class="flex gap-2 justify-end">
-            <button class="btn btn-secondary text-xs" (click)="cancelEdit()">Annulla</button>
-            <button class="btn btn-primary text-xs" (click)="saveEdit(app.id!)">Salva modifiche</button>
+            <button class="co-btn-secondary" (click)="cancelEdit()">Annulla</button>
+            <button class="co-btn-primary" (click)="saveEdit(app.id!)">Salva modifiche</button>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="empty-state" *ngIf="appointments.length === 0">
-        <span class="material-symbols-outlined empty-state-icon">event_busy</span>
-        <p>Nessun appuntamento in programma.</p>
+    <div class="co-empty" *ngIf="appointments.length === 0">
+      <span class="material-symbols-outlined">event_busy</span>
+      <p>Nessun appuntamento in programma.</p>
+    </div>
+  </div>
+
+  <!-- SLOT DISPONIBILI -->
+  <div class="co-section">
+    <div class="co-section-head">
+      <h2><span class="material-symbols-outlined">event_available</span>I miei slot</h2>
+      <button class="co-btn-primary" (click)="toggleNewSlotForm()">
+        <span class="material-symbols-outlined">add</span>
+        {{ showNewSlotForm ? 'Chiudi' : 'Genera slot' }}
+      </button>
+    </div>
+
+    <div class="co-form-alert success fade-in" *ngIf="newSlotSuccess">
+      {{ newSlotSuccess }}
+    </div>
+
+    <!-- GENERAZIONE SLOT -->
+    <div class="co-form" *ngIf="showNewSlotForm">
+      <div class="co-form-alert error fade-in" *ngIf="newSlotError">
+        {{ newSlotError }}
+      </div>
+      <div class="grid sm:grid-cols-3 gap-3">
+        <div>
+          <label for="newSlotStart">Ora inizio</label>
+          <input id="newSlotStart" type="time" name="newSlotStart" [(ngModel)]="newSlotBatch.startTime" />
+        </div>
+        <div>
+          <label for="newSlotEnd">Ora fine</label>
+          <input id="newSlotEnd" type="time" name="newSlotEnd" [(ngModel)]="newSlotBatch.endTime" />
+        </div>
+        <div>
+          <label for="newSlotDuration">Durata slot (min)</label>
+          <input id="newSlotDuration" type="number" min="5" step="5" name="newSlotDuration" [(ngModel)]="newSlotBatch.slotDurationMinutes" />
+        </div>
+      </div>
+      <p style="font-size: 0.78rem; color: var(--co-text-secondary);">Genera più slot consecutivi della durata scelta, per la data selezionata qui sotto.</p>
+      <div class="flex justify-end">
+        <button class="co-btn-primary" (click)="submitNewSlotBatch()">Genera slot</button>
+      </div>
+    </div>
+
+    <div class="co-date-field mb-4 max-w-xs">
+      <label for="slotDate">Data</label>
+      <input id="slotDate" type="date" name="slotDate" [(ngModel)]="selectedSlotDate" (change)="loadSlots()" />
+    </div>
+
+    <p style="font-size: 0.86rem; color: var(--co-text-secondary);" *ngIf="loadingSlots">Caricamento slot...</p>
+
+    <div class="flex flex-wrap gap-2" *ngIf="!loadingSlots">
+      <div class="co-slot-chip" [class.booked]="slot.booked" *ngFor="let slot of slots">
+        <span>{{ slot.startTime.substring(0,5) }} - {{ slot.endTime.substring(0,5) }}</span>
+        <span class="co-slot-chip-status" *ngIf="slot.booked">Prenotato</span>
+        <button class="co-slot-chip-remove" *ngIf="!slot.booked" (click)="removeSlot(slot)" title="Elimina slot">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="co-empty w-full" *ngIf="slots.length === 0">
+        <span class="material-symbols-outlined">event_busy</span>
+        <p>Nessuno slot disponibile per questa data.</p>
       </div>
     </div>
   </div>
 
-  <!-- STORICO PAZIENTE -->
-  <div class="glass-card p-6">
-    <div class="flex items-center gap-2 mb-4">
-      <span class="material-symbols-outlined text-blue-700">history</span>
-      <h3 class="text-base font-bold text-slate-800">Storico clinico paziente</h3>
+  <!-- Lo storico clinico per paziente ora vive nella sezione dedicata "Pazienti" (ricerca + elenco completo),
+       non più qui: prima richiedeva di selezionare un paziente dalla sidebar, ora è una pagina a sé con ricerca. -->
+  <div class="co-section co-link-card" routerLink="/patients">
+    <div class="co-link-icon"><span class="material-symbols-outlined">groups</span></div>
+    <div class="co-link-body">
+      <h2>Storico clinico e terapie</h2>
+      <p>Cerca un paziente per nome o email e consulta appuntamenti precedenti, terapie prescritte e assegnane di nuove.</p>
     </div>
-
-    <select name="historyPatient" (change)="onHistoryPatientSelect($event)">
-      <option value="null">Seleziona un paziente...</option>
-      <option *ngFor="let p of allPatients" [value]="p.id">{{ p.name }}</option>
-    </select>
-
-    <div class="mt-4" *ngIf="selectedHistoryPatientId">
-      <p class="text-sm text-slate-500" *ngIf="loadingHistory">Caricamento storico...</p>
-
-      <div class="space-y-4" *ngIf="!loadingHistory">
-        <div>
-          <h4 class="text-xs uppercase text-slate-400 font-semibold mb-2">Appuntamenti precedenti</h4>
-          <div class="space-y-2">
-            <div class="p-3 rounded-lg border border-slate-200 text-sm flex justify-between" *ngFor="let app of patientHistoryAppointments">
-              <span>{{ app.appointmentDate | date:'dd/MM/yyyy' }} — {{ app.reason }}</span>
-              <span class="badge" [ngClass]="{
-                'badge-scheduled': app.status === 'SCHEDULED',
-                'badge-completed': app.status === 'COMPLETED',
-                'badge-cancelled': app.status === 'CANCELLED'
-              }">{{ app.status }}</span>
-            </div>
-            <p class="text-xs text-slate-500" *ngIf="patientHistoryAppointments.length === 0">Nessun appuntamento precedente.</p>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="text-xs uppercase text-slate-400 font-semibold mb-2">Terapie prescritte</h4>
-          <div class="space-y-2">
-            <div class="p-3 rounded-lg border border-slate-200 text-sm" *ngFor="let therapy of patientHistoryTherapies">
-              <p class="font-medium text-slate-800">{{ therapy.description }}</p>
-              <p class="text-xs text-slate-500">{{ therapy.startDate | date:'dd/MM/yyyy' }} - {{ therapy.endDate | date:'dd/MM/yyyy' }}</p>
-            </div>
-            <p class="text-xs text-slate-500" *ngIf="patientHistoryTherapies.length === 0">Nessuna terapia prescritta.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <span class="material-symbols-outlined co-link-arrow">arrow_forward</span>
   </div>
 
   <!-- MODALE PRESCRIZIONE TERAPIA -->
@@ -176,7 +212,21 @@
     icon="medication"
     [show]="showTherapyModal"
     (close)="closeTherapyModal()">
-    <form (ngSubmit)="saveTherapy()" class="space-y-4" *ngIf="selectedAppointmentForTherapy">
+    <form (ngSubmit)="saveTherapy()" class="space-y-4" *ngIf="newTherapy.patientId">
+      <p class="text-sm text-[var(--text-secondary)]" *ngIf="therapyTargetPatientName">
+        Paziente: <span class="font-semibold text-[var(--text-primary)]">{{ therapyTargetPatientName }}</span>
+      </p>
+      <p class="text-xs text-[var(--text-secondary)]" *ngIf="therapyTargetAppointment; else noAppointmentLink">
+        Collegata alla visita del {{ therapyTargetAppointment.appointmentDate | date:'dd/MM/yyyy HH:mm' }} — {{ therapyTargetAppointment.reason }}
+      </p>
+      <ng-template #noAppointmentLink>
+        <p class="text-xs text-[var(--text-secondary)]">Non collegata a una visita specifica.</p>
+      </ng-template>
+
+      <div class="rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm font-medium fade-in" *ngIf="therapyError">
+        {{ therapyError }}
+      </div>
+
       <div>
         <label for="therapyDescription">Descrizione</label>
         <textarea id="therapyDescription" name="therapyDescription" rows="3" [(ngModel)]="newTherapy.description" required></textarea>

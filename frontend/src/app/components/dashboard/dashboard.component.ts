@@ -25,13 +25,13 @@ export class DashboardComponent {
 
   @Output() statusChange = new EventEmitter<{ id: number, status: string }>();
   @Output() ticketStatusChange = new EventEmitter<{ id: number, status: string }>();
-  @Output() navigate = new EventEmitter<'booking' | 'assistant'>();
+  @Output() navigate = new EventEmitter<'booking'>();
   @Output() editAppointment = new EventEmitter<{ id: number, appointmentDate: string, reason: string, notes: string }>();
   @Output() refreshRequested = new EventEmitter<void>();
 
   selectedReport: MedicalReportResponse | null = null;
 
-  onNavigate(tab: 'booking' | 'assistant') {
+  onNavigate(tab: 'booking') {
     this.navigate.emit(tab);
   }
 

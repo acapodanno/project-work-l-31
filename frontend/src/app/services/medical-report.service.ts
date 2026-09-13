@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MedicalReportResponse } from '../models/medical-report.model';
 import { environment } from '../../environments/environment';
+import { SILENT_ERROR } from '../interceptors/http-context';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,9 @@ export class MedicalReportService {
   }
 
   getReportByAppointmentId(appointmentId: number): Observable<MedicalReportResponse> {
-    return this.http.get<MedicalReportResponse>(`${this.apiUrl}/appointment/${appointmentId}`);
+    return this.http.get<MedicalReportResponse>(`${this.apiUrl}/appointment/${appointmentId}`, {
+      context: new HttpContext().set(SILENT_ERROR, true)
+    });
   }
 
   getReportsByPatientId(patientId: number): Observable<MedicalReportResponse[]> {

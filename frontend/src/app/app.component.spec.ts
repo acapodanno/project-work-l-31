@@ -12,6 +12,10 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
+  afterEach(() => {
+    localStorage.removeItem('role');
+  });
+
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;

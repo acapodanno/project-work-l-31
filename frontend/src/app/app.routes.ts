@@ -4,8 +4,8 @@ import { roleGuard } from './guards/role.guard';
 import { AccountPageComponent } from './pages/account-page/account-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { BookingPageComponent } from './pages/booking-page/booking-page.component';
-import { AssistantPageComponent } from './pages/assistant-page/assistant-page.component';
 import { TherapyComponent } from './components/therapy/therapy.component';
+import { PatientsComponent } from './components/patients/patients.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'account', pathMatch: 'full' },
@@ -17,12 +17,17 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['PATIENT', 'SUPPORT'] }
   },
-  { path: 'assistant', component: AssistantPageComponent, canActivate: [authGuard] },
   {
     path: 'therapy',
     component: TherapyComponent,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['PATIENT'] }
+  },
+  {
+    path: 'patients',
+    component: PatientsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['DOCTOR'] }
   },
   { path: '**', redirectTo: 'account' },
 ];

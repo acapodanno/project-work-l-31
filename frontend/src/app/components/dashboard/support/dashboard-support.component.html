@@ -1,100 +1,124 @@
-<div class="space-y-6">
-  <!-- STATISTICHE -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="stats">
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.totalPatients }}</p>
-      <p class="text-xs text-slate-500 mt-1">Pazienti</p>
-    </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.totalDoctors }}</p>
-      <p class="text-xs text-slate-500 mt-1">Medici</p>
-    </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.scheduledAppointments }}</p>
-      <p class="text-xs text-slate-500 mt-1">Visite programmate</p>
-    </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.completedAppointments }}</p>
-      <p class="text-xs text-slate-500 mt-1">Visite completate</p>
-    </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.cancelledAppointments }}</p>
-      <p class="text-xs text-slate-500 mt-1">Visite cancellate</p>
-    </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.openTickets }}</p>
-      <p class="text-xs text-slate-500 mt-1">Ticket aperti</p>
-    </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">{{ stats.closedTickets }}</p>
-      <p class="text-xs text-slate-500 mt-1">Ticket chiusi</p>
-    </div>
-    <div class="glass-card p-4 text-center">
-      <p class="text-2xl font-bold text-slate-800">
-        {{ stats.openTickets + stats.closedTickets > 0 ? ((stats.closedTickets / (stats.openTickets + stats.closedTickets)) * 100 | number:'1.0-0') : 0 }}%
-      </p>
-      <p class="text-xs text-slate-500 mt-1">Tasso risoluzione ticket</p>
+<div class="co-page">
+
+  <!-- HEADER -->
+  <div class="co-header">
+    <div>
+      <h1 class="co-title">Pannello di supporto</h1>
+      <p class="co-subtitle">{{ authService.getEmail() }} — gestione globale di appuntamenti e segnalazioni tecniche.</p>
     </div>
   </div>
 
-  <!-- APPUNTAMENTI -->
-  <div class="glass-card p-6">
-    <div class="flex items-center gap-2 mb-4">
-      <span class="material-symbols-outlined text-blue-700">calendar_month</span>
-      <h3 class="text-base font-bold text-slate-800">Gestione appuntamenti</h3>
+  <!-- STATISTICHE: solo i 4 numeri che orientano la coda di oggi — il resto (completate/cancellate/chiuse) è già
+       visibile nei conteggi delle chip di filtro qui sotto, ripeterlo qui sarebbe rumore, non informazione. -->
+  <div class="co-stats" *ngIf="stats">
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.scheduledAppointments }}</div>
+      <div class="co-stat-label">Visite programmate</div>
     </div>
-    <div class="space-y-3">
-      <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let app of appointments">
-        <div>
-          <h4 class="text-sm font-bold text-slate-800">{{ app.patient?.name || ('Paziente #' + app.patientId) }}</h4>
-          <p class="text-xs text-slate-500">Con {{ app.doctor?.name }} · {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p class="text-xs text-slate-600 mt-1">{{ app.reason }}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="badge" [ngClass]="{
-            'badge-scheduled': app.status === 'SCHEDULED',
-            'badge-completed': app.status === 'COMPLETED',
-            'badge-cancelled': app.status === 'CANCELLED'
-          }">{{ app.status }}</span>
-
-          <ng-container *ngIf="app.status === 'SCHEDULED'">
-            <button class="btn btn-secondary text-xs" (click)="onStatusChange(app.id!, 'COMPLETED')">Completa</button>
-            <button class="btn btn-danger text-xs" (click)="onStatusChange(app.id!, 'CANCELLED')">Annulla</button>
-          </ng-container>
-        </div>
-      </div>
-
-      <div class="empty-state" *ngIf="appointments.length === 0">
-        <span class="material-symbols-outlined empty-state-icon">event_busy</span>
-        <p>Nessun appuntamento presente.</p>
-      </div>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.openTickets }}</div>
+      <div class="co-stat-label">Ticket aperti</div>
+    </div>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.totalPatients }}</div>
+      <div class="co-stat-label">Pazienti</div>
+    </div>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ stats.totalDoctors }}</div>
+      <div class="co-stat-label">Medici</div>
     </div>
   </div>
 
-  <!-- TICKET -->
-  <div class="glass-card p-6">
-    <div class="flex items-center gap-2 mb-4">
-      <span class="material-symbols-outlined text-amber-600">support_agent</span>
-      <h3 class="text-base font-bold text-slate-800">Gestione ticket di supporto</h3>
-    </div>
-    <div class="space-y-3">
-      <div class="p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" *ngFor="let tkt of tickets">
-        <div>
-          <h4 class="text-sm font-bold text-slate-800">{{ tkt.title }}</h4>
-          <p class="text-xs text-slate-500">Paziente #{{ tkt.patientId }} · {{ tkt.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p class="text-xs text-slate-600 mt-1">{{ tkt.description }}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="badge badge-open">{{ tkt.status }}</span>
-          <button class="btn btn-secondary text-xs" *ngIf="tkt.status !== 'CLOSED'" (click)="onTicketStatusChange(tkt.id!, 'CLOSED')">
-            Chiudi
-          </button>
+  <!-- CODE DI LAVORO -->
+  <div class="co-queues">
+    <!-- APPUNTAMENTI -->
+    <div class="co-section">
+      <div class="co-section-head">
+        <h2><span class="material-symbols-outlined">calendar_month</span>Gestione appuntamenti</h2>
+      </div>
+
+      <div class="co-filter-bar">
+        <button class="co-filter-chip" [class.active]="appointmentFilter === 'ALL'" (click)="setAppointmentFilter('ALL')">
+          Tutti <span class="count">{{ appointments.length }}</span>
+        </button>
+        <button class="co-filter-chip" [class.active]="appointmentFilter === 'SCHEDULED'" (click)="setAppointmentFilter('SCHEDULED')">
+          Programmate <span class="count">{{ countAppointments('SCHEDULED') }}</span>
+        </button>
+        <button class="co-filter-chip" [class.active]="appointmentFilter === 'COMPLETED'" (click)="setAppointmentFilter('COMPLETED')">
+          Completate <span class="count">{{ countAppointments('COMPLETED') }}</span>
+        </button>
+        <button class="co-filter-chip" [class.active]="appointmentFilter === 'CANCELLED'" (click)="setAppointmentFilter('CANCELLED')">
+          Cancellate <span class="count">{{ countAppointments('CANCELLED') }}</span>
+        </button>
+      </div>
+
+      <div class="co-queue-list" *ngIf="filteredAppointments.length > 0">
+        <div class="co-queue-card" *ngFor="let app of filteredAppointments">
+          <div>
+            <h4 class="co-queue-card-name">{{ app.patient?.name || ('Paziente #' + app.patientId) }}</h4>
+            <p class="co-queue-card-meta">Con {{ app.doctor?.name }} · {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="co-queue-card-reason">{{ app.reason }}</p>
+          </div>
+          <div class="co-queue-card-actions">
+            <span class="co-status-badge" [ngClass]="{
+              'scheduled': app.status === 'SCHEDULED',
+              'completed': app.status === 'COMPLETED',
+              'cancelled': app.status === 'CANCELLED'
+            }"><span class="co-status-dot"></span>{{ app.status === 'SCHEDULED' ? 'Programmato' : (app.status === 'COMPLETED' ? 'Completato' : 'Annullato') }}</span>
+
+            <ng-container *ngIf="app.status === 'SCHEDULED'">
+              <button class="co-btn-secondary" (click)="onStatusChange(app.id!, 'COMPLETED')">Completa</button>
+              <button class="co-btn-secondary co-btn-danger" (click)="onStatusChange(app.id!, 'CANCELLED')">Annulla</button>
+            </ng-container>
+          </div>
         </div>
       </div>
 
-      <div class="empty-state" *ngIf="tickets.length === 0">
-        <span class="material-symbols-outlined empty-state-icon">task_alt</span>
-        <p>Nessun ticket aperto.</p>
+      <div class="co-empty" *ngIf="filteredAppointments.length === 0">
+        <span class="material-symbols-outlined">event_busy</span>
+        <p>Nessun appuntamento in questa categoria.</p>
+      </div>
+    </div>
+
+    <!-- TICKET -->
+    <div class="co-section">
+      <div class="co-section-head">
+        <h2><span class="material-symbols-outlined">support_agent</span>Gestione ticket di supporto</h2>
+      </div>
+
+      <div class="co-filter-bar">
+        <button class="co-filter-chip" [class.active]="ticketFilter === 'ALL'" (click)="setTicketFilter('ALL')">
+          Tutti <span class="count">{{ tickets.length }}</span>
+        </button>
+        <button class="co-filter-chip" [class.active]="ticketFilter === 'OPEN'" (click)="setTicketFilter('OPEN')">
+          Aperti <span class="count">{{ countTickets('OPEN') }}</span>
+        </button>
+        <button class="co-filter-chip" [class.active]="ticketFilter === 'CLOSED'" (click)="setTicketFilter('CLOSED')">
+          Chiusi <span class="count">{{ countTickets('CLOSED') }}</span>
+        </button>
+      </div>
+
+      <div class="co-queue-list" *ngIf="filteredTickets.length > 0">
+        <div class="co-queue-card" *ngFor="let tkt of filteredTickets">
+          <div>
+            <h4 class="co-queue-card-name">{{ tkt.title }}</h4>
+            <p class="co-queue-card-meta">Paziente #{{ tkt.patientId }} · {{ tkt.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="co-queue-card-reason">{{ tkt.description }}</p>
+          </div>
+          <div class="co-queue-card-actions">
+            <span class="co-status-badge" [ngClass]="tkt.status === 'CLOSED' ? 'completed' : 'open'">
+              <span class="co-status-dot"></span>{{ tkt.status === 'CLOSED' ? 'Chiuso' : 'Aperto' }}
+            </span>
+            <button class="co-btn-secondary" *ngIf="tkt.status !== 'CLOSED'" (click)="onTicketStatusChange(tkt.id!, 'CLOSED')">
+              Chiudi
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="co-empty" *ngIf="filteredTickets.length === 0">
+        <span class="material-symbols-outlined">task_alt</span>
+        <p>Nessun ticket in questa categoria.</p>
       </div>
     </div>
   </div>

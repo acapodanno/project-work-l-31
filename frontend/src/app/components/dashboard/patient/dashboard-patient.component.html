@@ -1,113 +1,165 @@
-<div class="space-y-6 no-print">
-  <div class="flex gap-3">
-    <button class="btn btn-primary flex-1" (click)="onNavigate('booking')">
-      <span class="material-symbols-outlined text-lg leading-none">event_available</span>
-      Prenota una visita
-    </button>
-    <button class="btn btn-secondary flex-1" (click)="onNavigate('assistant')">
-      <span class="material-symbols-outlined text-lg leading-none">chat_bubble</span>
-      Assistente AI
-    </button>
-    <button class="btn btn-secondary flex-1" (click)="exportClinicalSummary()">
-      <span class="material-symbols-outlined text-lg leading-none">picture_as_pdf</span>
-      Esporta cartella clinica
-    </button>
+<div class="co-page no-print">
+
+  <!-- HEADER -->
+  <div class="co-header">
+    <div>
+      <h1 class="co-title">Ciao, {{ currentPatient?.name || authService.getEmail() }}</h1>
+      <p class="co-subtitle">Gestisci le tue visite, terapie e segnalazioni in un unico posto.</p>
+    </div>
+    <div class="co-quick-actions">
+      <button class="co-btn-primary" (click)="onNavigate('booking')">
+        <span class="material-symbols-outlined">event_available</span>
+        Prenota una visita
+      </button>
+      <button class="co-btn-secondary" (click)="exportClinicalSummary()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">picture_as_pdf</span>
+        Esporta cartella clinica
+      </button>
+    </div>
+  </div>
+
+  <!-- STATISTICHE -->
+  <div class="co-stats">
+    <div class="co-stat">
+      <div class="co-stat-value">{{ scheduledCount }}</div>
+      <div class="co-stat-label">Prossime visite</div>
+    </div>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ completedCount }}</div>
+      <div class="co-stat-label">Visite completate</div>
+    </div>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ openTicketsCount }}</div>
+      <div class="co-stat-label">Segnalazioni aperte</div>
+    </div>
+    <div class="co-stat">
+      <div class="co-stat-value">{{ reportsCount }}</div>
+      <div class="co-stat-label">Referti disponibili</div>
+    </div>
   </div>
 
   <!-- APPUNTAMENTI -->
-  <div class="glass-card p-6">
-    <div class="flex items-center gap-2 mb-4">
-      <span class="material-symbols-outlined text-blue-700">calendar_month</span>
-      <h3 class="text-base font-bold text-slate-800">I miei appuntamenti</h3>
+  <div class="co-section">
+    <div class="co-section-head">
+      <h2><span class="material-symbols-outlined">calendar_month</span>I miei appuntamenti</h2>
     </div>
 
-    <div class="space-y-3">
-      <div class="p-4 rounded-xl border border-slate-200" *ngFor="let app of appointments">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h4 class="text-sm font-bold text-slate-800">{{ app.doctor?.name }}</h4>
-            <p class="text-xs text-slate-500">{{ app.doctor?.specialization }} · {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p class="text-xs text-slate-600 mt-1">{{ app.reason }}</p>
+    <div class="co-card-grid" *ngIf="appointments.length > 0">
+      <div class="co-person-card" *ngFor="let app of appointments">
+        <div class="co-card-top">
+          <div class="co-avatar" style="background: var(--co-brand);">
+            <span class="material-symbols-outlined" style="font-size: 20px;">stethoscope</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="badge" [ngClass]="{
-              'badge-scheduled': app.status === 'SCHEDULED',
-              'badge-completed': app.status === 'COMPLETED',
-              'badge-cancelled': app.status === 'CANCELLED'
-            }">{{ app.status }}</span>
+          <span class="co-status-badge" [ngClass]="{
+            'scheduled': app.status === 'SCHEDULED',
+            'completed': app.status === 'COMPLETED',
+            'cancelled': app.status === 'CANCELLED'
+          }"><span class="co-status-dot"></span>{{ app.status === 'SCHEDULED' ? 'Programmato' : (app.status === 'COMPLETED' ? 'Completato' : 'Annullato') }}</span>
+        </div>
+        <h4 class="co-card-name">{{ app.doctor?.name }}</h4>
+        <p class="co-card-meta">{{ app.doctor?.specialization }} · {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p class="co-card-reason">{{ app.reason }}</p>
 
-            <button class="btn btn-secondary text-xs" *ngIf="reportsMap.has(app.id!)" (click)="viewReport(app.id!)">
-              Referto
-            </button>
+        <div class="co-card-actions">
+          <button class="co-btn-secondary" *ngIf="reportsMap.has(app.id!)" (click)="viewReport(app.id!)">
+            Referto
+          </button>
 
-            <label class="btn btn-secondary text-xs cursor-pointer" *ngIf="!reportsMap.has(app.id!) && app.status === 'COMPLETED'">
-              <span *ngIf="!isUploadingMap.get(app.id!)">Carica referto</span>
-              <span *ngIf="isUploadingMap.get(app.id!)">Caricamento...</span>
-              <input type="file" class="hidden" (change)="onFileSelected($event, app.id!)" [disabled]="isUploadingMap.get(app.id!)" />
-            </label>
+          <label class="co-btn-secondary" style="cursor: pointer;" *ngIf="!reportsMap.has(app.id!) && app.status === 'COMPLETED'">
+            <span *ngIf="!isUploadingMap.get(app.id!)">Carica referto</span>
+            <span *ngIf="isUploadingMap.get(app.id!)">Caricamento...</span>
+            <input type="file" class="hidden" (change)="onFileSelected($event, app.id!)" [disabled]="isUploadingMap.get(app.id!)" />
+          </label>
 
-            <button class="btn btn-secondary text-xs" *ngIf="app.status === 'SCHEDULED' && editingAppointmentId !== app.id" (click)="startEdit(app)">
-              Modifica
-            </button>
+          <button class="co-btn-secondary" *ngIf="app.status === 'SCHEDULED' && editingAppointmentId !== app.id" (click)="startEdit(app)">
+            Modifica
+          </button>
 
-            <button class="btn btn-danger text-xs" *ngIf="app.status === 'SCHEDULED'" (click)="onCancel(app)">
-              Cancella
-            </button>
-          </div>
+          <button class="co-btn-secondary co-btn-danger" *ngIf="app.status === 'SCHEDULED'" (click)="onCancel(app)">
+            Cancella
+          </button>
         </div>
 
         <!-- FORM DI MODIFICA -->
-        <div class="mt-4 pt-4 border-t border-slate-200 space-y-3" *ngIf="editingAppointmentId === app.id">
+        <div class="co-edit-form" *ngIf="editingAppointmentId === app.id">
           <div class="grid sm:grid-cols-2 gap-3">
             <div>
-              <label class="text-xs font-medium text-slate-600">Data e ora</label>
+              <label>Data e ora</label>
               <input type="datetime-local" [(ngModel)]="editForm.appointmentDate" name="editAppointmentDate" />
             </div>
             <div>
-              <label class="text-xs font-medium text-slate-600">Motivo</label>
+              <label>Motivo</label>
               <input type="text" [(ngModel)]="editForm.reason" name="editReason" />
             </div>
           </div>
           <div>
-            <label class="text-xs font-medium text-slate-600">Note</label>
+            <label>Note</label>
             <textarea rows="2" [(ngModel)]="editForm.notes" name="editNotes"></textarea>
           </div>
           <div class="flex gap-2 justify-end">
-            <button class="btn btn-secondary text-xs" (click)="cancelEdit()">Annulla</button>
-            <button class="btn btn-primary text-xs" (click)="saveEdit(app.id!)">Salva modifiche</button>
+            <button class="co-btn-secondary" (click)="cancelEdit()">Annulla</button>
+            <button class="co-btn-primary" (click)="saveEdit(app.id!)">Salva modifiche</button>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="empty-state" *ngIf="appointments.length === 0">
-        <span class="material-symbols-outlined empty-state-icon">event_busy</span>
-        <p>Nessun appuntamento in programma.</p>
-      </div>
+    <div class="co-empty" *ngIf="appointments.length === 0">
+      <span class="material-symbols-outlined">event_busy</span>
+      <p>Nessun appuntamento in programma.</p>
     </div>
   </div>
 
   <!-- TICKET -->
-  <div class="glass-card p-6">
-    <div class="flex items-center gap-2 mb-4">
-      <span class="material-symbols-outlined text-amber-600">support_agent</span>
-      <h3 class="text-base font-bold text-slate-800">Le mie segnalazioni</h3>
+  <div class="co-section">
+    <div class="co-section-head">
+      <h2><span class="material-symbols-outlined">support_agent</span>Le mie segnalazioni</h2>
+      <button class="co-btn-primary" (click)="toggleNewTicketForm()">
+        <span class="material-symbols-outlined">add</span>
+        {{ showNewTicketForm ? 'Chiudi' : 'Nuova segnalazione' }}
+      </button>
     </div>
 
-    <div class="space-y-3">
-      <div class="p-4 rounded-xl border border-slate-200" *ngFor="let tkt of tickets">
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <h4 class="text-sm font-bold text-slate-800">{{ tkt.title }}</h4>
-            <p class="text-xs text-slate-600 mt-1">{{ tkt.description }}</p>
-          </div>
-          <span class="badge badge-open flex-shrink-0">{{ tkt.status }}</span>
-        </div>
-      </div>
+    <div class="co-form-alert success fade-in" *ngIf="newTicketSuccess">
+      Segnalazione inviata: il team di supporto la vedrà a breve.
+    </div>
 
-      <div class="empty-state" *ngIf="tickets.length === 0">
-        <span class="material-symbols-outlined empty-state-icon">task_alt</span>
-        <p>Nessuna segnalazione aperta.</p>
+    <!-- NUOVA SEGNALAZIONE -->
+    <div class="co-form" *ngIf="showNewTicketForm">
+      <div class="co-form-alert error fade-in" *ngIf="newTicketError">
+        {{ newTicketError }}
       </div>
+      <div>
+        <label for="newTicketTitle">Titolo</label>
+        <input id="newTicketTitle" type="text" name="newTicketTitle" placeholder="Es. Non riesco a caricare il referto" [(ngModel)]="newTicketForm.title" />
+      </div>
+      <div>
+        <label for="newTicketDescription">Descrizione</label>
+        <textarea id="newTicketDescription" name="newTicketDescription" rows="3" placeholder="Descrivi il problema che hai riscontrato" [(ngModel)]="newTicketForm.description"></textarea>
+      </div>
+      <div class="flex justify-end">
+        <button class="co-btn-primary" (click)="submitNewTicket()">Invia segnalazione</button>
+      </div>
+    </div>
+
+    <div class="co-card-grid" *ngIf="tickets.length > 0">
+      <div class="co-person-card" *ngFor="let tkt of tickets">
+        <div class="co-card-top">
+          <div class="co-avatar" style="background: var(--co-amber);">
+            <span class="material-symbols-outlined" style="font-size: 20px;">confirmation_number</span>
+          </div>
+          <span class="co-status-badge" [ngClass]="tkt.status === 'CLOSED' ? 'completed' : 'open'">
+            <span class="co-status-dot"></span>{{ tkt.status === 'CLOSED' ? 'Chiuso' : 'Aperto' }}
+          </span>
+        </div>
+        <h4 class="co-card-name">{{ tkt.title }}</h4>
+        <p class="co-card-reason">{{ tkt.description }}</p>
+      </div>
+    </div>
+
+    <div class="co-empty" *ngIf="tickets.length === 0">
+      <span class="material-symbols-outlined">task_alt</span>
+      <p>Nessuna segnalazione aperta.</p>
     </div>
   </div>
 </div>

@@ -1,31 +1,58 @@
 <div class="glass-card p-6 max-w-xl mx-auto space-y-5">
   <div class="flex items-center gap-3">
-    <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+    <div class="w-11 h-11 rounded-xl bg-[var(--bg-subtle)] text-[var(--color-secondary-text)] flex items-center justify-center flex-shrink-0">
       <span class="material-symbols-outlined">event_available</span>
     </div>
     <div>
-      <h2 class="text-base font-bold text-slate-800">Prenota con {{ selectedDoctor.name }}</h2>
-      <span class="text-xs text-blue-700 font-medium">{{ selectedDoctor.specialization }}</span>
+      <h2 class="text-base font-bold text-[var(--text-primary)]">Prenota con {{ selectedDoctor.name }}</h2>
+      <span class="text-xs text-[var(--color-secondary-text)] font-medium">{{ selectedDoctor.specialization }}</span>
     </div>
   </div>
 
-  <div class="rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-3 text-sm font-medium" *ngIf="bookingSuccess">
+  <div class="rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-3 text-sm font-medium fade-in" *ngIf="bookingSuccess">
     Prenotazione effettuata con successo!
   </div>
-  <div class="rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm font-medium" *ngIf="bookingError">
+  <div class="rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm font-medium fade-in" *ngIf="bookingError">
     {{ bookingError }}
   </div>
 
   <form (ngSubmit)="onSubmit()" class="space-y-4" *ngIf="!bookingSuccess">
     <div>
-      <label for="appointmentDate">Data e ora appuntamento</label>
+      <label for="appointmentDateOnly">Data della visita</label>
       <input
-        id="appointmentDate"
-        type="datetime-local"
-        name="appointmentDate"
-        [(ngModel)]="appointmentDate"
+        id="appointmentDateOnly"
+        type="date"
+        name="appointmentDateOnly"
+        [(ngModel)]="selectedDate"
+        (change)="loadSlots()"
         required />
     </div>
+
+    <div>
+      <label>Orario disponibile</label>
+      <div class="rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm font-medium mb-2 fade-in" *ngIf="slotError">
+        {{ slotError }}
+      </div>
+      <p class="text-sm text-[var(--text-secondary)]" *ngIf="loadingSlots">Caricamento orari disponibili...</p>
+      <div class="flex flex-wrap gap-2" *ngIf="!loadingSlots">
+        <button
+          type="button"
+          class="slot-chip selectable"
+          [class.booked]="slot.booked"
+          [class.selected]="selectedSlot === slot"
+          [disabled]="slot.booked"
+          *ngFor="let slot of slots"
+          (click)="selectSlot(slot)">
+          {{ slot.startTime.substring(0,5) }} - {{ slot.endTime.substring(0,5) }}
+          <span class="slot-chip-status" *ngIf="slot.booked">Occupato</span>
+        </button>
+
+        <p class="text-sm text-[var(--text-secondary)]" *ngIf="slots.length === 0">
+          Il medico non ha slot disponibili in questa data. Prova un altro giorno.
+        </p>
+      </div>
+    </div>
+
     <div>
       <label for="appointmentReason">Motivo della visita</label>
       <input
@@ -48,7 +75,7 @@
     <div>
       <label for="appointmentFile">Allega documento (opzionale)</label>
       <input id="appointmentFile" type="file" (change)="onFileSelected($event)" />
-      <p class="text-xs text-slate-500 mt-1" *ngIf="selectedFile">{{ selectedFile.name }}</p>
+      <p class="text-xs text-[var(--text-secondary)] mt-1" *ngIf="selectedFile">{{ selectedFile.name }}</p>
     </div>
 
     <div class="flex gap-3 pt-2">

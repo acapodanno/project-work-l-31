@@ -21,5 +21,8 @@ public record TherapyRequest(
     LocalDate startDate,
 
     @NotNull(message = "La data di fine è obbligatoria")
-    LocalDate endDate
+    LocalDate endDate,
+
+    // Facoltativo: valorizzato quando la terapia viene prescritta durante una visita specifica.
+    Long appointmentId
 ) {}

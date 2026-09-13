@@ -1,12 +1,12 @@
 <div class="glass-card p-6 max-w-xl mx-auto space-y-5">
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+      <div class="w-12 h-12 rounded-xl bg-[var(--bg-subtle)] text-[var(--color-secondary-text)] flex items-center justify-center">
         <span class="material-symbols-outlined">person</span>
       </div>
       <div>
-        <h2 class="text-base font-bold text-slate-800">{{ currentPatient?.name || authService.getEmail() }}</h2>
-        <span class="text-xs text-slate-500">{{ currentPatient?.email || authService.getEmail() }}</span>
+        <h2 class="text-base font-bold text-[var(--text-primary)]">{{ currentPatient?.name || authService.getEmail() }}</h2>
+        <span class="text-xs text-[var(--text-secondary)]">{{ currentPatient?.email || authService.getEmail() }}</span>
       </div>
     </div>
     <button class="btn btn-secondary text-sm" (click)="openEditModal()">
@@ -17,12 +17,12 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" *ngIf="currentPatient">
     <div>
-      <span class="text-xs uppercase text-slate-400 font-semibold">Nome</span>
-      <p class="text-slate-700">{{ currentPatient.name }}</p>
+      <span class="text-xs uppercase text-[var(--text-muted)] font-semibold">Nome</span>
+      <p class="text-[var(--text-primary)]">{{ currentPatient.name }}</p>
     </div>
     <div>
-      <span class="text-xs uppercase text-slate-400 font-semibold">Telefono</span>
-      <p class="text-slate-700">{{ currentPatient.phone || '—' }}</p>
+      <span class="text-xs uppercase text-[var(--text-muted)] font-semibold">Telefono</span>
+      <p class="text-[var(--text-primary)]">{{ currentPatient.phone || '—' }}</p>
     </div>
   </div>
 

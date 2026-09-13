@@ -1,6 +1,6 @@
 <div class="glass-card p-8 max-w-md w-full mx-auto">
-  <h2 class="text-xl font-bold text-slate-800 mb-1">Crea un account</h2>
-  <p class="text-sm text-slate-500 mb-6">Registrati per prenotare le tue visite</p>
+  <h2 class="text-xl font-bold text-[var(--text-primary)] mb-1">Crea un account</h2>
+  <p class="text-sm text-[var(--text-secondary)] mb-6">Registrati per prenotare le tue visite</p>
 
   <app-alert type="error" [message]="registerError" class="block mb-4"></app-alert>
 
@@ -51,8 +51,8 @@
     </button>
   </form>
 
-  <p class="text-sm text-slate-500 text-center mt-6">
+  <p class="text-sm text-[var(--text-secondary)] text-center mt-6">
     Hai già un account?
-    <a class="text-blue-700 font-semibold cursor-pointer" (click)="goToLogin.emit()">Accedi</a>
+    <a class="text-[var(--color-secondary-text)] font-semibold cursor-pointer" (click)="goToLogin.emit()">Accedi</a>
   </p>
 </div>

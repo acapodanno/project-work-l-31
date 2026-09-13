@@ -1,0 +1,146 @@
+<div class="co-page">
+
+  <!-- HEADER -->
+  <div class="co-header">
+    <div>
+      <h1 class="co-title">I miei pazienti</h1>
+      <p class="co-subtitle">{{ appState.doctorPatients.length }} pazienti in carico — cerca per nome o email per trovare uno storico clinico.</p>
+    </div>
+  </div>
+
+  <!-- RICERCA -->
+  <div class="co-search" *ngIf="!selectedPatient">
+    <span class="material-symbols-outlined">search</span>
+    <input type="text" placeholder="Cerca per nome o email..." [(ngModel)]="searchTerm" name="patientSearch" />
+  </div>
+
+  <!-- GRIGLIA PAZIENTI -->
+  <div class="co-section" *ngIf="!selectedPatient">
+    <div class="co-card-grid" *ngIf="filteredPatients.length > 0">
+      <div class="co-person-card" *ngFor="let p of filteredPatients">
+        <div class="co-card-top">
+          <div class="co-avatar co-avatar-lg" [style.background]="avatarColor(p.name)">{{ initials(p.name) }}</div>
+        </div>
+        <h4 class="co-card-name">{{ p.name }}</h4>
+        <p class="co-card-meta">{{ p.email }}</p>
+        <p class="co-card-meta" *ngIf="p.phone">{{ p.phone }}</p>
+
+        <div class="co-card-actions">
+          <button class="co-btn-secondary" (click)="viewHistory(p.id!)">
+            <span class="material-symbols-outlined" style="font-size: 16px;">history</span>
+            Storico clinico
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="co-empty" *ngIf="filteredPatients.length === 0 && appState.doctorPatients.length > 0">
+      <span class="material-symbols-outlined">search_off</span>
+      <p>Nessun paziente corrisponde a "{{ searchTerm }}".</p>
+    </div>
+
+    <div class="co-empty" *ngIf="appState.doctorPatients.length === 0">
+      <span class="material-symbols-outlined">groups</span>
+      <p>Non hai ancora pazienti assegnati.</p>
+    </div>
+  </div>
+
+  <!-- DETTAGLIO PAZIENTE -->
+  <div class="co-section" *ngIf="selectedPatient as patient">
+    <div class="co-section-head">
+      <button class="co-btn-secondary" (click)="backToList()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
+        Torna all'elenco
+      </button>
+      <button class="co-btn-primary" (click)="openTherapyModal()">
+        <span class="material-symbols-outlined">medication</span>
+        Assegna terapia
+      </button>
+    </div>
+
+    <div class="co-patient-header">
+      <div class="co-avatar co-avatar-xl" [style.background]="avatarColor(patient.name)">{{ initials(patient.name) }}</div>
+      <div>
+        <h3 class="co-patient-name">{{ patient.name }}</h3>
+        <p class="co-card-meta">{{ patient.email }}<span *ngIf="patient.phone"> · {{ patient.phone }}</span></p>
+      </div>
+    </div>
+
+    <div class="co-form-alert success fade-in" *ngIf="therapySuccessMessage">
+      {{ therapySuccessMessage }}
+    </div>
+
+    <p style="font-size: 0.86rem; color: var(--co-text-secondary);" *ngIf="appState.loadingDoctorPatientHistory">Caricamento storico...</p>
+
+    <div class="grid sm:grid-cols-2 gap-6" *ngIf="!appState.loadingDoctorPatientHistory">
+      <div>
+        <h4 class="co-history-label">Appuntamenti precedenti</h4>
+        <div>
+          <div class="co-history-row flex justify-between items-center" *ngFor="let app of appState.doctorPatientHistoryAppointments">
+            <span>{{ app.appointmentDate | date:'dd/MM/yyyy' }} — {{ app.reason }}</span>
+            <span class="co-status-badge" [ngClass]="{
+              'scheduled': app.status === 'SCHEDULED',
+              'completed': app.status === 'COMPLETED',
+              'cancelled': app.status === 'CANCELLED'
+            }"><span class="co-status-dot"></span>{{ statusLabel(app.status) }}</span>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--co-text-secondary);" *ngIf="appState.doctorPatientHistoryAppointments.length === 0">Nessun appuntamento precedente.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="co-history-label">Terapie prescritte</h4>
+        <div>
+          <div class="co-history-row" *ngFor="let therapy of appState.doctorPatientHistoryTherapies">
+            <p style="font-weight: 700; color: var(--co-text);">{{ therapy.description }}</p>
+            <p style="font-size: 0.78rem; color: var(--co-text-secondary);">{{ therapy.startDate | date:'dd/MM/yyyy' }} - {{ therapy.endDate | date:'dd/MM/yyyy' }}</p>
+            <p style="font-size: 0.76rem; color: var(--co-text-muted); margin-top: 0.25rem;" *ngIf="therapy.appointmentReason; else noLink">
+              Da visita del {{ therapy.appointmentDate | date:'dd/MM/yyyy' }} — {{ therapy.appointmentReason }}
+            </p>
+            <ng-template #noLink>
+              <p style="font-size: 0.76rem; color: var(--co-text-muted); margin-top: 0.25rem;">Non collegata a una visita specifica</p>
+            </ng-template>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--co-text-secondary);" *ngIf="appState.doctorPatientHistoryTherapies.length === 0">Nessuna terapia prescritta.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE PRESCRIZIONE TERAPIA -->
+  <app-modal
+    title="Prescrivi terapia"
+    icon="medication"
+    [show]="showTherapyModal"
+    (close)="closeTherapyModal()">
+    <form (ngSubmit)="saveTherapy()" class="space-y-4" *ngIf="newTherapy.patientId">
+      <p class="text-sm text-[var(--text-secondary)]" *ngIf="selectedPatient">
+        Paziente: <span class="font-semibold text-[var(--text-primary)]">{{ selectedPatient.name }}</span>
+      </p>
+      <p class="text-xs text-[var(--text-secondary)]">Non collegata a una visita specifica.</p>
+
+      <div class="rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm font-medium fade-in" *ngIf="therapyError">
+        {{ therapyError }}
+      </div>
+
+      <div>
+        <label for="patTherapyDescription">Descrizione</label>
+        <textarea id="patTherapyDescription" name="patTherapyDescription" rows="3" [(ngModel)]="newTherapy.description" required></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="patTherapyStart">Data inizio</label>
+          <input id="patTherapyStart" type="date" name="patTherapyStart" [(ngModel)]="newTherapy.startDate" required />
+        </div>
+        <div>
+          <label for="patTherapyEnd">Data fine</label>
+          <input id="patTherapyEnd" type="date" name="patTherapyEnd" [(ngModel)]="newTherapy.endDate" required />
+        </div>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="button" class="btn btn-secondary flex-1" (click)="closeTherapyModal()">Annulla</button>
+        <button type="submit" class="btn btn-primary flex-1">Salva terapia</button>
+      </div>
+    </form>
+  </app-modal>
+</div>

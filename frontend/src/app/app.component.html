@@ -1,88 +1,98 @@
 <ng-container *ngIf="authService.isLoggedIn(); else guestView">
-  <div class="app-container">
-    <!-- TOP HEADER -->
-    <header class="top-header glass-panel">
-      <div class="logo-section">
-        <span class="material-symbols-outlined logo-icon animate-pulse">local_hospital</span>
-        <div class="logo-text">
-          <h1>HealthCare <span>Plus</span></h1>
-          <p>Clinica Polispecialistica</p>
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+      <div>
+        <div class="sidebar-brand">
+          <span class="material-symbols-outlined logo-icon animate-pulse">local_hospital</span>
+          <div class="logo-text">
+            <h1>HealthCare <span>Plus</span></h1>
+            <p>Clinica Polispecialistica</p>
+          </div>
         </div>
-      </div>
 
-      <div class="user-profile-header">
-        <div class="avatar">
-          <span class="material-symbols-outlined">person</span>
-        </div>
-        <div class="user-info">
-          <span class="user-name">{{ appState.currentPatient?.name || authService.getEmail() }}</span>
-          <span class="user-role badge" [class]="'badge-' + authService.getRole()?.toLowerCase()">
-            {{ authService.getRole() }}
-          </span>
-        </div>
-        <button class="btn btn-logout-icon" (click)="logout()" title="Disconnetti">
-          <span class="material-symbols-outlined">logout</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- MAIN WRAPPER -->
-    <div class="main-wrapper">
-      <!-- SIDEBAR -->
-      <aside class="sidebar glass-panel">
         <nav class="nav-menu">
           <a
             class="nav-item"
             routerLink="/dashboard"
-            routerLinkActive="active">
+            routerLinkActive="active"
+            title="Dashboard">
             <span class="material-symbols-outlined">dashboard</span>
-            <span>Dashboard</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+
+          <a
+            *ngIf="authService.getRole() === 'DOCTOR'"
+            class="nav-item"
+            routerLink="/patients"
+            routerLinkActive="active"
+            title="Pazienti">
+            <span class="material-symbols-outlined">groups</span>
+            <span class="nav-label">Pazienti</span>
           </a>
 
           <a
             *ngIf="authService.getRole() === 'PATIENT' || authService.getRole() === 'SUPPORT'"
             class="nav-item"
             routerLink="/booking"
-            routerLinkActive="active">
+            routerLinkActive="active"
+            title="Prenota Visita">
             <span class="material-symbols-outlined">calendar_month</span>
-            <span>Prenota Visita</span>
+            <span class="nav-label">Prenota Visita</span>
           </a>
 
           <a
             *ngIf="authService.getRole() === 'PATIENT'"
             class="nav-item"
             routerLink="/therapy"
-            routerLinkActive="active">
+            routerLinkActive="active"
+            title="Le Mie Terapie">
             <span class="material-symbols-outlined">medication</span>
-            <span>Le Mie Terapie</span>
-          </a>
-
-          <a
-            class="nav-item btn-ai"
-            routerLink="/assistant"
-            routerLinkActive="active">
-            <span class="material-symbols-outlined">chat_bubble</span>
-            <span>Assistente AI RAG</span>
+            <span class="nav-label">Le Mie Terapie</span>
           </a>
 
           <a
             class="nav-item"
             routerLink="/account"
-            routerLinkActive="active">
+            routerLinkActive="active"
+            title="Profilo">
             <span class="material-symbols-outlined">account_circle</span>
-            <span>Profilo</span>
+            <span class="nav-label">Profilo</span>
           </a>
         </nav>
+      </div>
 
-        <div class="sidebar-footer">
-          <div class="status-indicator">
-            <span class="dot active"></span>
-            <span>Autenticato</span>
-          </div>
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <span class="dot active"></span>
+          <span class="nav-label">Autenticato</span>
         </div>
-      </aside>
+      </div>
+    </aside>
 
-      <!-- CONTENT AREA -->
+    <!-- COLONNA PRINCIPALE (header + contenuto, attaccati alla sidebar) -->
+    <div class="shell-main">
+      <header class="top-header">
+        <button class="btn-icon-toggle" (click)="toggleSidebar()" title="{{ sidebarCollapsed ? 'Espandi menu' : 'Comprimi menu' }}">
+          <span class="material-symbols-outlined">{{ sidebarCollapsed ? 'menu_open' : 'menu' }}</span>
+        </button>
+
+        <div class="user-profile-header">
+          <div class="avatar">
+            <span class="material-symbols-outlined">person</span>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ appState.currentPatient?.name || appState.currentDoctor?.name || authService.getEmail() }}</span>
+            <span class="user-role badge" [class]="'badge-' + authService.getRole()?.toLowerCase()">
+              {{ authService.getRoleLabel() }}
+            </span>
+          </div>
+          <button class="btn btn-logout-icon" (click)="logout()" title="Disconnetti">
+            <span class="material-symbols-outlined">logout</span>
+          </button>
+        </div>
+      </header>
+
       <main class="content-area">
         <div class="tab-content fade-in">
           <router-outlet></router-outlet>

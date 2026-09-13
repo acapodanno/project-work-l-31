@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AppStateService } from '../../services/app-state.service';
+import { ToastService } from '../../services/toast.service';
 import { LoginComponent } from '../../components/login/login.component';
 import { ProfileComponent } from '../../components/profile/profile.component';
 import { DoctorProfileInfoComponent } from '../../components/profile/doctor-profile-info/doctor-profile-info.component';
@@ -38,9 +39,17 @@ export class AccountPageComponent {
   authService = inject(AuthService);
   appState = inject(AppStateService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   onLoginSuccess() {
     this.appState.loadAllData();
+
+    // Momento esplicito di conferma identità: in un contesto clinico con postazioni condivise
+    // tra turni, un badge piccolo in header non basta a far notare "sei entrato come qualcun altro".
+    this.toastService.showSuccess(
+      `Accesso effettuato come ${this.authService.getRoleLabel()} — ${this.authService.getEmail()}`
+    );
+
     this.router.navigateByUrl('/dashboard');
   }
 

@@ -1,23 +1,21 @@
 import { Injectable, inject } from '@angular/core';
-import { tap } from 'rxjs';
+import { tap, throwError } from 'rxjs';
 import { PatientService } from './patient.service';
 import { DoctorService } from './doctor.service';
 import { AppointmentService } from './appointment.service';
 import { TicketService } from './ticket.service';
-import { AgentService } from './agent.service';
+import { TherapyService } from './therapy.service';
 import { AuthService } from './auth.service';
 import { MedicalReportService } from './medical-report.service';
-import { Patient, Doctor, Appointment, Ticket, ChatMessage } from '../models/healthcare.models';
-
-const CHAT_HISTORY_STORAGE_KEY = 'healthcare.chatHistory';
+import { Patient, Doctor, Appointment, Ticket, Therapy } from '../models/healthcare.models';
 
 /**
  * Stato applicativo condiviso tra le pagine instradate dal Router (dashboard,
- * booking, assistant...). Prima della migrazione al routing, questi dati e la
+ * booking...). Prima della migrazione al routing, questi dati e la
  * logica di caricamento vivevano tutti dentro AppComponent e venivano passati
  * ai figli via @Input/@Output; ora ogni pagina instradata inietta questo
  * servizio direttamente, così i componenti "dumb" esistenti (DashboardComponent,
- * BookingComponent, AssistantComponent...) restano invariati.
+ * BookingComponent...) restano invariati.
  */
 @Injectable({ providedIn: 'root' })
 export class AppStateService {
@@ -25,8 +23,8 @@ export class AppStateService {
   private doctorService = inject(DoctorService);
   private appointmentService = inject(AppointmentService);
   private ticketService = inject(TicketService);
-  private agentService = inject(AgentService);
   private reportService = inject(MedicalReportService);
+  private therapyService = inject(TherapyService);
   private authService = inject(AuthService);
 
   currentPatient?: Patient;
@@ -35,17 +33,25 @@ export class AppStateService {
   appointments: Appointment[] = [];
   tickets: Ticket[] = [];
 
+  // --- Pazienti del medico, navigabili dalla sidebar ---
+  doctorPatients: Patient[] = [];
+  selectedDoctorPatientId: number | null = null;
+  doctorPatientHistoryAppointments: Appointment[] = [];
+  doctorPatientHistoryTherapies: Therapy[] = [];
+  loadingDoctorPatientHistory = false;
+
   bookingSuccess = false;
   bookingError = '';
-
-  chatMessages: ChatMessage[] = this.loadChatHistory();
-  chatLoading = false;
 
   reset() {
     this.appointments = [];
     this.tickets = [];
     this.currentPatient = undefined;
     this.currentDoctor = undefined;
+    this.doctorPatients = [];
+    this.selectedDoctorPatientId = null;
+    this.doctorPatientHistoryAppointments = [];
+    this.doctorPatientHistoryTherapies = [];
   }
 
   // --- Caricamento dati basato sul ruolo ---
@@ -64,7 +70,7 @@ export class AppStateService {
         this.loadDoctorDetails(profileId);
       }
       this.loadAllAppointments();
-      this.loadAllTickets();
+      this.loadDoctorPatients();
     } else if (role === 'SUPPORT') {
       this.loadAllAppointments();
       this.loadAllTickets();
@@ -120,6 +126,37 @@ export class AppStateService {
     });
   }
 
+  // --- Pazienti del medico e relativo storico clinico (selezione dalla sidebar) ---
+  loadDoctorPatients() {
+    this.patientService.getPatients().subscribe({
+      next: (data) => this.doctorPatients = data,
+      error: (err) => console.error('Errore nel caricamento dei pazienti:', err)
+    });
+  }
+
+  selectDoctorPatient(patientId: number) {
+    this.selectedDoctorPatientId = patientId;
+    this.loadingDoctorPatientHistory = true;
+
+    this.appointmentService.getAppointmentsByPatient(patientId).subscribe({
+      next: (apps) => {
+        this.doctorPatientHistoryAppointments = apps.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
+      },
+      error: (err) => console.error('Errore storico appuntamenti', err)
+    });
+
+    this.therapyService.getTherapiesByPatient(patientId).subscribe({
+      next: (therapies) => {
+        this.doctorPatientHistoryTherapies = therapies.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+        this.loadingDoctorPatientHistory = false;
+      },
+      error: (err) => {
+        console.error('Errore storico terapie', err);
+        this.loadingDoctorPatientHistory = false;
+      }
+    });
+  }
+
   // --- Prenotazione appuntamento ---
   bookAppointment(data: { doctorId: number, appointmentDate: string, reason: string, notes: string, file?: File }) {
     const profileId = this.authService.getProfileId();
@@ -167,6 +204,22 @@ export class AppStateService {
     return this.appointmentService.createAppointment(data);
   }
 
+  // --- Apertura di una segnalazione (Patient) ---
+  openTicket(data: { title: string, description: string }) {
+    const profileId = this.authService.getProfileId();
+    if (!profileId) {
+      return throwError(() => new Error('Nessun profilo paziente associato.'));
+    }
+
+    return this.ticketService.createTicket({
+      patientId: profileId,
+      title: data.title,
+      description: data.description
+    }).pipe(
+      tap(() => this.loadTicketsForPatient(profileId))
+    );
+  }
+
   private showBookingSuccess() {
     this.bookingSuccess = true;
     this.bookingError = '';
@@ -206,81 +259,4 @@ export class AppStateService {
     });
   }
 
-  // --- Invio messaggio in chat ---
-  sendMessage(messageText: string) {
-    if (!messageText.trim()) return;
-
-    this.chatMessages.push({
-      sender: 'user',
-      text: messageText,
-      timestamp: new Date()
-    });
-    this.persistChatHistory();
-    this.chatLoading = true;
-
-    const patientIdForChat = this.authService.getProfileId() || 1;
-
-    this.agentService.sendMessageToAgent(messageText, patientIdForChat).subscribe({
-      next: (res) => {
-        this.chatMessages.push({
-          sender: 'assistant',
-          text: res.response,
-          timestamp: new Date()
-        });
-        this.persistChatHistory();
-        this.chatLoading = false;
-
-        if (res.response.toLowerCase().includes('successo') || res.response.toLowerCase().includes('ticket') || res.response.toLowerCase().includes('registrato')) {
-          this.loadAllData();
-        }
-      },
-      error: (err) => {
-        console.error('Errore nella chat:', err);
-        this.chatMessages.push({
-          sender: 'assistant',
-          text: "Spiacente, non riesco a connettermi all'assistente virtuale. Verifica che il servizio agent sia attivo.",
-          timestamp: new Date()
-        });
-        this.persistChatHistory();
-        this.chatLoading = false;
-      }
-    });
-  }
-
-  clearChatHistory() {
-    this.chatMessages = [this.welcomeMessage()];
-    this.persistChatHistory();
-  }
-
-  private welcomeMessage(): ChatMessage {
-    return {
-      sender: 'assistant',
-      text: "Ciao! Sono l'assistente virtuale di HealthCare Plus. Come posso aiutarti oggi? Puoi chiedermi informazioni sulla clinica o chiedermi di aprire un ticket se riscontri un problema tecnico.",
-      timestamp: new Date()
-    };
-  }
-
-  private loadChatHistory(): ChatMessage[] {
-    try {
-      const raw = localStorage.getItem(CHAT_HISTORY_STORAGE_KEY);
-      if (!raw) {
-        return [this.welcomeMessage()];
-      }
-      const parsed = JSON.parse(raw) as ChatMessage[];
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        return [this.welcomeMessage()];
-      }
-      return parsed.map(m => ({ ...m, timestamp: new Date(m.timestamp) }));
-    } catch {
-      return [this.welcomeMessage()];
-    }
-  }
-
-  private persistChatHistory() {
-    try {
-      localStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(this.chatMessages));
-    } catch {
-      // localStorage non disponibile (es. modalità privata): la cronologia resta solo in memoria.
-    }
-  }
 }

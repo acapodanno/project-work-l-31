@@ -25,7 +25,6 @@ jobs:
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
-      agent: ${{ steps.filter.outputs.agent }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -36,8 +35,6 @@ jobs:
               - 'backend/**'
             frontend:
               - 'frontend/**'
-            agent:
-              - 'agent/**'
 
   # ═══════════════════════════════ BACKEND ════════════════════════════════════
   build-backend:
@@ -165,69 +162,3 @@ jobs:
           name: "Frontend v${{ steps.version.outputs.version }}"
           generate_release_notes: true
           files: release/frontend-dist.zip
-
-  # ═══════════════════════════════ AGENTE AI ══════════════════════════════════
-  build-agent:
-    name: "Agente AI — Build"
-    needs: changes
-    if: needs.changes.outputs.agent == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: agent/requirements.txt
-      - name: Installa dipendenze
-        working-directory: agent
-        run: pip install -r requirements.txt
-      - name: Pacchettizza agente (zip sorgenti + requirements)
-        run: zip -r agent-package.zip agent -x "agent/__pycache__/*" "agent/**/__pycache__/*" "agent/tests/*"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: agent-package
-          path: agent-package.zip
-          retention-days: 1
-
-  test-agent:
-    name: "Agente AI — Test"
-    needs: [changes, build-agent]
-    if: needs.changes.outputs.agent == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: agent/requirements.txt
-      - name: Installa dipendenze
-        working-directory: agent
-        run: pip install -r requirements.txt
-      - name: Esegui test (pytest, modalità offline)
-        working-directory: agent
-        env:
-          OPENAI_API_KEY: ""
-        run: pytest -v
-
-  release-agent:
-    name: "Agente AI — Release"
-    needs: [changes, test-agent]
-    if: needs.changes.outputs.agent == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Calcola numero di versione
-        id: version
-        run: echo "version=1.0.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-      - uses: actions/download-artifact@v4
-        with:
-          name: agent-package
-          path: release
-      - name: Crea tag e GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: agent-v${{ steps.version.outputs.version }}
-          name: "Agente AI v${{ steps.version.outputs.version }}"
-          generate_release_notes: true
-          files: release/agent-package.zip

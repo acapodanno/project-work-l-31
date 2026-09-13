@@ -1,0 +1,34 @@
+.modal-overlay {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.modal-panel {
+  /* I modali non sono ancorati a un trigger specifico: restano centrati, a differenza di un popover. */
+  transform-origin: center;
+  opacity: 1;
+  transform: scale(1);
+  /* Mai da scale(0): niente appare dal nulla nel mondo reale. */
+  transition: opacity 220ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)),
+              transform 220ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-panel {
+    transition-duration: 120ms;
+  }
+  .modal-panel {
+    transition-property: opacity;
+    transform: none;
+  }
+}

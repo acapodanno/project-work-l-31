@@ -1,30 +1,30 @@
 <div class="glass-card p-6 max-w-xl mx-auto space-y-5">
   <div class="flex items-center gap-4">
-    <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+    <div class="w-16 h-16 rounded-2xl bg-[var(--bg-subtle)] text-[var(--color-secondary-text)] flex items-center justify-center flex-shrink-0">
       <span class="material-symbols-outlined text-3xl">stethoscope</span>
     </div>
     <div>
-      <h2 class="text-lg font-bold text-slate-800">{{ selectedDoctor.name }}</h2>
-      <span class="text-sm text-blue-700 font-medium">{{ selectedDoctor.specialization }}</span>
+      <h2 class="text-lg font-bold text-[var(--text-primary)]">{{ selectedDoctor.name }}</h2>
+      <span class="text-sm text-[var(--color-secondary-text)] font-medium">{{ selectedDoctor.specialization }}</span>
     </div>
   </div>
 
-  <p class="text-sm text-slate-600 leading-relaxed" *ngIf="selectedDoctor.bio">
+  <p class="text-sm text-[var(--text-secondary)] leading-relaxed" *ngIf="selectedDoctor.bio">
     {{ selectedDoctor.bio }}
   </p>
 
   <div class="grid grid-cols-2 gap-4 text-sm">
     <div>
-      <span class="text-xs uppercase text-slate-400 font-semibold">Email</span>
-      <p class="text-slate-700">{{ selectedDoctor.email }}</p>
+      <span class="text-xs uppercase text-[var(--text-muted)] font-semibold">Email</span>
+      <p class="text-[var(--text-primary)]">{{ selectedDoctor.email }}</p>
     </div>
     <div *ngIf="selectedDoctor.experienceYears">
-      <span class="text-xs uppercase text-slate-400 font-semibold">Esperienza</span>
-      <p class="text-slate-700">{{ selectedDoctor.experienceYears }} anni</p>
+      <span class="text-xs uppercase text-[var(--text-muted)] font-semibold">Esperienza</span>
+      <p class="text-[var(--text-primary)]">{{ selectedDoctor.experienceYears }} anni</p>
     </div>
     <div class="col-span-2" *ngIf="selectedDoctor.workingHours">
-      <span class="text-xs uppercase text-slate-400 font-semibold">Orari</span>
-      <p class="text-slate-700">{{ selectedDoctor.workingHours }}</p>
+      <span class="text-xs uppercase text-[var(--text-muted)] font-semibold">Orari</span>
+      <p class="text-[var(--text-primary)]">{{ selectedDoctor.workingHours }}</p>
     </div>
   </div>
 

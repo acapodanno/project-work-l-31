@@ -23,6 +23,11 @@ public class Therapy {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
+    /** Facoltativo: la visita specifica durante cui è stata prescritta, se ce n'è una (non tutte le terapie nascono da un appuntamento). */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
+
     @Column(nullable = false, length = 1000)
     private String description;
 

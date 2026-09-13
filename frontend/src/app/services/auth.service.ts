@@ -74,6 +74,16 @@ export class AuthService {
     return localStorage.getItem('role');
   }
 
+  /** Etichetta in italiano del ruolo, per messaggi rivolti all'utente (badge, toast, errori). */
+  getRoleLabel(role: string | null = this.getRole()): string {
+    switch (role) {
+      case 'PATIENT': return 'Paziente';
+      case 'DOCTOR': return 'Medico';
+      case 'SUPPORT': return 'Supporto';
+      default: return role ?? '';
+    }
+  }
+
   getEmail(): string | null {
     return localStorage.getItem('email');
   }

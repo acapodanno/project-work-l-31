@@ -4,6 +4,7 @@ import com.example.healthcare.repository.AppointmentRepository;
 import com.example.healthcare.repository.DoctorRepository;
 import com.example.healthcare.repository.MedicalReportRepository;
 import com.example.healthcare.repository.PatientRepository;
+import com.example.healthcare.repository.SlotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +23,7 @@ public class OwnershipService {
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
     private final MedicalReportRepository medicalReportRepository;
+    private final SlotRepository slotRepository;
 
     public boolean isSelfPatient(Long patientId, Authentication authentication) {
         if (authentication == null || patientId == null) {
@@ -67,6 +69,16 @@ public class OwnershipService {
         }
         return appointmentRepository.findById(appointmentId)
                 .map(appt -> appt.getPatient().getEmail().equals(authentication.getName()))
+                .orElse(false);
+    }
+
+    /** Solo il medico proprietario dello slot può eliminarlo. */
+    public boolean isSelfSlotDoctor(Long slotId, Authentication authentication) {
+        if (authentication == null || slotId == null) {
+            return false;
+        }
+        return slotRepository.findById(slotId)
+                .map(slot -> slot.getDoctor().getEmail().equals(authentication.getName()))
                 .orElse(false);
     }
 

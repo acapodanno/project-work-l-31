@@ -5,15 +5,18 @@ import { Appointment, Ticket, Patient, MedicalReportResponse, Therapy } from '..
 import { MedicalReportService } from '../../../services/medical-report.service';
 import { TherapyService } from '../../../services/therapy.service';
 import { AuthService } from '../../../services/auth.service';
+import { AppStateService } from '../../../services/app-state.service';
 
 @Component({
   selector: 'app-dashboard-patient',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './dashboard-patient.component.html'
+  templateUrl: './dashboard-patient.component.html',
+  styleUrl: './dashboard-patient.component.css'
 })
 export class DashboardPatientComponent implements OnInit, OnChanges {
   public authService = inject(AuthService);
+  private appState = inject(AppStateService);
   private reportService = inject(MedicalReportService);
   private therapyService = inject(TherapyService);
 
@@ -21,7 +24,7 @@ export class DashboardPatientComponent implements OnInit, OnChanges {
   @Input() tickets: Ticket[] = [];
   @Input() currentPatient?: Patient;
 
-  @Output() navigate = new EventEmitter<'booking' | 'assistant'>();
+  @Output() navigate = new EventEmitter<'booking'>();
   @Output() viewReportEvent = new EventEmitter<MedicalReportResponse>();
   @Output() cancelAppointment = new EventEmitter<number>();
   @Output() editAppointment = new EventEmitter<{ id: number, appointmentDate: string, reason: string, notes: string }>();
@@ -32,6 +35,11 @@ export class DashboardPatientComponent implements OnInit, OnChanges {
   editForm = { appointmentDate: '', reason: '', notes: '' };
   therapies: Therapy[] = [];
   printDate = new Date();
+
+  showNewTicketForm = false;
+  newTicketForm = { title: '', description: '' };
+  newTicketError = '';
+  newTicketSuccess = false;
 
   ngOnInit() {
     this.loadReports();
@@ -65,6 +73,23 @@ export class DashboardPatientComponent implements OnInit, OnChanges {
     }
   }
 
+  /** Numeri "a colpo d'occhio": calcolati dai dati già caricati, nessuna chiamata aggiuntiva al backend. */
+  get scheduledCount(): number {
+    return this.appointments.filter(a => a.status === 'SCHEDULED').length;
+  }
+
+  get completedCount(): number {
+    return this.appointments.filter(a => a.status === 'COMPLETED').length;
+  }
+
+  get openTicketsCount(): number {
+    return this.tickets.filter(t => t.status !== 'CLOSED').length;
+  }
+
+  get reportsCount(): number {
+    return this.reportsMap.size;
+  }
+
   exportClinicalSummary() {
     this.printDate = new Date();
     setTimeout(() => window.print(), 0);
@@ -95,7 +120,7 @@ export class DashboardPatientComponent implements OnInit, OnChanges {
     }
   }
 
-  onNavigate(tab: 'booking' | 'assistant') {
+  onNavigate(tab: 'booking') {
     this.navigate.emit(tab);
   }
 
@@ -125,5 +150,31 @@ export class DashboardPatientComponent implements OnInit, OnChanges {
     }
     this.editAppointment.emit({ id: appointmentId, ...this.editForm });
     this.editingAppointmentId = null;
+  }
+
+  toggleNewTicketForm() {
+    this.showNewTicketForm = !this.showNewTicketForm;
+    this.newTicketForm = { title: '', description: '' };
+    this.newTicketError = '';
+  }
+
+  submitNewTicket() {
+    if (!this.newTicketForm.title || !this.newTicketForm.description) {
+      this.newTicketError = 'Compila titolo e descrizione della segnalazione.';
+      return;
+    }
+
+    this.appState.openTicket(this.newTicketForm).subscribe({
+      next: () => {
+        this.newTicketSuccess = true;
+        this.newTicketError = '';
+        this.showNewTicketForm = false;
+        setTimeout(() => this.newTicketSuccess = false, 4000);
+      },
+      error: (err) => {
+        console.error('Errore nella creazione della segnalazione:', err);
+        this.newTicketError = 'Si è verificato un errore. Riprova.';
+      }
+    });
   }
 }

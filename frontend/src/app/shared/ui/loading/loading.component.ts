@@ -28,10 +28,14 @@ import { LoadingService } from '../../../services/loading.service';
     .spinner {
       width: 48px;
       height: 48px;
-      border: 4px solid var(--border-color, #e2e8f0);
-      border-top-color: var(--color-primary, #1e3a8a);
+      border: 4px solid var(--border-color, #ccfbf1);
+      border-top-color: var(--color-primary, #0891b2);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      /* Uno spinner più veloce fa percepire il caricamento come più rapido, anche a parità di attesa reale. */
+      animation: spin 0.6s linear infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .spinner { animation-duration: 1.2s; }
     }
     @keyframes spin {
       to { transform: rotate(360deg); }

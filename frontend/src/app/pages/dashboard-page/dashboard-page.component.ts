@@ -41,7 +41,7 @@ export class DashboardPageComponent {
     });
   }
 
-  onNavigate(tab: 'booking' | 'assistant') {
+  onNavigate(tab: 'booking') {
     this.router.navigateByUrl(`/${tab}`);
   }
 }

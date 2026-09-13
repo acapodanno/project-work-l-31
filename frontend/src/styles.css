@@ -1,42 +1,76 @@
-/* Global Styles & Variables */
+/* Global Styles & Variables — Palette "Medical Clinic" (ui-ux-pro-max, stile Accessible & Ethical, risk:low),
+   indaco riservato al marchio dell'app (logo/wordmark), non parte del sistema di design proposto dallo skill. */
 :root {
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: 'Figtree', 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  /* Color Palette (Light Theme / Clinical) */
-  --bg-main: #f8fafc;
+  --bg-main: #f0fdfa;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #f8fafc;
-  --bg-subtle: #f1f5f9;
+  --bg-card-hover: #f5fffd;
+  --bg-subtle: #e8f1f6;
 
-  --border-color: #e2e8f0;
-  --border-color-strong: #cbd5e1;
-  --border-color-focus: #1e3a8a;
+  --border-color: #ccfbf1;
+  --border-color-strong: #a7ded0;
 
-  --text-primary: #0f172a;
+  /* Foreground/Muted Foreground della palette "Medical Clinic" — testo con una punta teal invece del grigio neutro precedente. */
+  --text-primary: #134e4a;
   --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-muted: #64748b;
 
-  --color-primary: #1e3a8a; /* Navy Blue */
-  --color-primary-hover: #1e40af;
-  --color-secondary: #2563eb; /* Bright Blue */
-  --color-accent: #10b981; /* Sage / Emerald Green */
-  --color-danger: #ef4444; /* Red */
-  --color-danger-hover: #dc2626;
-  --color-warning: #f59e0b; /* Amber */
+  /* Secondary della palette "Medical Clinic": ciano chiaro. Sostituisce l'indaco (non era nella palette dello
+     skill) come colore di identità/wayfinding — logo, wordmark, avatar, stato attivo in sidebar, badge di ruolo
+     Patient. Resta distinto dal ciano primario delle azioni per non appiattire tutta la UI su un solo colore,
+     ma resta dentro la stessa palette "Medical Clinic", non un'aggiunta arbitraria. */
+  --color-secondary: #22d3ee;
+  --color-secondary-hover: #06b6d4;
+  --color-on-secondary: #0f172a;
+  /* #06b6d4 misura solo ~2.4:1 su bianco: troppo chiaro anche per la soglia 3:1 delle icone non testuali.
+     Usare questa variante, non --color-secondary-hover, ogni volta che il ciano è testo o icona su sfondo chiaro. */
+  --color-secondary-text: #155e75; /* 7.3:1 su bianco */
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* Primary della palette "Medical Clinic": teal medico. Il testo sopra questo colore deve essere scuro, non
+     bianco — #0891B2 misura solo ~3.7:1 con testo bianco (sotto AA), ~5.7:1 con testo nero (--color-on-primary). */
+  --color-primary: #0891b2;
+  --color-primary-hover: #0e7490;
+  --color-on-primary: #000000;
+
+  /* Accent della palette "Medical Clinic": verde salute. Come per il primario, #16A34A misura solo ~3.3:1 su
+     bianco come testo (sotto AA): --color-accent-text è la variante scurita per quando il verde è testo. */
+  --color-accent: #16a34a;
+  --color-accent-text: #0e7a3a; /* 5.4:1 su bianco */
+
+  /* Corallo — azioni reversibili: annulla appuntamento, rimuovi slot. La palette "Medical Clinic" non distingue
+     due livelli di danno: questa distinzione resta un'aggiunta di questo progetto sopra il rosso "Destructive". */
+  --color-danger: #c93f58;
+  --color-danger-hover: #a8324a;
+  /* Destructive della palette "Medical Clinic" — riservato ad azioni davvero irreversibili sui dati clinici.
+     Non ancora usato: nessuna azione del prodotto lo richiede oggi (annullare una visita e rimuovere uno slot
+     restano nel dominio "corallo", recuperabili). */
+  --color-critical: #dc2626;
+  --color-critical-hover: #b91c1c;
+
+  /* Ambra — non presente nella palette "Medical Clinic" (nessun token "warning" dedicato): mantenuta invariata,
+     era già conforme (5.7:1). */
+  --color-warning: #b5760f;
+  --color-warning-text: #8f5c0c;
+
+  --radius-sm: 13px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   --radius-pill: 9999px;
 
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 8px 20px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12);
+  --shadow-xs: 0 1px 2px rgba(34, 31, 51, 0.04);
+  --shadow-sm: 0 1px 3px rgba(34, 31, 51, 0.06), 0 1px 2px rgba(34, 31, 51, 0.04);
+  --shadow-md: 0 8px 20px rgba(34, 31, 51, 0.08);
+  --shadow-lg: 0 16px 40px rgba(34, 31, 51, 0.12);
 
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Curve dedicate per il movimento (press, hover-lift, ingresso/uscita): le easing native del browser
+     sono troppo deboli per sentirsi intenzionali. Usare per transform, non per hover di colore/sfondo. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 * {
@@ -46,7 +80,7 @@
 }
 
 *:focus-visible {
-  outline: 2px solid var(--color-secondary);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -56,9 +90,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-main);
   background-image:
-    radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(37, 99, 235, 0.04) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(34, 211, 238, 0.06) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(22, 163, 74, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(8, 145, 178, 0.05) 0px, transparent 50%);
   background-attachment: fixed;
   color: var(--text-primary);
   min-height: 100vh;
@@ -87,12 +121,12 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
   transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .glass-card:hover {
-  border-color: rgba(30, 58, 138, 0.25);
+  border-color: rgba(8, 145, 178, 0.25);
   box-shadow: var(--shadow-md);
 }
 
@@ -113,13 +147,13 @@ body {
 /* Forms & Inputs */
 input, select, textarea {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  border: 1.5px solid transparent;
   border-radius: var(--radius-sm);
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   outline: none;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
@@ -129,14 +163,16 @@ input:hover, select:hover, textarea:hover {
 }
 
 input:focus, select:focus, textarea:focus {
-  border-color: var(--color-secondary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.14);
 }
 
 input:disabled, select:disabled, textarea:disabled {
   background: var(--bg-subtle);
   color: var(--text-muted);
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
 input::placeholder, textarea::placeholder {
@@ -145,16 +181,25 @@ input::placeholder, textarea::placeholder {
 
 select {
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b6680'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0l-4.25-4.65a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 18px;
+  padding-right: 2.5rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 5rem;
 }
 
 label {
   display: block;
   margin-bottom: 0.4rem;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 /* Buttons */
@@ -170,7 +215,9 @@ label {
   font-family: inherit;
   cursor: pointer;
   border: none;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+  /* transform ha una curva propria: --transition-fast usa un "ease" generico, troppo debole per far
+     sentire intenzionale il rialzo al passaggio e la pressione al click. */
+  transition: transform 160ms var(--ease-out), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
 }
 
 .btn:active {
@@ -184,14 +231,14 @@ label {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  color: white;
-  box-shadow: 0 4px 14px rgba(30, 58, 138, 0.2);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: 0 8px 20px rgba(8, 145, 178, 0.28);
 }
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
-  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
+  background: var(--color-primary-hover);
+  box-shadow: 0 10px 24px rgba(8, 145, 178, 0.34);
 }
 
 .btn-secondary {
@@ -204,14 +251,27 @@ label {
   border-color: var(--border-color-strong);
 }
 
+/* Azione distruttiva ma reversibile: annulla appuntamento, rimuovi slot. */
 .btn-danger {
   background: var(--color-danger);
   color: white;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 14px rgba(201, 63, 88, 0.2);
 }
 .btn-danger:hover:not(:disabled) {
   background: var(--color-danger-hover);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.28);
+  box-shadow: 0 6px 20px rgba(201, 63, 88, 0.28);
+}
+
+/* Azione irreversibile sui dati clinici. Non ancora usata da nessun bottone del prodotto: pronta per quando servirà
+   davvero (es. eliminare una cartella), per non annacquare il segnale del rosso su azioni che sono solo "reversibili". */
+.btn-critical {
+  background: var(--color-critical);
+  color: white;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.22);
+}
+.btn-critical:hover:not(:disabled) {
+  background: var(--color-critical-hover);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
 }
 
 /* Typography & Badges */
@@ -232,46 +292,61 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
 }
 
+/* Stato "Programmato": è un'informazione operativa, non un'identità di ruolo — segue il blu delle azioni, non l'indaco di marca. */
 .badge-scheduled {
-  background: rgba(37, 99, 235, 0.1);
-  color: #1d4ed8;
-  border: 1px solid rgba(37, 99, 235, 0.2);
+  background: rgba(8, 145, 178, 0.1);
+  color: var(--color-primary-hover);
+  border: 1px solid rgba(8, 145, 178, 0.2);
 }
 
 .badge-completed {
-  background: rgba(16, 185, 129, 0.1);
-  color: #047857;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(30, 156, 121, 0.1);
+  color: var(--color-accent-text);
+  border: 1px solid rgba(30, 156, 121, 0.2);
 }
 
 .badge-cancelled {
-  background: rgba(239, 68, 68, 0.1);
-  color: #b91c1c;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(201, 63, 88, 0.1);
+  color: var(--color-danger);
+  border: 1px solid rgba(201, 63, 88, 0.2);
 }
 
 .badge-open {
-  background: rgba(245, 158, 11, 0.1);
-  color: #b45309;
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(181, 118, 15, 0.1);
+  color: var(--color-warning-text);
+  border: 1px solid rgba(181, 118, 15, 0.2);
 }
 
+.badge-scheduled::before,
+.badge-completed::before,
+.badge-cancelled::before,
+.badge-open::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Identità di ruolo, non stato operativo: resta sul ciano secondario di identità (a differenza di .badge-scheduled,
+   che usa il ciano primario delle azioni). */
 .badge-patient {
-  background: rgba(37, 99, 235, 0.1);
-  color: #1d4ed8;
-  border: 1px solid rgba(37, 99, 235, 0.2);
+  background: rgba(34, 211, 238, 0.15);
+  color: var(--color-secondary-text);
+  border: 1px solid rgba(34, 211, 238, 0.3);
 }
 
 .badge-doctor {
-  background: rgba(16, 185, 129, 0.1);
-  color: #047857;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(30, 156, 121, 0.1);
+  color: var(--color-accent-text);
+  border: 1px solid rgba(30, 156, 121, 0.2);
 }
 
 .badge-support {
-  background: rgba(245, 158, 11, 0.1);
-  color: #b45309;
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(181, 118, 15, 0.1);
+  color: var(--color-warning-text);
+  border: 1px solid rgba(181, 118, 15, 0.2);
 }
 
 /* Esportazione PDF via stampa del browser: .print-only è nascosto durante la
@@ -286,6 +361,7 @@ h1, h2, h3, h4 {
   border-collapse: collapse;
   margin-bottom: 1.5rem;
   font-size: 0.85rem;
+  font-variant-numeric: tabular-nums; /* date e importi in colonna restano allineati, non "ballerini" tra una riga e l'altra */
 }
 
 .print-only th,
@@ -317,13 +393,206 @@ h1, h2, h3, h4 {
   }
 
   .content-area,
-  .main-wrapper,
-  .app-container {
+  .shell-main,
+  .app-shell {
     padding: 0 !important;
     margin: 0 !important;
     box-shadow: none !important;
     background: #fff !important;
   }
+}
+
+/* Chip icona condiviso per i titoli di sezione (dashboard, terapie, profilo) */
+.icon-chip {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-chip .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.icon-chip.mint {
+  background: rgba(30, 156, 121, 0.12);
+  color: var(--color-accent-text);
+}
+
+.icon-chip.amber {
+  background: rgba(181, 118, 15, 0.12);
+  color: var(--color-warning-text);
+}
+
+/* Riga di lista condivisa (appuntamenti, pazienti, ticket...) */
+.list-row {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  /* "transform" era assente dalla lista: il rialzo al passaggio del mouse scattava di colpo mentre
+     sfondo/ombra sfumavano — ora si muovono insieme. */
+  transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast),
+              transform 200ms var(--ease-in-out);
+}
+
+.list-row:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-color-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.list-row-selected {
+  border-color: var(--color-primary);
+  background: var(--bg-subtle);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.list-row-selected:hover {
+  border-color: var(--color-primary);
+}
+
+.list-row-sm {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+}
+
+/* Filtri di stato a chip (code appuntamenti/ticket) */
+.filter-bar {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast),
+              transform 100ms var(--ease-out);
+}
+
+.filter-chip:hover {
+  border-color: var(--border-color-strong);
+  color: var(--text-primary);
+}
+
+.filter-chip:active {
+  transform: scale(0.96);
+}
+
+.filter-chip.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.filter-chip .count {
+  font-size: 0.68rem;
+  opacity: 0.8;
+}
+
+/* Slot orari (creazione medico, selezione paziente in prenotazione) */
+.slot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.7rem 0.45rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(8, 145, 178, 0.3);
+  background: var(--bg-subtle);
+  color: var(--color-primary-hover);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums; /* gli orari (09:00 - 09:30) restano allineati invece di "ballare" tra un chip e l'altro */
+  cursor: default;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast),
+              color var(--transition-fast), transform 100ms var(--ease-out);
+}
+
+.slot-chip.selectable:active {
+  transform: scale(0.96);
+}
+
+.slot-chip.booked {
+  border-color: var(--border-color);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.slot-chip.selectable {
+  cursor: pointer;
+}
+
+.slot-chip.selectable:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.slot-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.slot-chip.selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.slot-chip-status {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.slot-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Area di tocco >=24x24 CSS px (WCAG 2.2 AA target size) — l'icona resta piccola (14px,
+     sotto), solo il rettangolo cliccabile si allarga. */
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast),
+              transform 100ms var(--ease-out);
+}
+
+.slot-chip-remove:hover {
+  opacity: 1;
+  background: rgba(201, 63, 88, 0.15);
+  color: var(--color-danger);
+}
+
+.slot-chip-remove:active {
+  transform: scale(0.88);
+}
+
+.slot-chip-remove .material-symbols-outlined {
+  font-size: 14px;
 }
 
 /* Empty state condiviso (elenchi vuoti in dashboard, terapie, ecc.) */
@@ -361,4 +630,16 @@ h1, h2, h3, h4 {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: .5; }
+}
+
+/* Il movimento (non il colore/opacità) è ciò che può causare disagio: si rimuove solo quello. */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; }
+  .btn:active,
+  .list-row:hover,
+  .filter-chip:active,
+  .slot-chip.selectable:active,
+  .slot-chip-remove:active {
+    transform: none;
+  }
 }

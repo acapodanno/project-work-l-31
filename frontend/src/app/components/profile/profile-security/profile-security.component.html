@@ -1,18 +1,18 @@
 <div class="glass-card p-6 max-w-xl mx-auto space-y-4">
-  <h2 class="text-base font-bold text-slate-800 mb-2">Sicurezza account</h2>
+  <h2 class="text-base font-bold text-[var(--text-primary)] mb-2">Sicurezza account</h2>
 
-  <div class="flex items-center justify-between p-4 rounded-xl border border-slate-200">
+  <div class="flex items-center justify-between p-4 list-row">
     <div>
-      <h3 class="text-sm font-semibold text-slate-800">Password</h3>
-      <p class="text-xs text-slate-500">Aggiorna periodicamente la tua password</p>
+      <h3 class="text-sm font-semibold text-[var(--text-primary)]">Password</h3>
+      <p class="text-xs text-[var(--text-secondary)]">Aggiorna periodicamente la tua password</p>
     </div>
     <button class="btn btn-secondary text-sm" (click)="openPasswordModal()">Cambia password</button>
   </div>
 
-  <div class="flex items-center justify-between p-4 rounded-xl border border-slate-200">
+  <div class="flex items-center justify-between p-4 list-row">
     <div>
-      <h3 class="text-sm font-semibold text-slate-800">Autenticazione a due fattori</h3>
-      <p class="text-xs text-slate-500">
+      <h3 class="text-sm font-semibold text-[var(--text-primary)]">Autenticazione a due fattori</h3>
+      <p class="text-xs text-[var(--text-secondary)]">
         {{ is2faEnabled ? 'Attiva sul tuo account' : 'Aggiungi un livello extra di sicurezza' }}
       </p>
     </div>
@@ -21,11 +21,11 @@
     </button>
   </div>
 
-  <div class="rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-3 text-sm font-medium" *ngIf="twoFaSuccess">
+  <div class="rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-3 text-sm font-medium fade-in" *ngIf="twoFaSuccess">
     Autenticazione a due fattori attivata con successo!
   </div>
 
-  <button class="btn btn-danger w-full mt-6" (click)="onLogout()">
+  <button class="btn btn-secondary w-full mt-6" (click)="onLogout()">
     <span class="material-symbols-outlined text-lg leading-none">logout</span>
     Disconnetti
   </button>
@@ -36,7 +36,7 @@
     icon="lock"
     [show]="showPasswordModal"
     (close)="closePasswordModal()">
-    <div class="rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-3 text-sm font-medium mb-4" *ngIf="passwordSuccess">
+    <div class="rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-3 text-sm font-medium mb-4 fade-in" *ngIf="passwordSuccess">
       Password aggiornata con successo!
     </div>
     <form (ngSubmit)="onChangePassword()" class="space-y-4" *ngIf="!passwordSuccess">
@@ -62,8 +62,8 @@
     [show]="show2faModal"
     (close)="close2faModal()">
     <div class="space-y-4 text-center">
-      <img [src]="qrCodeUrl" alt="QR Code 2FA" class="mx-auto rounded-xl border border-slate-200" *ngIf="qrCodeUrl" />
-      <p class="text-sm text-slate-500">Scansiona il QR code con la tua app di autenticazione, poi inserisci il codice generato.</p>
+      <img [src]="qrCodeUrl" alt="QR Code 2FA" class="mx-auto list-row" *ngIf="qrCodeUrl" />
+      <p class="text-sm text-[var(--text-secondary)]">Scansiona il QR code con la tua app di autenticazione, poi inserisci il codice generato.</p>
       <div class="text-left">
         <label for="twoFaCodeConfirm">Codice OTP</label>
         <input id="twoFaCodeConfirm" type="text" name="twoFaCodeConfirm" inputmode="numeric" maxlength="6" [(ngModel)]="twoFaCode" />

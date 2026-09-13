@@ -1,4 +1,4 @@
-# Esegue i test + code coverage dei tre servizi in container, senza avviare
+# Esegue i test + code coverage dei due servizi in container, senza avviare
 # nulla in ascolto (i target `test` terminano dopo aver eseguito la suite).
 #
 # Uso:
@@ -12,8 +12,6 @@
 #       --output type=local,dest=./coverage/backend  backend/
 #   DOCKER_BUILDKIT=1 docker build --target test \
 #       --output type=local,dest=./coverage/frontend frontend/
-#   DOCKER_BUILDKIT=1 docker build --target test \
-#       --output type=local,dest=./coverage/agent    agent/
 
 services:
   backend-test:
@@ -24,9 +22,4 @@ services:
   frontend-test:
     build:
       context: ./frontend
-      target: test
-
-  agent-test:
-    build:
-      context: ./agent
       target: test

@@ -31,11 +31,8 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getTicketsByPatientId(patientId));
     }
 
-    // Nessuna restrizione di ruolo: questo endpoint è chiamato sia dal frontend
-    // (paziente autenticato) sia dal tool create_ticket_tool dell'agente AI, che
-    // effettua una chiamata server-to-server senza JWT (non ha un'identità utente
-    // delegata). L'ownership del ticket è comunque garantita dal patientId nel payload.
     @PostMapping
+    @PreAuthorize("hasRole('PATIENT') and @ownership.isSelfPatient(#ticketDTO.patientId(), authentication)")
     public ResponseEntity<TicketDTO> createTicket(@Valid @RequestBody TicketDTO ticketDTO) {
         return new ResponseEntity<>(ticketService.createTicket(ticketDTO), HttpStatus.CREATED);
     }

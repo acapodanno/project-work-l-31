@@ -45,7 +45,7 @@ class TherapyControllerTest {
 
     @Test
     void createTherapy_Success() throws Exception {
-        TherapyRequest req = new TherapyRequest(1L, 2L, "Fisioterapia", LocalDate.now(), LocalDate.now().plusDays(10));
+        TherapyRequest req = new TherapyRequest(1L, 2L, "Fisioterapia", LocalDate.now(), LocalDate.now().plusDays(10), null);
         TherapyResponse response = TherapyResponse.builder().id(1L).description("Fisioterapia").build();
 
         when(therapyService.createTherapy(any(TherapyRequest.class))).thenReturn(response);

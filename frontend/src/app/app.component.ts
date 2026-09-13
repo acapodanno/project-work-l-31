@@ -25,10 +25,18 @@ export class AppComponent implements OnInit {
   public appState = inject(AppStateService);
   private router = inject(Router);
 
+  sidebarCollapsed = false;
+
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.appState.loadAllData();
     }
+    this.sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+  }
+
+  toggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+    localStorage.setItem('sidebarCollapsed', String(this.sidebarCollapsed));
   }
 
   logout() {

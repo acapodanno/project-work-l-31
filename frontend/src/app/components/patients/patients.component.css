@@ -1,0 +1,128 @@
+/* Stessa direzione visiva della Dashboard Doctor (ispirata a CareOps, dribbble.com/shots/27313885) — pagina
+   dedicata "Pazienti", non annidata nel componente dashboard. */
+:host {
+  --co-brand: #7c6fe0;
+  --co-brand-tint: #efedfd;
+  --co-ink: #14151a;
+  --co-ink-hover: #2a2c35;
+  --co-bg: #f7f7fb;
+  --co-card: #ffffff;
+  --co-border: #ececf3;
+  --co-text: #14151a;
+  --co-text-secondary: #6b6f7d;
+  --co-text-muted: #9497a3;
+  --co-green: #16a34a;
+  --co-green-tint: #e8f8ee;
+  --co-amber: #d97706;
+  --co-amber-tint: #fef3e2;
+  --co-red: #dc2626;
+  --co-red-tint: #fdeaea;
+  --co-blue: #2563eb;
+  --co-blue-tint: #eaf1fe;
+  --co-radius-sm: 10px;
+  --co-radius-md: 14px;
+  --co-radius-lg: 20px;
+  --co-shadow: 0 1px 2px rgba(20, 21, 26, 0.04), 0 8px 24px rgba(20, 21, 26, 0.06);
+
+  display: block;
+  background: var(--co-bg);
+  margin: -1.75rem -2rem;
+  padding: 1.75rem 2rem;
+  min-height: 100%;
+  font-family: var(--font-sans);
+  color: var(--co-text);
+}
+
+.co-page { display: flex; flex-direction: column; gap: 1.75rem; }
+
+.co-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.co-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 0.25rem; color: var(--co-text); }
+.co-subtitle { font-size: 0.9rem; color: var(--co-text-secondary); margin: 0; }
+
+.co-btn-primary {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--co-ink); color: #fff; border: none;
+  padding: 0.65rem 1.2rem; border-radius: 999px;
+  font-weight: 700; font-size: 0.86rem; font-family: inherit; cursor: pointer;
+  transition: background 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.co-btn-primary:hover { background: var(--co-ink-hover); }
+.co-btn-primary:active { transform: scale(0.97); }
+.co-btn-primary .material-symbols-outlined { font-size: 18px; }
+
+.co-btn-secondary {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: #fff; color: var(--co-text); border: 1px solid var(--co-border);
+  padding: 0.55rem 1rem; border-radius: 999px;
+  font-weight: 600; font-size: 0.82rem; font-family: inherit; cursor: pointer;
+  transition: background 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.co-btn-secondary:hover { background: var(--co-bg); }
+.co-btn-secondary:active { transform: scale(0.97); }
+
+/* ---------- search ---------- */
+.co-search {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--co-card); border: 1px solid var(--co-border); border-radius: var(--co-radius-md);
+  padding: 0.75rem 1rem; max-width: 420px; box-shadow: var(--co-shadow);
+}
+.co-search .material-symbols-outlined { color: var(--co-text-muted); font-size: 20px; }
+.co-search input { flex: 1; border: none; outline: none; font-size: 0.9rem; font-family: inherit; color: var(--co-text); background: transparent; }
+.co-search input::placeholder { color: var(--co-text-muted); }
+
+/* ---------- section ---------- */
+.co-section {
+  background: var(--co-card); border: 1px solid var(--co-border); border-radius: var(--co-radius-lg);
+  box-shadow: var(--co-shadow); padding: 1.5rem;
+}
+.co-section-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+
+/* ---------- person card grid ---------- */
+.co-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+.co-person-card {
+  border: 1px solid var(--co-border); border-radius: var(--co-radius-md); padding: 1.1rem;
+  transition: box-shadow 200ms ease, transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)), border-color 200ms ease;
+}
+.co-person-card:hover { box-shadow: var(--co-shadow); transform: translateY(-2px); border-color: color-mix(in srgb, var(--co-brand) 25%, var(--co-border)); }
+
+.co-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.7rem; }
+.co-avatar {
+  width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+}
+.co-avatar-lg { width: 48px; height: 48px; font-size: 0.95rem; }
+.co-avatar-xl { width: 64px; height: 64px; font-size: 1.3rem; }
+
+.co-status-badge {
+  display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.68rem; font-weight: 700;
+  padding: 0.25rem 0.6rem; border-radius: 999px; white-space: nowrap;
+}
+.co-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.co-status-badge.scheduled { background: var(--co-blue-tint); color: var(--co-blue); }
+.co-status-badge.completed { background: var(--co-green-tint); color: var(--co-green); }
+.co-status-badge.cancelled { background: var(--co-red-tint); color: var(--co-red); }
+
+.co-card-name { font-size: 0.94rem; font-weight: 700; margin: 0 0 0.15rem; }
+.co-card-meta { font-size: 0.78rem; color: var(--co-text-secondary); margin: 0; }
+
+.co-card-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; padding-top: 0.75rem; margin-top: 0.75rem; border-top: 1px dashed var(--co-border); }
+
+/* ---------- patient detail header ---------- */
+.co-patient-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--co-border); }
+.co-patient-name { font-size: 1.15rem; font-weight: 800; margin: 0 0 0.2rem; }
+
+/* ---------- form alert ---------- */
+.co-form-alert { border-radius: var(--co-radius-sm); padding: 0.7rem 0.9rem; font-size: 0.82rem; font-weight: 600; margin-bottom: 1rem; }
+.co-form-alert.success { background: var(--co-green-tint); color: var(--co-green); }
+
+/* ---------- history ---------- */
+.co-history-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--co-text-muted); margin-bottom: 0.6rem; }
+.co-history-row { padding: 0.65rem 0.85rem; border: 1px solid var(--co-border); border-radius: var(--co-radius-sm); background: var(--co-bg); font-size: 0.85rem; margin-bottom: 0.5rem; }
+
+/* ---------- empty state ---------- */
+.co-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 2.5rem 1rem; text-align: center; color: var(--co-text-secondary); font-size: 0.88rem; }
+.co-empty .material-symbols-outlined { font-size: 2.1rem; color: var(--co-text-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .co-person-card:hover { transform: none; }
+}

@@ -61,12 +61,11 @@ Per ottimizzare lo spazio del repository e migliorarne le performance, sono stat
 
 ## Containerizzazione (Docker)
 
-Ogni modulo ha un proprio `Dockerfile` multi-stage, con uno stage `test` dedicato al calcolo del code coverage (JaCoCo per il backend, Karma/Istanbul per il frontend, pytest-cov per l'agente) separato dallo stage `runtime` finale:
+Ogni modulo ha un proprio `Dockerfile` multi-stage, con uno stage `test` dedicato al calcolo del code coverage (JaCoCo per il backend, Karma/Istanbul per il frontend) separato dallo stage `runtime` finale:
 
 ```text
 backend/Dockerfile    # deps -> test (JaCoCo) -> build -> runtime (JRE Alpine, porta 8080)
 frontend/Dockerfile   # deps -> test (Karma headless + coverage) -> build -> runtime (Nginx, porta 80)
-agent/Dockerfile      # deps -> test (pytest-cov) -> runtime (porta 5000)
 ```
 
-`docker-compose.yml` orchestra i tre servizi runtime con healthcheck e variabili d'ambiente per la comunicazione inter-container (es. l'agente raggiunge il backend come `http://backend:8080/api`, non `localhost`, perché sono container distinti sulla stessa rete Docker). `docker-compose.test.yml` esegue invece solo gli stage `test`. Il vecchio `Dockerfile` combinato in root è mantenuto solo per compatibilità, con un commento che rimanda ai tre file dedicati.
+`docker-compose.yml` orchestra i due servizi runtime con healthcheck e variabili d'ambiente per la comunicazione inter-container. `docker-compose.test.yml` esegue invece solo gli stage `test`. Il vecchio `Dockerfile` combinato in root è mantenuto solo per compatibilità, con un commento che rimanda ai due file dedicati.

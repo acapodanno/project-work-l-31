@@ -56,6 +56,47 @@ describe('ToastService', () => {
     sub.unsubscribe();
   }));
 
+  it('should show warning toast', () => {
+    service.showWarning('Warning msg');
+    service.toasts$.subscribe(toasts => {
+      expect(toasts.length).toBe(1);
+      expect(toasts[0].message).toBe('Warning msg');
+      expect(toasts[0].type).toBe('warning');
+    });
+  });
+
+  it('should NOT auto remove an error toast after 5000ms — it must persist until dismissed', fakeAsync(() => {
+    service.showError('Persistent error');
+    let toastCount = 0;
+
+    const sub = service.toasts$.subscribe(toasts => {
+      toastCount = toasts.length;
+    });
+
+    expect(toastCount).toBe(1);
+
+    tick(5000);
+
+    expect(toastCount).toBe(1);
+    sub.unsubscribe();
+  }));
+
+  it('should NOT auto remove a warning toast after 5000ms — it must persist until dismissed', fakeAsync(() => {
+    service.showWarning('Persistent warning');
+    let toastCount = 0;
+
+    const sub = service.toasts$.subscribe(toasts => {
+      toastCount = toasts.length;
+    });
+
+    expect(toastCount).toBe(1);
+
+    tick(5000);
+
+    expect(toastCount).toBe(1);
+    sub.unsubscribe();
+  }));
+
   it('should remove toast manually', () => {
     service.showInfo('Manual remove');
     let toastId: number = -1;

@@ -88,6 +88,13 @@ Thumbs.db
 *.db
 .env
 
+# Python (l'agente FastAPI è stato rimosso, ma questa regola evita che un venv o una
+# cache __pycache__ locale finiscano di nuovo per errore nel tracking di git)
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
 # Other heavy files
 *.mp4
 *.pdf

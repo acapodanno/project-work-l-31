@@ -123,7 +123,60 @@ sequenceDiagram
     F-->>P: Mostra Messaggio di Successo
 ```
 
-## 2.3 C4 Model (Context Diagram)
+## 2.3 UML Sequence Diagram (Apertura di un Ticket)
+Il paziente apre una segnalazione tecnica dalla propria dashboard; il backend verifica che l'ID paziente indicato nella richiesta corrisponda all'utente autenticato (`@ownership.isSelfPatient`) prima di salvare il ticket:
+
+```mermaid
+sequenceDiagram
+    actor P as Paziente
+    participant F as Frontend (Angular)
+    participant B as Backend (Spring Boot)
+    participant O as OwnershipService
+    participant DB as Database (H2)
+
+    P->>F: Compila il form "Nuova segnalazione"
+    F->>B: POST /api/tickets {patientId, title, description} (Bearer Token)
+    B->>O: isSelfPatient(patientId, authentication)
+    O-->>B: true / false
+    alt ownership verificata
+        B->>DB: INSERT Ticket (status OPEN)
+        DB-->>B: ID generato
+        B-->>F: HTTP 201 Created
+        F-->>P: Aggiorna la tabella "Le mie segnalazioni"
+    else ownership non verificata
+        B-->>F: HTTP 403 Forbidden
+    end
+```
+
+## 2.4 UML Sequence Diagram (Login con Autenticazione a Due Fattori)
+Quando un utente ha la 2FA attiva, il login avviene in due chiamate separate: la prima verifica la password e segnala che serve il secondo fattore, senza emettere alcun token; la seconda verifica il codice TOTP e genera il token JWT. Non essendoci sessione lato server, il secondo passaggio non ripresenta la password — un compromesso di un sistema stateless discusso in `REPORT.md` (§4) e in `doc/9-Valutazione_Risultati.md`.
+
+```mermaid
+sequenceDiagram
+    actor P as Paziente
+    participant F as Frontend (Angular)
+    participant B as Backend (Spring Boot)
+    participant DB as Database (H2)
+
+    P->>F: Inserisce email e password
+    F->>B: POST /api/auth/login {email, password}
+    B->>DB: Verifica credenziali + is2faEnabled
+    DB-->>B: Utente valido, 2FA attiva
+    B-->>F: { requires2fa: true } (nessun token)
+    F-->>P: Richiede il codice dell'app di autenticazione
+
+    P->>F: Inserisce il codice TOTP
+    F->>B: POST /api/auth/login/verify-2fa {email, code}
+    B->>B: codeVerifier.isValidCode(secretKey, code)
+    alt codice corretto
+        B-->>F: { token, role, profileId }
+        F-->>P: Accesso completato, mostra dashboard
+    else codice errato
+        B-->>F: HTTP 401/errore "Codice 2FA non valido"
+    end
+```
+
+## 2.5 C4 Model (Context Diagram)
 Un diagramma di contesto C4 per rappresentare l'architettura macroscopica del progetto monorepo:
 
 ```mermaid

@@ -103,6 +103,32 @@ sequenceDiagram
     UI-->>Utente: Aggiorna la tabella "Le mie segnalazioni"
 ```
 
+### 2.4 Diagramma di Sequenza: Login con Autenticazione a Due Fattori
+
+Con la 2FA attiva il login avviene in due chiamate separate: la prima verifica la password e segnala solo che serve il secondo fattore (nessun token emesso); la seconda verifica il codice TOTP e genera il token. Essendo un sistema stateless, il secondo passaggio non ripresenta la password: un compromesso discusso in [9. Valutazione dei Risultati](./doc/9-Valutazione_Risultati.md).
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Utente as Paziente
+    participant UI as Client Angular
+    participant SB as Spring Boot Backend (Java)
+    database DB as H2 Database
+
+    Utente->>UI: Inserisce email e password
+    UI->>SB: POST /api/auth/login {email, password}
+    SB->>DB: Verifica credenziali + is2faEnabled
+    DB-->>SB: Utente valido, 2FA attiva
+    SB-->>UI: { requires2fa: true } (nessun token)
+    UI-->>Utente: Richiede il codice dell'app di autenticazione
+
+    Utente->>UI: Inserisce il codice TOTP
+    UI->>SB: POST /api/auth/login/verify-2fa {email, code}
+    SB->>SB: Verifica il codice TOTP rispetto al secret salvato
+    SB-->>UI: { token, role, profileId }
+    UI-->>Utente: Accesso completato, mostra dashboard
+```
+
 ---
 
 ## 3. Documentazione delle API (REST)

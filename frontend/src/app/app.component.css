@@ -296,13 +296,4 @@
   flex: 1;
 }
 
-/* CHAT ASSISTENTE AI (usato da assistant.component.html) */
-.chat-container {
-  border-radius: var(--radius-lg);
-}
-
-.message-bubble, .msg-content {
-  max-width: 75%;
-}
-
 /* ANIMAZIONI locali allo shell (fade-in/pulse condivisi sono in styles.css) */

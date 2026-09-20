@@ -1,0 +1,20 @@
+# Contesto di build per il Dockerfile "all-in-one" in root.
+# Esclude sorgenti generati/pesanti non necessari alla build Docker.
+
+.git/
+.github/
+.vscode/
+.idea/
+doc/
+
+/target/
+backend/target/
+backend/uploads/
+backend/src/main/resources/static/
+
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+
+**/*.md

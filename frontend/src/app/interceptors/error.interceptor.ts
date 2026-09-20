@@ -14,15 +14,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      // Richieste come login/registrazione/verifica 2FA gestiscono già il proprio errore inline
+      // (accanto ai campi del form): l'interceptor non deve aggiungere un toast globale sopra,
+      // né trattare un 401 di credenziali sbagliate come una sessione scaduta da cui fare logout.
+      if (req.context.get(SILENT_ERROR)) {
+        return throwError(() => error);
+      }
+
       // Se l'errore è 401 (Non Autorizzato), il token è probabilmente scaduto
       if (error.status === 401) {
         authService.logout();
         router.navigate(['/account']);
         toastService.showInfo('La tua sessione è scaduta. Effettua nuovamente il login.');
-        return throwError(() => error);
-      }
-
-      if (req.context.get(SILENT_ERROR)) {
         return throwError(() => error);
       }
 

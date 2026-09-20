@@ -7,42 +7,65 @@
   <form (ngSubmit)="register()" class="space-y-4">
     <div>
       <label for="registerName">Nome e cognome</label>
-      <input
-        id="registerName"
-        type="text"
-        name="registerName"
-        placeholder="Mario Rossi"
-        [(ngModel)]="registerName"
-        required />
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] !text-lg pointer-events-none">person</span>
+        <input
+          id="registerName"
+          type="text"
+          name="registerName"
+          class="!pl-10"
+          placeholder="Mario Rossi"
+          [(ngModel)]="registerName"
+          required />
+      </div>
     </div>
     <div>
       <label for="registerEmail">Email</label>
-      <input
-        id="registerEmail"
-        type="email"
-        name="registerEmail"
-        placeholder="mario.rossi@email.com"
-        [(ngModel)]="registerEmail"
-        required />
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] !text-lg pointer-events-none">mail</span>
+        <input
+          id="registerEmail"
+          type="email"
+          name="registerEmail"
+          class="!pl-10"
+          placeholder="mario.rossi@email.com"
+          [(ngModel)]="registerEmail"
+          required />
+      </div>
     </div>
     <div>
       <label for="registerPhone">Telefono</label>
-      <input
-        id="registerPhone"
-        type="tel"
-        name="registerPhone"
-        placeholder="+39 333 1234567"
-        [(ngModel)]="registerPhone" />
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] !text-lg pointer-events-none">call</span>
+        <input
+          id="registerPhone"
+          type="tel"
+          name="registerPhone"
+          class="!pl-10"
+          placeholder="+39 333 1234567"
+          [(ngModel)]="registerPhone" />
+      </div>
     </div>
     <div>
       <label for="registerPassword">Password</label>
-      <input
-        id="registerPassword"
-        type="password"
-        name="registerPassword"
-        placeholder="••••••••"
-        [(ngModel)]="registerPassword"
-        required />
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] !text-lg pointer-events-none">lock</span>
+        <input
+          id="registerPassword"
+          [type]="showPassword ? 'text' : 'password'"
+          name="registerPassword"
+          class="!pl-10 !pr-10"
+          placeholder="••••••••"
+          [(ngModel)]="registerPassword"
+          required />
+        <button
+          type="button"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center w-7 h-7"
+          (click)="showPassword = !showPassword"
+          [attr.aria-label]="showPassword ? 'Nascondi password' : 'Mostra password'">
+          <span class="material-symbols-outlined !text-lg">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
     </div>
 
     <button type="submit" class="btn btn-primary w-full">

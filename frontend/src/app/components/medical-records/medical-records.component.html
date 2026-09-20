@@ -1,0 +1,83 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <div class="flex items-center gap-3">
+    <div class="icon-chip sky !w-11 !h-11">
+      <span class="material-symbols-outlined !text-xl">folder_shared</span>
+    </div>
+    <div>
+      <h2 class="text-lg font-bold text-[var(--text-primary)]">Cartella clinica</h2>
+      <p class="text-sm text-[var(--text-secondary)]">Carica e consulta i tuoi referti e documenti clinici</p>
+    </div>
+  </div>
+
+  <!-- CARICAMENTO -->
+  <div class="glass-card p-6 space-y-4">
+    <h3 class="font-bold text-[var(--text-primary)]">Carica un nuovo documento</h3>
+
+    <app-alert type="error" [message]="uploadError" *ngIf="uploadError"></app-alert>
+    <app-alert type="success" [message]="uploadSuccess" *ngIf="uploadSuccess"></app-alert>
+
+    <ng-container *ngIf="uploadableAppointments.length > 0; else noUploadable">
+      <div class="grid sm:grid-cols-2 gap-3 sm:items-end">
+        <div>
+          <label for="uploadAppointment">Visita di riferimento</label>
+          <select id="uploadAppointment" name="uploadAppointment" [(ngModel)]="uploadAppointmentId">
+            <option [ngValue]="null">Seleziona una visita completata...</option>
+            <option *ngFor="let a of uploadableAppointments" [ngValue]="a.id">
+              {{ a.doctor?.name }} — {{ a.appointmentDate | date:'dd/MM/yyyy' }}
+            </option>
+          </select>
+        </div>
+
+        <label class="btn btn-secondary w-full" style="cursor: pointer;" [class.opacity-50]="!uploadAppointmentId || isUploading">
+          <span class="material-symbols-outlined text-lg leading-none">upload_file</span>
+          {{ isUploading ? 'Caricamento...' : 'Scegli file e carica' }}
+          <input type="file" class="hidden" (change)="onFileSelected($event)" [disabled]="!uploadAppointmentId || isUploading" />
+        </label>
+      </div>
+      <p class="text-xs text-[var(--text-muted)]">Formati supportati: PDF o immagine del referto.</p>
+    </ng-container>
+
+    <ng-template #noUploadable>
+      <p class="text-sm text-[var(--text-secondary)]">
+        Potrai caricare un documento non appena avrai una visita completata senza un referto già associato.
+      </p>
+    </ng-template>
+  </div>
+
+  <!-- ELENCO DOCUMENTI -->
+  <div class="glass-card p-6 space-y-3">
+    <h3 class="font-bold text-[var(--text-primary)]">I tuoi documenti</h3>
+
+    <div class="space-y-2" *ngIf="reports.length > 0; else emptyReports">
+      <div
+        class="list-row flex items-center justify-between gap-3 p-4 cursor-pointer"
+        *ngFor="let r of reports"
+        (click)="viewReport(r)">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="icon-chip sky !w-10 !h-10 flex-shrink-0">
+            <span class="material-symbols-outlined !text-lg">description</span>
+          </div>
+          <div class="min-w-0">
+            <p class="font-semibold text-[var(--text-primary)] truncate">{{ r.fileName }}</p>
+            <p class="text-xs text-[var(--text-secondary)]">{{ r.doctorName }} · {{ r.appointmentDate | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+        <span class="material-symbols-outlined text-[var(--text-muted)] flex-shrink-0">chevron_right</span>
+      </div>
+    </div>
+
+    <ng-template #emptyReports>
+      <div class="empty-state">
+        <span class="material-symbols-outlined empty-state-icon">folder_off</span>
+        <p>Nessun documento caricato finora.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<app-report-viewer
+  *ngIf="selectedReport"
+  [report]="selectedReport"
+  [isDoctor]="false"
+  (close)="closeReportViewer()">
+</app-report-viewer>

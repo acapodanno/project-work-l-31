@@ -1,38 +1,35 @@
-/* Global Styles & Variables — Palette "Medical Clinic" (ui-ux-pro-max, stile Accessible & Ethical, risk:low),
-   indaco riservato al marchio dell'app (logo/wordmark), non parte del sistema di design proposto dallo skill. */
+/* Global Styles & Variables — Palette "Boots" (ispirata a boots.it: navy + blu, grigi neutri, UI piatta e
+   minimale). I colori semantici clinici (successo/pericolo/warning/critico) restano quelli della palette
+   "Medical Clinic" precedente: non sono identità di marca, servono a leggere lo stato di visite/ticket. */
 :root {
   --font-sans: 'Figtree', 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  --bg-main: #f0fdfa;
+  --bg-main: #f7f8fb;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #f5fffd;
-  --bg-subtle: #e8f1f6;
+  --bg-card-hover: #fbfbfd;
+  --bg-subtle: #f0f2f7;
 
-  --border-color: #ccfbf1;
-  --border-color-strong: #a7ded0;
+  --border-color: #e3e5ec;
+  --border-color-strong: #c7cbdb;
 
-  /* Foreground/Muted Foreground della palette "Medical Clinic" — testo con una punta teal invece del grigio neutro precedente. */
-  --text-primary: #134e4a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
+  /* Testo neutro (grigi), non più tinto di teal: il navy resta riservato a titoli/azioni di marca. */
+  --text-primary: #05054b;
+  --text-secondary: #4b4b63;
+  --text-muted: #7a7a92;
 
-  /* Secondary della palette "Medical Clinic": ciano chiaro. Sostituisce l'indaco (non era nella palette dello
-     skill) come colore di identità/wayfinding — logo, wordmark, avatar, stato attivo in sidebar, badge di ruolo
-     Patient. Resta distinto dal ciano primario delle azioni per non appiattire tutta la UI su un solo colore,
-     ma resta dentro la stessa palette "Medical Clinic", non un'aggiunta arbitraria. */
-  --color-secondary: #22d3ee;
-  --color-secondary-hover: #06b6d4;
-  --color-on-secondary: #0f172a;
-  /* #06b6d4 misura solo ~2.4:1 su bianco: troppo chiaro anche per la soglia 3:1 delle icone non testuali.
-     Usare questa variante, non --color-secondary-hover, ogni volta che il ciano è testo o icona su sfondo chiaro. */
-  --color-secondary-text: #155e75; /* 7.3:1 su bianco */
+  /* Secondary: il blu di boots.it (colore dei link e dello stato attivo in nav). Identità/wayfinding — logo,
+     wordmark, avatar, stato attivo in sidebar, badge di ruolo Patient — distinto dal navy delle azioni primarie. */
+  --color-secondary: #0067b2;
+  --color-secondary-hover: #00548f;
+  --color-on-secondary: #ffffff; /* ~6.1:1 su #0067b2, oltre la soglia AA per testo normale */
+  --color-secondary-text: #0067b2; /* stesso valore: già ~6.1:1 su bianco, non serve scurirlo per l'uso come testo */
 
-  /* Primary della palette "Medical Clinic": teal medico. Il testo sopra questo colore deve essere scuro, non
-     bianco — #0891B2 misura solo ~3.7:1 con testo bianco (sotto AA), ~5.7:1 con testo nero (--color-on-primary). */
-  --color-primary: #0891b2;
-  --color-primary-hover: #0e7490;
-  --color-on-primary: #000000;
+  /* Primary: il navy di boots.it, usato sui bottoni principali del sito ("PRENOTA ORA!", "SCOPRI TUTTO").
+     Praticamente nero-bluastro: il testo sopra deve essere bianco (~19:1), non nero. */
+  --color-primary: #05054b;
+  --color-primary-hover: #14144f;
+  --color-on-primary: #ffffff;
 
   /* Accent della palette "Medical Clinic": verde salute. Come per il primario, #16A34A misura solo ~3.3:1 su
      bianco come testo (sotto AA): --color-accent-text è la variante scurita per quando il verde è testo. */
@@ -54,15 +51,18 @@
   --color-warning: #b5760f;
   --color-warning-text: #8f5c0c;
 
-  --radius-sm: 13px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  /* Angoli più squadrati (boots.it usa bottoni quasi a spigolo vivo, 2px): qui addolciti quanto basta
+     per restare leggibili come card/bottoni, non per imitare il pixel esatto del sito. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
   --radius-pill: 9999px;
 
-  --shadow-xs: 0 1px 2px rgba(34, 31, 51, 0.04);
-  --shadow-sm: 0 1px 3px rgba(34, 31, 51, 0.06), 0 1px 2px rgba(34, 31, 51, 0.04);
-  --shadow-md: 0 8px 20px rgba(34, 31, 51, 0.08);
-  --shadow-lg: 0 16px 40px rgba(34, 31, 51, 0.12);
+  /* Ombre più sobrie: boots.it è un'interfaccia piatta, quasi senza ombreggiature. */
+  --shadow-xs: 0 1px 2px rgba(15, 15, 40, 0.03);
+  --shadow-sm: 0 1px 2px rgba(15, 15, 40, 0.05), 0 1px 1px rgba(15, 15, 40, 0.03);
+  --shadow-md: 0 4px 12px rgba(15, 15, 40, 0.07);
+  --shadow-lg: 0 10px 28px rgba(15, 15, 40, 0.1);
 
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -90,9 +90,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-main);
   background-image:
-    radial-gradient(at 0% 0%, rgba(34, 211, 238, 0.06) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(22, 163, 74, 0.05) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(8, 145, 178, 0.05) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(0, 103, 178, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(22, 163, 74, 0.04) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(5, 5, 75, 0.04) 0px, transparent 50%);
   background-attachment: fixed;
   color: var(--text-primary);
   min-height: 100vh;
@@ -126,7 +126,7 @@ body {
 }
 
 .glass-card:hover {
-  border-color: rgba(8, 145, 178, 0.25);
+  border-color: rgba(5, 5, 75, 0.2);
   box-shadow: var(--shadow-md);
 }
 
@@ -165,7 +165,7 @@ input:hover, select:hover, textarea:hover {
 input:focus, select:focus, textarea:focus {
   background: #ffffff;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.14);
+  box-shadow: 0 0 0 4px rgba(5, 5, 75, 0.12);
 }
 
 input:disabled, select:disabled, textarea:disabled {
@@ -233,12 +233,12 @@ label {
 .btn-primary {
   background: var(--color-primary);
   color: var(--color-on-primary);
-  box-shadow: 0 8px 20px rgba(8, 145, 178, 0.28);
+  box-shadow: 0 4px 12px rgba(5, 5, 75, 0.22);
 }
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
   background: var(--color-primary-hover);
-  box-shadow: 0 10px 24px rgba(8, 145, 178, 0.34);
+  box-shadow: 0 6px 16px rgba(5, 5, 75, 0.28);
 }
 
 .btn-secondary {
@@ -292,11 +292,11 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
 }
 
-/* Stato "Programmato": è un'informazione operativa, non un'identità di ruolo — segue il blu delle azioni, non l'indaco di marca. */
+/* Stato "Programmato": è un'informazione operativa, non un'identità di ruolo — segue il navy delle azioni, non il blu di identità. */
 .badge-scheduled {
-  background: rgba(8, 145, 178, 0.1);
+  background: rgba(5, 5, 75, 0.08);
   color: var(--color-primary-hover);
-  border: 1px solid rgba(8, 145, 178, 0.2);
+  border: 1px solid rgba(5, 5, 75, 0.18);
 }
 
 .badge-completed {
@@ -329,12 +329,12 @@ h1, h2, h3, h4 {
   flex-shrink: 0;
 }
 
-/* Identità di ruolo, non stato operativo: resta sul ciano secondario di identità (a differenza di .badge-scheduled,
-   che usa il ciano primario delle azioni). */
+/* Identità di ruolo, non stato operativo: resta sul blu secondario di identità (a differenza di .badge-scheduled,
+   che usa il navy primario delle azioni). */
 .badge-patient {
-  background: rgba(34, 211, 238, 0.15);
+  background: rgba(0, 103, 178, 0.12);
   color: var(--color-secondary-text);
-  border: 1px solid rgba(34, 211, 238, 0.3);
+  border: 1px solid rgba(0, 103, 178, 0.28);
 }
 
 .badge-doctor {
@@ -422,6 +422,12 @@ h1, h2, h3, h4 {
 .icon-chip.mint {
   background: rgba(30, 156, 121, 0.12);
   color: var(--color-accent-text);
+}
+
+/* Variante blu di identità (boots.it): per icone decorative/marketing, non per stati clinici — quelli restano su .icon-chip.mint. */
+.icon-chip.sky {
+  background: rgba(0, 103, 178, 0.1);
+  color: var(--color-secondary-text);
 }
 
 .icon-chip.amber {
@@ -514,7 +520,7 @@ h1, h2, h3, h4 {
   gap: 0.5rem;
   padding: 0.45rem 0.7rem 0.45rem 0.9rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(8, 145, 178, 0.3);
+  border: 1px solid rgba(5, 5, 75, 0.25);
   background: var(--bg-subtle);
   color: var(--color-primary-hover);
   font-size: 0.82rem;

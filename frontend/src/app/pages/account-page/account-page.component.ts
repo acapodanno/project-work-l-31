@@ -26,8 +26,8 @@ import { ProfileSecurityComponent } from '../../components/profile/profile-secur
     </app-profile>
 
     <div class="max-w-xl mx-auto space-y-6" *ngIf="authService.isLoggedIn() && authService.getRole() === 'DOCTOR'">
-      <app-doctor-profile-info [currentDoctor]="appState.currentDoctor"></app-doctor-profile-info>
-      <app-profile-security (logout)="onLogout()"></app-profile-security>
+      <app-doctor-profile-info class="block" [currentDoctor]="appState.currentDoctor"></app-doctor-profile-info>
+      <app-profile-security class="block" (logout)="onLogout()"></app-profile-security>
     </div>
 
     <div class="max-w-xl mx-auto space-y-6" *ngIf="authService.isLoggedIn() && authService.getRole() === 'SUPPORT'">

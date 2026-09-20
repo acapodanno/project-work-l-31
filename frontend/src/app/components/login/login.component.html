@@ -1,37 +1,85 @@
-<div class="min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-md space-y-4">
-    <div class="flex flex-col items-center text-center gap-3 mb-2">
-      <div class="w-16 h-16 rounded-2xl bg-[var(--bg-subtle)] text-[var(--color-secondary-text)] flex items-center justify-center">
-        <span class="material-symbols-outlined text-4xl">{{ showRegisterForm ? 'person_add' : 'local_hospital' }}</span>
+<div class="min-h-screen flex">
+
+  <!-- PANNELLO BRANDING (solo desktop) -->
+  <div class="hidden lg:flex lg:w-5/12 relative flex-col justify-between p-12 text-white overflow-hidden"
+       style="background: linear-gradient(160deg, var(--color-primary), var(--color-secondary-text));">
+    <div class="absolute inset-0 opacity-10 pointer-events-none"
+         style="background-image: radial-gradient(circle at 20% 20%, white 0, transparent 45%), radial-gradient(circle at 80% 80%, white 0, transparent 45%);"></div>
+
+    <div class="relative flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center">
+        <span class="material-symbols-outlined text-3xl">local_hospital</span>
       </div>
-      <div>
-        <h1 class="text-2xl font-extrabold text-[var(--text-primary)] leading-tight">
-          HealthCare <span class="text-[var(--color-secondary-text)]">Plus</span>
-        </h1>
-        <p class="text-sm text-[var(--text-secondary)]">Clinica Polispecialistica</p>
+      <div class="leading-tight">
+        <p class="text-xl font-extrabold">HealthCare Plus</p>
+        <p class="text-sm text-white/80">Clinica Polispecialistica</p>
       </div>
     </div>
 
-    <app-alert type="success" [message]="registerSuccessMsg" *ngIf="registerSuccessMsg && !show2faForm && !showRegisterForm"></app-alert>
+    <div class="relative space-y-6">
+      <h2 class="text-3xl font-extrabold leading-tight">La tua salute,<br>sempre a portata di mano</h2>
+      <ul class="space-y-4">
+        <li class="flex items-start gap-3">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <span class="text-sm text-white/90">Prenota visite con i nostri specialisti in pochi click</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="material-symbols-outlined">description</span>
+          <span class="text-sm text-white/90">Consulta referti e cartella clinica online</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="material-symbols-outlined">shield_lock</span>
+          <span class="text-sm text-white/90">Accesso protetto da autenticazione a due fattori</span>
+        </li>
+      </ul>
+    </div>
 
-    <app-two-fa-form
-      *ngIf="show2faForm"
-      [loginEmail]="loginEmail"
-      (verifySuccess)="onLoginSuccess()"
-      (goBack)="show2faForm = false">
-    </app-two-fa-form>
-
-    <app-register-form
-      *ngIf="!show2faForm && showRegisterForm"
-      (registerSuccess)="onRegisterSuccess($event)"
-      (goToLogin)="showRegisterForm = false">
-    </app-register-form>
-
-    <app-login-form
-      *ngIf="!show2faForm && !showRegisterForm"
-      (loginSuccess)="onLoginSuccess()"
-      (requires2fa)="onRequires2fa($event)"
-      (goToRegister)="showRegisterForm = true; registerSuccessMsg = ''">
-    </app-login-form>
+    <p class="relative text-xs text-white/70">&copy; {{ currentYear }} HealthCare Plus</p>
   </div>
+
+  <!-- PANNELLO FORM -->
+  <div class="w-full lg:w-7/12 flex items-center justify-center p-4 sm:p-8">
+    <div class="w-full max-w-md space-y-4">
+
+      <a routerLink="/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+        <span class="material-symbols-outlined text-lg leading-none">arrow_back</span>
+        Torna alla home
+      </a>
+
+      <div class="flex flex-col items-center text-center gap-3 lg:hidden !mt-2">
+        <div class="w-16 h-16 rounded-2xl bg-[var(--bg-subtle)] text-[var(--color-secondary-text)] flex items-center justify-center">
+          <span class="material-symbols-outlined text-4xl">{{ showRegisterForm ? 'person_add' : 'local_hospital' }}</span>
+        </div>
+        <div>
+          <h1 class="text-2xl font-extrabold text-[var(--text-primary)] leading-tight">
+            HealthCare <span class="text-[var(--color-secondary-text)]">Plus</span>
+          </h1>
+          <p class="text-sm text-[var(--text-secondary)]">Clinica Polispecialistica</p>
+        </div>
+      </div>
+
+      <app-alert type="success" [message]="registerSuccessMsg" *ngIf="registerSuccessMsg && !show2faForm && !showRegisterForm"></app-alert>
+
+      <app-two-fa-form
+        *ngIf="show2faForm"
+        [loginEmail]="loginEmail"
+        (verifySuccess)="onLoginSuccess()"
+        (goBack)="show2faForm = false">
+      </app-two-fa-form>
+
+      <app-register-form
+        *ngIf="!show2faForm && showRegisterForm"
+        (registerSuccess)="onRegisterSuccess($event)"
+        (goToLogin)="showRegisterForm = false">
+      </app-register-form>
+
+      <app-login-form
+        *ngIf="!show2faForm && !showRegisterForm"
+        (loginSuccess)="onLoginSuccess()"
+        (requires2fa)="onRequires2fa($event)"
+        (goToRegister)="showRegisterForm = true; registerSuccessMsg = ''">
+      </app-login-form>
+    </div>
+  </div>
+
 </div>

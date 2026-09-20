@@ -94,7 +94,7 @@ export class DashboardDoctorComponent implements OnInit, OnChanges {
     }
   }
 
-  private readonly avatarPalette = ['#7c6fe0', '#2563eb', '#16a34a', '#d97706', '#dc2626', '#0891b2'];
+  private readonly avatarPalette = ['#05054b', '#0067b2', '#16a34a', '#b5760f', '#c93f58'];
 
   initials(name?: string): string {
     if (!name) return '?';

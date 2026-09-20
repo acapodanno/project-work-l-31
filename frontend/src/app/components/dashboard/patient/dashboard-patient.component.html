@@ -110,58 +110,15 @@
     </div>
   </div>
 
-  <!-- TICKET -->
-  <div class="co-section">
-    <div class="co-section-head">
-      <h2><span class="material-symbols-outlined">support_agent</span>Le mie segnalazioni</h2>
-      <button class="co-btn-primary" (click)="toggleNewTicketForm()">
-        <span class="material-symbols-outlined">add</span>
-        {{ showNewTicketForm ? 'Chiudi' : 'Nuova segnalazione' }}
-      </button>
+  <!-- ASSISTENZA (elenco completo e nuova segnalazione: pagina dedicata /support) -->
+  <a routerLink="/support" class="co-section co-link-card">
+    <div class="co-link-icon"><span class="material-symbols-outlined">support_agent</span></div>
+    <div class="co-link-body">
+      <h2>Assistenza</h2>
+      <p>{{ openTicketsCount }} {{ openTicketsCount === 1 ? 'segnalazione aperta' : 'segnalazioni aperte' }} — apri una nuova richiesta o consulta lo stato delle tue segnalazioni.</p>
     </div>
-
-    <div class="co-form-alert success fade-in" *ngIf="newTicketSuccess">
-      Segnalazione inviata: il team di supporto la vedrà a breve.
-    </div>
-
-    <!-- NUOVA SEGNALAZIONE -->
-    <div class="co-form" *ngIf="showNewTicketForm">
-      <div class="co-form-alert error fade-in" *ngIf="newTicketError">
-        {{ newTicketError }}
-      </div>
-      <div>
-        <label for="newTicketTitle">Titolo</label>
-        <input id="newTicketTitle" type="text" name="newTicketTitle" placeholder="Es. Non riesco a caricare il referto" [(ngModel)]="newTicketForm.title" />
-      </div>
-      <div>
-        <label for="newTicketDescription">Descrizione</label>
-        <textarea id="newTicketDescription" name="newTicketDescription" rows="3" placeholder="Descrivi il problema che hai riscontrato" [(ngModel)]="newTicketForm.description"></textarea>
-      </div>
-      <div class="flex justify-end">
-        <button class="co-btn-primary" (click)="submitNewTicket()">Invia segnalazione</button>
-      </div>
-    </div>
-
-    <div class="co-card-grid" *ngIf="tickets.length > 0">
-      <div class="co-person-card" *ngFor="let tkt of tickets">
-        <div class="co-card-top">
-          <div class="co-avatar" style="background: var(--co-amber);">
-            <span class="material-symbols-outlined" style="font-size: 20px;">confirmation_number</span>
-          </div>
-          <span class="co-status-badge" [ngClass]="tkt.status === 'CLOSED' ? 'completed' : 'open'">
-            <span class="co-status-dot"></span>{{ tkt.status === 'CLOSED' ? 'Chiuso' : 'Aperto' }}
-          </span>
-        </div>
-        <h4 class="co-card-name">{{ tkt.title }}</h4>
-        <p class="co-card-reason">{{ tkt.description }}</p>
-      </div>
-    </div>
-
-    <div class="co-empty" *ngIf="tickets.length === 0">
-      <span class="material-symbols-outlined">task_alt</span>
-      <p>Nessuna segnalazione aperta.</p>
-    </div>
-  </div>
+    <span class="material-symbols-outlined co-link-arrow">arrow_forward</span>
+  </a>
 </div>
 
 <!-- VISTA STAMPABILE (visibile solo in fase di stampa/esportazione PDF) -->

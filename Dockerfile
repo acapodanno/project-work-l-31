@@ -1,35 +1,58 @@
-# NOTA: questo Dockerfile combinato è mantenuto per compatibilità, ma è
-# stato superato da due Dockerfile dedicati e più completi (con stage `test`
-# per il code coverage):
-#   backend/Dockerfile   (Spring Boot, target: deps | test | build | runtime, porta 8080)
-#   frontend/Dockerfile  (Angular + Nginx, target: deps | test | build | runtime, porta 80)
+# syntax=docker/dockerfile:1
 #
-# Per avviare l'intero stack in un colpo solo:
-#   docker compose up --build
+# Dockerfile "all-in-one": un solo container con backend Spring Boot +
+# frontend Angular incorporato come risorsa statica. Pensato per la
+# consegna/demo del project work (avvio con un solo `docker run`), non
+# per lo sviluppo quotidiano.
 #
-# Per eseguire solo i test con coverage dei due servizi:
-#   docker compose -f docker-compose.test.yml build
+# Il pom.xml in root compila il frontend tramite frontend-maven-plugin
+# (fase `generate-resources`, con la configuration Angular "embedded"
+# definita in frontend/angular.json) e lo scrive in
+# backend/src/main/resources/static; backend/pom.xml (modulo Maven
+# indipendente e invariato) lo impacchetta poi nel jar. I due comandi vanno
+# lanciati in questo ordine: NON sono un reactor Maven unico, perché senza
+# una relazione di parent/dipendenza esplicita Maven non garantirebbe che
+# root venga eseguito prima di backend (vedi commento in pom.xml).
 #
-# Dockerfile per l'avvio del build del progetto full-stack
+# backend/pom.xml resta un modulo Maven indipendente e invariato: per lo
+# sviluppo/CI con servizi separati (hot reload, Nginx, coverage indipendente)
+# continuare a usare backend/Dockerfile + frontend/Dockerfile tramite
+# docker-compose.yml.
+#
+# Uso:
+#   docker build -t healthcare-app .
+#   docker run --rm -p 8080:8080 healthcare-app
 
-# Fase 1: Build del backend Spring Boot
-FROM maven:3.9-eclipse-temurin-21 AS backend-build
+# ---------- Stage 1: build (Maven + Node/npm scaricati dal frontend-maven-plugin) ----------
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY backend/pom.xml backend/
+
+# Cache delle dipendenze Maven del backend (layer invalidato solo se cambia backend/pom.xml)
+COPY backend/pom.xml backend/pom.xml
+RUN --mount=type=cache,target=/root/.m2 mvn -B -f backend/pom.xml dependency:go-offline
+
+# pom.xml di root (frontend-maven-plugin) + sorgenti di frontend e backend
+COPY pom.xml pom.xml
+COPY frontend frontend
 COPY backend/src backend/src
-RUN mvn -f backend/pom.xml clean package -DskipTests
 
-# Fase 2: Build del frontend Angular
-FROM node:23-alpine AS frontend-build
-WORKDIR /app
-COPY frontend/package*.json ./
-RUN npm ci
-COPY frontend/ ./
-RUN npm run build
+# 1) Compila l'Angular e lo scrive in backend/src/main/resources/static
+RUN --mount=type=cache,target=/root/.m2 mvn -B -f pom.xml clean generate-resources
 
-# Fase 3: Runtime finale (Esempio per il backend)
-FROM eclipse-temurin:21-jre-alpine
+# 2) Compila e impacchetta il backend, che include lo static/ appena generato.
+#    backend/pom.xml non fissa un <finalName> (resta invariato per non
+#    impattare backend/Dockerfile e la CI): il jar si chiama
+#    healthcare-backend-<version>.jar, e Spring Boot Maven Plugin genera
+#    anche un jar "-plain" (libreria, non eseguibile) accanto ad esso. Lo
+#    escludiamo esplicitamente e rinominiamo l'eseguibile in un nome fisso.
+RUN --mount=type=cache,target=/root/.m2 mvn -B -f backend/pom.xml clean package -DskipTests && \
+    cp $(ls backend/target/*.jar | grep -v -- '-plain\.jar$') backend/target/app.jar
+
+# ---------- Stage 2: runtime ----------
+FROM eclipse-temurin:21-jre-alpine AS runtime
 WORKDIR /app
-COPY --from=backend-build /app/backend/target/*.jar app.jar
+RUN addgroup -S spring && adduser -S spring -G spring
+COPY --from=build /app/backend/target/app.jar app.jar
+USER spring
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

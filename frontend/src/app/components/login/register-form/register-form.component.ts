@@ -21,6 +21,7 @@ export class RegisterFormComponent {
   registerPhone = '';
   registerPassword = '';
   registerError = '';
+  showPassword = false;
 
   register() {
     if (!this.registerName || !this.registerEmail || !this.registerPassword) {

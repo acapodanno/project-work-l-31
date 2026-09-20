@@ -6,10 +6,15 @@
         <div class="sidebar-brand">
           <span class="material-symbols-outlined logo-icon animate-pulse">local_hospital</span>
           <div class="logo-text">
-            <h1>HealthCare <span>Plus</span></h1>
+            <h1>HealthCare Plus</h1>
             <p>Clinica Polispecialistica</p>
           </div>
         </div>
+
+        <button class="sidebar-toggle" (click)="toggleSidebar()" title="{{ sidebarCollapsed ? 'Espandi menu' : 'Comprimi menu' }}">
+          <span class="material-symbols-outlined">{{ sidebarCollapsed ? 'chevron_right' : 'chevron_left' }}</span>
+          <span class="nav-label">{{ sidebarCollapsed ? 'Espandi' : 'Comprimi' }}</span>
+        </button>
 
         <nav class="nav-menu">
           <a
@@ -52,6 +57,26 @@
           </a>
 
           <a
+            *ngIf="authService.getRole() === 'PATIENT'"
+            class="nav-item"
+            routerLink="/records"
+            routerLinkActive="active"
+            title="Cartella Clinica">
+            <span class="material-symbols-outlined">folder_shared</span>
+            <span class="nav-label">Cartella Clinica</span>
+          </a>
+
+          <a
+            *ngIf="authService.getRole() === 'PATIENT'"
+            class="nav-item"
+            routerLink="/support"
+            routerLinkActive="active"
+            title="Assistenza">
+            <span class="material-symbols-outlined">support_agent</span>
+            <span class="nav-label">Assistenza</span>
+          </a>
+
+          <a
             class="nav-item"
             routerLink="/account"
             routerLinkActive="active"
@@ -63,33 +88,23 @@
       </div>
 
       <div class="sidebar-footer">
-        <div class="status-indicator">
-          <span class="dot active"></span>
-          <span class="nav-label">Autenticato</span>
-        </div>
+        <button class="nav-item" (click)="logout()" title="Disconnetti">
+          <span class="material-symbols-outlined">logout</span>
+          <span class="nav-label">Disconnetti</span>
+        </button>
       </div>
     </aside>
 
     <!-- COLONNA PRINCIPALE (header + contenuto, attaccati alla sidebar) -->
     <div class="shell-main">
       <header class="top-header">
-        <button class="btn-icon-toggle" (click)="toggleSidebar()" title="{{ sidebarCollapsed ? 'Espandi menu' : 'Comprimi menu' }}">
-          <span class="material-symbols-outlined">{{ sidebarCollapsed ? 'menu_open' : 'menu' }}</span>
-        </button>
-
         <div class="user-profile-header">
           <div class="avatar">
             <span class="material-symbols-outlined">person</span>
           </div>
           <div class="user-info">
             <span class="user-name">{{ appState.currentPatient?.name || appState.currentDoctor?.name || authService.getEmail() }}</span>
-            <span class="user-role badge" [class]="'badge-' + authService.getRole()?.toLowerCase()">
-              {{ authService.getRoleLabel() }}
-            </span>
           </div>
-          <button class="btn btn-logout-icon" (click)="logout()" title="Disconnetti">
-            <span class="material-symbols-outlined">logout</span>
-          </button>
         </div>
       </header>
 

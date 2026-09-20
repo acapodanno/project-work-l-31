@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>healthcare-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>healthcare-app</name>
+    <description>
+        Pom usato SOLO dal Dockerfile "all-in-one" in root per assemblare in
+        un'unica immagine il frontend Angular (./frontend) e il backend Spring
+        Boot (./backend, modulo Maven indipendente e invariato). Non serve per
+        lo sviluppo quotidiano: backend/pom.xml resta buildabile e testabile da
+        solo, ed è quello usato da backend/Dockerfile e dalla CI.
+
+        NON e' un pom aggregatore con modules: backend/pom.xml non può
+        diventarne figlio (backend/Dockerfile ha come build context la sola
+        cartella backend/ e non vedrebbe un ../pom.xml esterno), e senza una
+        relazione di parent/dipendenza esplicita Maven non garantisce che
+        questo pom venga eseguito PRIMA del modulo backend in un reactor con
+        modules (verificato: con mvn package da qui l'ordine osservato è
+        backend prima di questo pom, che produrrebbe un jar senza frontend).
+
+        Per questo va invocato con DUE comandi Maven separati, in ordine
+        (esattamente come fa il Dockerfile in root):
+          1. mvn -f pom.xml clean generate-resources
+             -> compila il frontend con frontend-maven-plugin e lo scrive in
+                backend/src/main/resources/static
+          2. mvn -f backend/pom.xml clean package -DskipTests
+             -> builda il backend, che include lo static/ appena generato
+    </description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.15.1</version>
+                <configuration>
+                    <workingDirectory>${project.basedir}/frontend</workingDirectory>
+                    <installDirectory>${project.build.directory}</installDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-node-and-npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v20.12.2</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>ci</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-build-embedded</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Configuration "embedded" definita in frontend/angular.json:
+                                 scrive l'output in backend/src/main/resources/static senza
+                                 la sottocartella browser/ usata dal new application builder. -->
+                            <arguments>run build -- --configuration=production,embedded</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Pulisce anche il dist Angular incorporato in backend/src/main/resources/static,
+                 generato dal frontend-maven-plugin e fuori da target/ (non toccato
+                 dal clean di default). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.basedir}/backend/src/main/resources/static</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

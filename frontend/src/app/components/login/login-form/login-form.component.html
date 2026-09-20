@@ -7,23 +7,38 @@
   <form (ngSubmit)="login()" class="space-y-4">
     <div>
       <label for="loginEmail">Email</label>
-      <input
-        id="loginEmail"
-        type="email"
-        name="loginEmail"
-        placeholder="mario.rossi@email.com"
-        [(ngModel)]="loginEmail"
-        required />
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] !text-lg pointer-events-none">mail</span>
+        <input
+          id="loginEmail"
+          type="email"
+          name="loginEmail"
+          class="!pl-10"
+          placeholder="mario.rossi@email.com"
+          [(ngModel)]="loginEmail"
+          required />
+      </div>
     </div>
     <div>
       <label for="loginPassword">Password</label>
-      <input
-        id="loginPassword"
-        type="password"
-        name="loginPassword"
-        placeholder="••••••••"
-        [(ngModel)]="loginPassword"
-        required />
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] !text-lg pointer-events-none">lock</span>
+        <input
+          id="loginPassword"
+          [type]="showPassword ? 'text' : 'password'"
+          name="loginPassword"
+          class="!pl-10 !pr-10"
+          placeholder="••••••••"
+          [(ngModel)]="loginPassword"
+          required />
+        <button
+          type="button"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center w-7 h-7"
+          (click)="showPassword = !showPassword"
+          [attr.aria-label]="showPassword ? 'Nascondi password' : 'Mostra password'">
+          <span class="material-symbols-outlined !text-lg">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
     </div>
 
     <button type="submit" class="btn btn-primary w-full">

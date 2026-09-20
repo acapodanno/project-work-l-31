@@ -9,15 +9,19 @@
   <form (ngSubmit)="verify2fa()" class="space-y-4">
     <div>
       <label for="twoFaCode">Codice OTP</label>
-      <input
-        id="twoFaCode"
-        type="text"
-        name="twoFaCode"
-        placeholder="123456"
-        inputmode="numeric"
-        maxlength="6"
-        [(ngModel)]="twoFaCode"
-        required />
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] !text-lg pointer-events-none">pin</span>
+        <input
+          id="twoFaCode"
+          type="text"
+          name="twoFaCode"
+          class="!pl-10 tracking-[0.3em] font-semibold"
+          placeholder="123456"
+          inputmode="numeric"
+          maxlength="6"
+          [(ngModel)]="twoFaCode"
+          required />
+      </div>
     </div>
 
     <button type="submit" class="btn btn-primary w-full">

@@ -1,28 +1,30 @@
-/* Stessa direzione visiva della Dashboard Doctor e della pagina Pazienti (ispirata a CareOps,
-   dribbble.com/shots/27313885) — CSS isolato a questo componente, non tocca il resto dell'app. */
+/* Stessa direzione visiva della Dashboard Doctor e della pagina Pazienti (layout ispirato a CareOps,
+   dribbble.com/shots/27313885) — i colori/raggi/ombre ora alias diretto del design system globale
+   (styles.css), non più una palette a parte: la dashboard deve leggersi come la stessa app della
+   landing/login, non come uno strumento diverso. */
 :host {
-  --co-brand: #7c6fe0;
-  --co-brand-tint: #efedfd;
-  --co-ink: #14151a;
-  --co-ink-hover: #2a2c35;
-  --co-bg: #f7f7fb;
-  --co-card: #ffffff;
-  --co-border: #ececf3;
-  --co-text: #14151a;
-  --co-text-secondary: #6b6f7d;
-  --co-text-muted: #9497a3;
-  --co-green: #16a34a;
-  --co-green-tint: #e8f8ee;
-  --co-amber: #d97706;
-  --co-amber-tint: #fef3e2;
-  --co-red: #dc2626;
-  --co-red-tint: #fdeaea;
-  --co-blue: #2563eb;
-  --co-blue-tint: #eaf1fe;
-  --co-radius-sm: 10px;
-  --co-radius-md: 14px;
-  --co-radius-lg: 20px;
-  --co-shadow: 0 1px 2px rgba(20, 21, 26, 0.04), 0 8px 24px rgba(20, 21, 26, 0.06);
+  --co-brand: var(--color-secondary);
+  --co-brand-tint: var(--bg-subtle);
+  --co-ink: var(--color-primary);
+  --co-ink-hover: var(--color-primary-hover);
+  --co-bg: var(--bg-main);
+  --co-card: var(--bg-card);
+  --co-border: var(--border-color);
+  --co-text: var(--text-primary);
+  --co-text-secondary: var(--text-secondary);
+  --co-text-muted: var(--text-muted);
+  --co-green: var(--color-accent-text);
+  --co-green-tint: rgba(22, 163, 74, 0.1);
+  --co-amber: var(--color-warning-text);
+  --co-amber-tint: rgba(181, 118, 15, 0.1);
+  --co-red: var(--color-danger);
+  --co-red-tint: rgba(201, 63, 88, 0.1);
+  --co-blue: var(--color-primary-hover);
+  --co-blue-tint: rgba(5, 5, 75, 0.08);
+  --co-radius-sm: var(--radius-sm);
+  --co-radius-md: var(--radius-md);
+  --co-radius-lg: var(--radius-lg);
+  --co-shadow: var(--shadow-sm);
 
   display: block;
   background: var(--co-bg);
@@ -42,7 +44,7 @@
 .co-btn-primary {
   display: inline-flex; align-items: center; gap: 0.4rem;
   background: var(--co-ink); color: #fff; border: none;
-  padding: 0.65rem 1.2rem; border-radius: 999px;
+  padding: 0.65rem 1.2rem; border-radius: var(--co-radius-sm);
   font-weight: 700; font-size: 0.86rem; font-family: inherit; cursor: pointer;
   transition: background 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -53,7 +55,7 @@
 .co-btn-secondary {
   display: inline-flex; align-items: center; gap: 0.35rem;
   background: #fff; color: var(--co-text); border: 1px solid var(--co-border);
-  padding: 0.55rem 1rem; border-radius: 999px;
+  padding: 0.55rem 1rem; border-radius: var(--co-radius-sm);
   font-weight: 600; font-size: 0.82rem; font-family: inherit; cursor: pointer;
   transition: background 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -62,6 +64,24 @@
 
 .co-btn-danger { color: var(--co-red); border-color: color-mix(in srgb, var(--co-red) 30%, var(--co-border)); }
 .co-btn-danger:hover { background: var(--co-red-tint); }
+
+/* ---------- link card (rimanda a /support) ---------- */
+.co-link-card {
+  display: flex; align-items: center; gap: 1rem; cursor: pointer;
+  color: inherit; text-decoration: none;
+  transition: box-shadow 200ms ease, transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)), border-color 200ms ease;
+}
+.co-link-card:hover { box-shadow: var(--co-shadow); transform: translateY(-1px); border-color: color-mix(in srgb, var(--co-brand) 30%, var(--co-border)); }
+.co-link-card:active { transform: scale(0.995); }
+.co-link-icon {
+  width: 44px; height: 44px; border-radius: var(--co-radius-md); background: var(--co-brand-tint); color: var(--co-brand);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.co-link-body { flex: 1; min-width: 0; }
+.co-link-body h2 { font-size: 0.98rem; font-weight: 800; margin: 0 0 0.2rem; }
+.co-link-body p { font-size: 0.82rem; color: var(--co-text-secondary); margin: 0; line-height: 1.4; }
+.co-link-arrow { color: var(--co-text-muted); flex-shrink: 0; transition: transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)); }
+.co-link-card:hover .co-link-arrow { transform: translateX(3px); color: var(--co-brand); }
 
 /* ---------- quick actions ---------- */
 .co-quick-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
@@ -84,7 +104,7 @@
 }
 .co-section-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
 .co-section-head h2 { font-size: 1.02rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
-.co-section-head .material-symbols-outlined { color: var(--co-brand); font-size: 1.2rem; }
+.co-section-head h2 .material-symbols-outlined { color: var(--co-brand); font-size: 1.2rem; }
 
 /* ---------- inline form ---------- */
 .co-form { background: var(--co-bg); border: 1px solid var(--co-border); border-radius: var(--co-radius-md); padding: 1.1rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; }

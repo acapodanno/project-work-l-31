@@ -1,28 +1,29 @@
-/* Stessa direzione visiva della Dashboard Doctor (ispirata a CareOps, dribbble.com/shots/27313885) — pagina
-   dedicata "Pazienti", non annidata nel componente dashboard. */
+/* Stessa direzione visiva della Dashboard Doctor (layout ispirato a CareOps, dribbble.com/shots/27313885) —
+   colori/raggi/ombre ora alias diretto del design system globale (styles.css), non più una palette a parte.
+   Pagina dedicata "Pazienti", non annidata nel componente dashboard. */
 :host {
-  --co-brand: #7c6fe0;
-  --co-brand-tint: #efedfd;
-  --co-ink: #14151a;
-  --co-ink-hover: #2a2c35;
-  --co-bg: #f7f7fb;
-  --co-card: #ffffff;
-  --co-border: #ececf3;
-  --co-text: #14151a;
-  --co-text-secondary: #6b6f7d;
-  --co-text-muted: #9497a3;
-  --co-green: #16a34a;
-  --co-green-tint: #e8f8ee;
-  --co-amber: #d97706;
-  --co-amber-tint: #fef3e2;
-  --co-red: #dc2626;
-  --co-red-tint: #fdeaea;
-  --co-blue: #2563eb;
-  --co-blue-tint: #eaf1fe;
-  --co-radius-sm: 10px;
-  --co-radius-md: 14px;
-  --co-radius-lg: 20px;
-  --co-shadow: 0 1px 2px rgba(20, 21, 26, 0.04), 0 8px 24px rgba(20, 21, 26, 0.06);
+  --co-brand: var(--color-secondary);
+  --co-brand-tint: var(--bg-subtle);
+  --co-ink: var(--color-primary);
+  --co-ink-hover: var(--color-primary-hover);
+  --co-bg: var(--bg-main);
+  --co-card: var(--bg-card);
+  --co-border: var(--border-color);
+  --co-text: var(--text-primary);
+  --co-text-secondary: var(--text-secondary);
+  --co-text-muted: var(--text-muted);
+  --co-green: var(--color-accent-text);
+  --co-green-tint: rgba(22, 163, 74, 0.1);
+  --co-amber: var(--color-warning-text);
+  --co-amber-tint: rgba(181, 118, 15, 0.1);
+  --co-red: var(--color-danger);
+  --co-red-tint: rgba(201, 63, 88, 0.1);
+  --co-blue: var(--color-primary-hover);
+  --co-blue-tint: rgba(5, 5, 75, 0.08);
+  --co-radius-sm: var(--radius-sm);
+  --co-radius-md: var(--radius-md);
+  --co-radius-lg: var(--radius-lg);
+  --co-shadow: var(--shadow-sm);
 
   display: block;
   background: var(--co-bg);
@@ -42,7 +43,7 @@
 .co-btn-primary {
   display: inline-flex; align-items: center; gap: 0.4rem;
   background: var(--co-ink); color: #fff; border: none;
-  padding: 0.65rem 1.2rem; border-radius: 999px;
+  padding: 0.65rem 1.2rem; border-radius: var(--co-radius-sm);
   font-weight: 700; font-size: 0.86rem; font-family: inherit; cursor: pointer;
   transition: background 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -53,7 +54,7 @@
 .co-btn-secondary {
   display: inline-flex; align-items: center; gap: 0.35rem;
   background: #fff; color: var(--co-text); border: 1px solid var(--co-border);
-  padding: 0.55rem 1rem; border-radius: 999px;
+  padding: 0.55rem 1rem; border-radius: var(--co-radius-sm);
   font-weight: 600; font-size: 0.82rem; font-family: inherit; cursor: pointer;
   transition: background 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }

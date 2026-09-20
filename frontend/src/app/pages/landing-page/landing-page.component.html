@@ -1,0 +1,183 @@
+<div class="min-h-screen">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-10 backdrop-blur border-b border-[var(--border-color)]" style="background: rgba(247, 248, 251, 0.85);">
+    <div class="container flex items-center justify-between !py-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-[var(--bg-subtle)] text-[var(--color-secondary-text)] flex items-center justify-center">
+          <span class="material-symbols-outlined text-2xl">local_hospital</span>
+        </div>
+        <div class="leading-tight">
+          <p class="font-extrabold text-[var(--text-primary)]">HealthCare <span class="text-[var(--color-secondary-text)]">Plus</span></p>
+          <p class="text-xs text-[var(--text-secondary)]">Clinica Polispecialistica</p>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-[var(--text-secondary)]">
+        <a href="#chi-siamo" class="hover:text-[var(--color-secondary-text)]">Chi siamo</a>
+        <a href="#specialita" class="hover:text-[var(--color-secondary-text)]">Specialità</a>
+        <a href="#specialisti" class="hover:text-[var(--color-secondary-text)]">I nostri specialisti</a>
+        <a href="#servizi" class="hover:text-[var(--color-secondary-text)]">Servizi</a>
+      </nav>
+
+      <a routerLink="/account" class="btn btn-secondary !py-2 !px-4 text-sm">
+        <span class="material-symbols-outlined text-lg leading-none">login</span>
+        Accedi
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="container grid lg:grid-cols-2 gap-10 items-center !py-16">
+    <div class="space-y-6">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] leading-tight">
+        La tua salute, <span class="text-[var(--color-secondary-text)]">un'unica piattaforma</span>
+      </h1>
+      <p class="text-lg text-[var(--text-secondary)] max-w-lg">
+        Prenota visite, tieni sotto controllo le tue terapie e consulta i referti online.
+        HealthCare Plus mette in comunicazione pazienti, medici e staff della clinica in un unico posto sicuro.
+      </p>
+      <div class="flex flex-wrap gap-3 !pt-2">
+        <a routerLink="/account" class="btn btn-primary">
+          <span class="material-symbols-outlined text-lg leading-none">calendar_month</span>
+          Prenota una visita
+        </a>
+        <a routerLink="/account" class="btn btn-secondary">
+          Hai già un account? Accedi
+        </a>
+      </div>
+    </div>
+
+    <div class="glass-card p-8 space-y-5">
+      <div class="flex items-center gap-3">
+        <div class="icon-chip">
+          <span class="material-symbols-outlined">verified</span>
+        </div>
+        <p class="font-bold text-[var(--text-primary)]">Perché i pazienti si affidano a noi</p>
+      </div>
+      <ul class="space-y-4">
+        <li class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-[var(--color-accent-text)]">check_circle</span>
+          <span class="text-sm text-[var(--text-secondary)]">Nessuna attesa al telefono: prenoti online quando vuoi</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-[var(--color-accent-text)]">check_circle</span>
+          <span class="text-sm text-[var(--text-secondary)]">Referti e cartella clinica sempre a portata di mano</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-[var(--color-accent-text)]">check_circle</span>
+          <span class="text-sm text-[var(--text-secondary)]">Dati protetti da autenticazione a due fattori</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CHI SIAMO -->
+  <section id="chi-siamo" class="container !py-12 scroll-mt-24">
+    <div class="grid lg:grid-cols-2 gap-10 items-center">
+      <div class="space-y-4">
+        <h2 class="text-2xl font-extrabold text-[var(--text-primary)]">Chi siamo</h2>
+        <p class="text-[var(--text-secondary)]">
+          HealthCare Plus è una clinica polispecialistica che unisce l'esperienza di medici specializzati
+          a una piattaforma digitale semplice da usare. Accompagniamo i nostri pazienti in ogni fase del
+          percorso di cura, dalla prenotazione della visita alla consultazione del referto, con un unico
+          obiettivo: rendere la sanità più semplice da vivere.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="glass-card !p-5 text-center" *ngFor="let stat of stats">
+          <p class="text-2xl font-extrabold text-[var(--color-secondary-text)]">{{ stat.value }}</p>
+          <p class="text-sm text-[var(--text-secondary)]">{{ stat.label }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPECIALITA' -->
+  <section id="specialita" class="container !py-12 scroll-mt-24">
+    <div class="text-center max-w-xl mx-auto space-y-2 mb-10">
+      <h2 class="text-2xl font-extrabold text-[var(--text-primary)]">Le nostre specialità</h2>
+      <p class="text-[var(--text-secondary)]">Un team di specialisti pronto a seguirti in ogni fase della tua salute.</p>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div class="glass-card !p-5 flex flex-col items-center text-center gap-2" *ngFor="let s of specialties">
+        <div class="icon-chip sky !w-11 !h-11">
+          <span class="material-symbols-outlined !text-xl">{{ s.icon }}</span>
+        </div>
+        <p class="text-sm font-semibold text-[var(--text-primary)]">{{ s.name }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- I NOSTRI SPECIALISTI -->
+  <section id="specialisti" class="container !py-12 scroll-mt-24">
+    <div class="text-center max-w-xl mx-auto space-y-2 mb-10">
+      <h2 class="text-2xl font-extrabold text-[var(--text-primary)]">I nostri specialisti</h2>
+      <p class="text-[var(--text-secondary)]">Un team multidisciplinare sempre aggiornato sulle migliori pratiche cliniche.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="glass-card p-6 flex items-center gap-4" *ngFor="let d of specialists; let i = index">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
+             [style.background]="i % 2 === 0 ? 'var(--color-primary)' : 'var(--color-secondary)'">
+          {{ d.initials }}
+        </div>
+        <div>
+          <p class="font-bold text-[var(--text-primary)]">{{ d.name }}</p>
+          <p class="text-xs font-semibold text-[var(--color-secondary-text)] uppercase tracking-wide">{{ d.role }}</p>
+          <p class="text-sm text-[var(--text-secondary)] mt-1">{{ d.bio }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="servizi" class="container !py-12 scroll-mt-24">
+    <div class="text-center max-w-xl mx-auto space-y-2 mb-10">
+      <h2 class="text-2xl font-extrabold text-[var(--text-primary)]">Perché scegliere HealthCare Plus</h2>
+      <p class="text-[var(--text-secondary)]">Tutto quello che serve per gestire la tua salute, in un'unica app.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="glass-card p-6 space-y-3" *ngFor="let f of features">
+        <div class="icon-chip !w-11 !h-11">
+          <span class="material-symbols-outlined !text-xl">{{ f.icon }}</span>
+        </div>
+        <p class="font-bold text-[var(--text-primary)]">{{ f.title }}</p>
+        <p class="text-sm text-[var(--text-secondary)]">{{ f.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="container !py-12">
+    <div class="glass-card !p-10 flex flex-col items-center text-center gap-4" style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary-text));">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Pronto a prenotare la tua visita?</h2>
+      <p class="text-white/90 max-w-md">Accedi o crea un account gratuito per iniziare a gestire la tua salute con HealthCare Plus.</p>
+      <a routerLink="/account" class="btn !bg-white !text-[var(--color-primary-hover)] !shadow-lg hover:!bg-white/90">
+        <span class="material-symbols-outlined text-lg leading-none">arrow_forward</span>
+        Inizia ora
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-[var(--border-color)]">
+    <div class="container flex flex-col gap-4 !py-6 text-sm text-[var(--text-secondary)]">
+      <div class="flex flex-wrap gap-x-6 gap-y-2 justify-center sm:justify-start font-semibold">
+        <a href="#chi-siamo" class="hover:text-[var(--color-secondary-text)]">Chi siamo</a>
+        <a href="#specialita" class="hover:text-[var(--color-secondary-text)]">Specialità</a>
+        <a href="#specialisti" class="hover:text-[var(--color-secondary-text)]">I nostri specialisti</a>
+        <a href="#servizi" class="hover:text-[var(--color-secondary-text)]">Servizi</a>
+        <a routerLink="/account" class="hover:text-[var(--color-secondary-text)]">Accedi</a>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-4 border-t border-[var(--border-color)]">
+        <p>&copy; {{ currentYear }} HealthCare Plus — Clinica Polispecialistica</p>
+        <p>Assistenza: supporto&#64;healthcareplus.it</p>
+      </div>
+    </div>
+  </footer>
+
+</div>

@@ -20,6 +20,7 @@ export class LoginFormComponent {
   loginEmail = '';
   loginPassword = '';
   loginError = '';
+  showPassword = false;
   registerSuccess = ''; // can be passed via input if needed, but let's manage locally or via parent?
 
   login() {

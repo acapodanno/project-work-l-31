@@ -1,22 +1,21 @@
 import { Component, EventEmitter, Input, Output, inject, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Appointment, Ticket, Patient, MedicalReportResponse, Therapy } from '../../../models/healthcare.models';
 import { MedicalReportService } from '../../../services/medical-report.service';
 import { TherapyService } from '../../../services/therapy.service';
 import { AuthService } from '../../../services/auth.service';
-import { AppStateService } from '../../../services/app-state.service';
 
 @Component({
   selector: 'app-dashboard-patient',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './dashboard-patient.component.html',
   styleUrl: './dashboard-patient.component.css'
 })
 export class DashboardPatientComponent implements OnInit, OnChanges {
   public authService = inject(AuthService);
-  private appState = inject(AppStateService);
   private reportService = inject(MedicalReportService);
   private therapyService = inject(TherapyService);
 
@@ -35,11 +34,6 @@ export class DashboardPatientComponent implements OnInit, OnChanges {
   editForm = { appointmentDate: '', reason: '', notes: '' };
   therapies: Therapy[] = [];
   printDate = new Date();
-
-  showNewTicketForm = false;
-  newTicketForm = { title: '', description: '' };
-  newTicketError = '';
-  newTicketSuccess = false;
 
   ngOnInit() {
     this.loadReports();
@@ -150,31 +144,5 @@ export class DashboardPatientComponent implements OnInit, OnChanges {
     }
     this.editAppointment.emit({ id: appointmentId, ...this.editForm });
     this.editingAppointmentId = null;
-  }
-
-  toggleNewTicketForm() {
-    this.showNewTicketForm = !this.showNewTicketForm;
-    this.newTicketForm = { title: '', description: '' };
-    this.newTicketError = '';
-  }
-
-  submitNewTicket() {
-    if (!this.newTicketForm.title || !this.newTicketForm.description) {
-      this.newTicketError = 'Compila titolo e descrizione della segnalazione.';
-      return;
-    }
-
-    this.appState.openTicket(this.newTicketForm).subscribe({
-      next: () => {
-        this.newTicketSuccess = true;
-        this.newTicketError = '';
-        this.showNewTicketForm = false;
-        setTimeout(() => this.newTicketSuccess = false, 4000);
-      },
-      error: (err) => {
-        console.error('Errore nella creazione della segnalazione:', err);
-        this.newTicketError = 'Si è verificato un errore. Riprova.';
-      }
-    });
   }
 }

@@ -1,0 +1,68 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <div class="flex items-center justify-between gap-3 flex-wrap">
+    <div class="flex items-center gap-3">
+      <div class="icon-chip amber !w-11 !h-11">
+        <span class="material-symbols-outlined !text-xl">support_agent</span>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-[var(--text-primary)]">Assistenza</h2>
+        <p class="text-sm text-[var(--text-secondary)]">Apri una segnalazione e consulta lo stato delle tue richieste</p>
+      </div>
+    </div>
+    <button class="btn btn-primary" (click)="toggleNewTicketForm()">
+      <span class="material-symbols-outlined text-lg leading-none">add</span>
+      {{ showNewTicketForm ? 'Chiudi' : 'Nuova segnalazione' }}
+    </button>
+  </div>
+
+  <app-alert type="success" [message]="'Segnalazione inviata: il team di supporto la vedrà a breve.'" *ngIf="newTicketSuccess"></app-alert>
+
+  <div class="glass-card p-6 space-y-4" *ngIf="showNewTicketForm">
+    <app-alert type="error" [message]="newTicketError" *ngIf="newTicketError"></app-alert>
+
+    <div>
+      <label for="newTicketTitle">Titolo</label>
+      <input
+        id="newTicketTitle"
+        type="text"
+        name="newTicketTitle"
+        placeholder="Es. Non riesco a caricare il referto"
+        [(ngModel)]="newTicketForm.title" />
+    </div>
+    <div>
+      <label for="newTicketDescription">Descrizione</label>
+      <textarea
+        id="newTicketDescription"
+        name="newTicketDescription"
+        rows="3"
+        placeholder="Descrivi il problema che hai riscontrato"
+        [(ngModel)]="newTicketForm.description"></textarea>
+    </div>
+    <div class="flex justify-end">
+      <button class="btn btn-primary" (click)="submitNewTicket()">Invia segnalazione</button>
+    </div>
+  </div>
+
+  <div class="glass-card p-6 space-y-3">
+    <h3 class="font-bold text-[var(--text-primary)]">Le tue segnalazioni</h3>
+
+    <div class="space-y-2" *ngIf="appState.tickets.length > 0; else emptyTickets">
+      <div class="list-row p-4" *ngFor="let tkt of appState.tickets">
+        <div class="flex items-start justify-between gap-3 mb-1">
+          <p class="font-semibold text-[var(--text-primary)]">{{ tkt.title }}</p>
+          <span class="badge" [ngClass]="tkt.status === 'CLOSED' ? 'badge-completed' : 'badge-open'">
+            {{ tkt.status === 'CLOSED' ? 'Chiuso' : 'Aperto' }}
+          </span>
+        </div>
+        <p class="text-sm text-[var(--text-secondary)]">{{ tkt.description }}</p>
+      </div>
+    </div>
+
+    <ng-template #emptyTickets>
+      <div class="empty-state">
+        <span class="material-symbols-outlined empty-state-icon">task_alt</span>
+        <p>Nessuna segnalazione aperta.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

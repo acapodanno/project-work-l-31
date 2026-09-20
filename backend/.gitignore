@@ -25,6 +25,9 @@ replay_pid*
 
 # Maven
 target/
+
+# Frontend Angular incorporato dal frontend-maven-plugin (vedi pom.xml)
+src/main/resources/static/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup

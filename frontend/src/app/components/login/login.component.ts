@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { TwoFaFormComponent } from './two-fa-form/two-fa-form.component';
@@ -9,7 +10,7 @@ import { AlertComponent } from '../../shared/ui/alert/alert.component';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, LoginFormComponent, TwoFaFormComponent, RegisterFormComponent, AlertComponent],
+  imports: [CommonModule, RouterLink, LoginFormComponent, TwoFaFormComponent, RegisterFormComponent, AlertComponent],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -17,6 +18,7 @@ export class LoginComponent {
 
   @Output() loginSuccess = new EventEmitter<void>();
 
+  currentYear = new Date().getFullYear();
   showRegisterForm = false;
   show2faForm = false;
   loginEmail = '';

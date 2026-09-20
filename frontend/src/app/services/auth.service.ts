@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginRequest, LoginResponse, RegistrationRequest } from '../models/healthcare.models';
 import { environment } from '../../environments/environment';
+import { SILENT_ERROR } from '../interceptors/http-context';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,13 @@ export class AuthService {
   private http = inject(HttpClient);
   private authUrl = `${environment.backendUrl}/auth`;
 
+  // Credenziali/codice sbagliati sono un esito atteso, non un errore di sistema: login, registrazione
+  // e verifica 2FA mostrano già il proprio messaggio inline accanto ai campi del form, quindi non devono
+  // anche far comparire il toast globale (che mostrerebbe il messaggio tecnico grezzo del backend).
+  private readonly silentContext = new HttpContext().set(SILENT_ERROR, true);
+
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials).pipe(
+    return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials, { context: this.silentContext }).pipe(
       tap(response => {
         if (!response.requires2fa) {
           this.saveSession(response);
@@ -23,13 +29,13 @@ export class AuthService {
   }
 
   verify2fa(data: {email: string, code: string}): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.authUrl}/login/verify-2fa`, data).pipe(
+    return this.http.post<LoginResponse>(`${this.authUrl}/login/verify-2fa`, data, { context: this.silentContext }).pipe(
       tap(response => this.saveSession(response))
     );
   }
 
   register(userData: RegistrationRequest): Observable<any> {
-    return this.http.post<any>(`${this.authUrl}/register`, userData);
+    return this.http.post<any>(`${this.authUrl}/register`, userData, { context: this.silentContext });
   }
 
   changePassword(passwordData: any): Observable<any> {

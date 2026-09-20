@@ -75,21 +75,17 @@ Thumbs.db
 # Claude Code local session settings (permessi specifici della sessione)
 .claude/settings.local.json
 
-# Skill di terze parti installate localmente (es. npx skills@latest add, plugin store) — non fanno
-# parte del codice del progetto, restano una preferenza dell'ambiente di chi sviluppa.
+# Skill e strumenti AI installati localmente: non fanno parte del progetto
 .claude/skills/
-.agents/skills/*
-!.agents/skills/backend-design-patterns/
-!.agents/skills/enforce-unit-tests/
-!.agents/skills/frontend-style-guidelines/
+.agents/
 
 # Databases / Environment
 *.sqlite
 *.db
 .env
 
-# Python (l'agente FastAPI è stato rimosso, ma questa regola evita che un venv o una
-# cache __pycache__ locale finiscano di nuovo per errore nel tracking di git)
+# Python (regole preventive: evitano che un venv o una cache __pycache__ locale
+# finiscano per errore nel tracking di git)
 venv/
 __pycache__/
 *.pyc

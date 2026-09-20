@@ -24,7 +24,7 @@ RUN mvn -B dependency:go-offline
 FROM deps AS test
 COPY src ./src
 # `verify` esegue anche il goal `report` di JaCoCo configurato nel pom.xml.
-# Report HTML: target/site/jacoco/index.html — Report XML (per tool esterni/Sonar): target/site/jacoco/jacoco.xml
+# Report HTML: target/site/jacoco/index.html — Report XML (per tool esterni): target/site/jacoco/jacoco.xml
 RUN mvn -B clean verify
 
 # ---------- Stage 3: build del jar (senza rieseguire i test, già eseguiti nello stage `test`) ----------

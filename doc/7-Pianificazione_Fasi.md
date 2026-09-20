@@ -2,28 +2,30 @@
 
 [⬅ Indice](./README.md) | [Avanti: Risorse Utilizzate ➡](./8-Risorse_Utilizzate.md)
 
-Il progetto è stato pianificato secondo un approccio incrementale a 6 fasi, ciascuna con obiettivi di uscita verificabili (entità/DB, endpoint funzionanti, build che compila, test verdi) prima di passare alla fase successiva. Il criterio di allocazione del tempo ha seguito la complessità tecnica di ciascun modulo: la sicurezza (JWT + 2FA) è la fase a cui è stato dedicato più tempo, in quanto coinvolge una libreria esterna (TOTP) con maggiore incertezza implementativa.
+Il progetto è stato pianificato con un approccio incrementale a **6 fasi**, ciascuna con un obiettivo di uscita verificabile prima di passare alla successiva. Questo capitolo confronta il **piano iniziale** (§7.1–7.2) con il **calendario effettivo** ricostruito dalla storia Git (§7.3), poi riporta le dipendenze critiche e i rischi (§7.4–7.5).
 
-## Obiettivi specifici per fase
+Il criterio di allocazione del tempo ha seguito la complessità tecnica di ciascun modulo: la sicurezza (JWT + 2FA) è la fase a cui è stato dedicato più tempo relativo, poiché coinvolge una libreria esterna (TOTP) con maggiore incertezza implementativa.
 
-Ogni fase è guidata da un obiettivo misurabile, verificato al termine della fase stessa prima di procedere:
+## 7.1 Obiettivi specifici per fase
 
-| Fase | Obiettivo specifico | Criterio di verifica |
-|---|---|---|
-| 0 — Analisi e Design | Modellare correttamente le entità del dominio sanitario (pazienti, medici, appuntamenti, referti, terapie, ticket) e le relazioni tra loro | Diagramma ER coerente con le entità JPA effettivamente implementate in Fase 1 |
-| 1 — Backend Core | Esporre un'API RESTful completa (CRUD appuntamenti, medici, pazienti) documentata automaticamente | Swagger UI raggiungibile su `/swagger-ui.html` con tutti gli endpoint elencati |
-| 2 — Sicurezza | Garantire che ogni endpoint sensibile richieda autenticazione JWT valida e rispetti il ruolo dell'utente (RBAC) | Test che verificano risposta 401/403 per token assente/non autorizzato |
-| 3 — Frontend | Fornire un'interfaccia utente funzionale per prenotare visite, consultare la dashboard e gestire il profilo, senza richiedere competenze tecniche all'utente finale | Flusso di prenotazione completabile senza errori dall'apertura del form alla conferma |
-| 4 — Test e Qualità | Raggiungere una copertura di test misurabile (non solo dichiarata) su backend e frontend | Report JaCoCo generato; suite Karma/Jasmine del frontend verde |
-| 5 — Documentazione | Produrre una relazione tracciabile 1:1 rispetto al codice realmente presente nel repository, senza funzionalità dichiarate ma non implementate | Ogni sezione della relazione (context, design, API, processo, pianificazione, risorse, valutazione, test) verificata contro il codice sorgente corrispondente |
+| Fase | Obiettivo specifico | Criterio di verifica | Esito |
+|---|---|---|---|
+| 0 — Analisi e Design | Modellare le entità del dominio sanitario (pazienti, medici, appuntamenti, referti, terapie, ticket, slot) e le loro relazioni | Diagramma ER coerente con le entità JPA implementate in Fase 1 | ✅ ER allineato alle 8 entità del codice ([cap. 2](./2-Design_Architetturale.md)) |
+| 1 — Backend Core | Esporre un'API RESTful completa, documentata automaticamente | Swagger UI raggiungibile su `/swagger-ui.html` con tutti gli endpoint | ✅ 9 controller, 40 operazioni ([cap. 3](./3-API_Swagger.md)) |
+| 2 — Sicurezza | Ogni endpoint sensibile richiede JWT valido e rispetta ruolo **e ownership** | Test e verifiche che mostrano `403` per token assente/non autorizzato | ✅ 9 test di integrazione RBAC + 45 verifiche end-to-end ([cap. 6](./6-Test_Funzionali.md)) |
+| 3 — Frontend | Interfaccia funzionale per prenotare, consultare la dashboard e gestire il profilo, senza competenze tecniche | Flusso di prenotazione completabile dall'apertura del form alla conferma | ✅ Flusso documentato con screenshot reali |
+| 4 — Test e Qualità | Copertura di test misurabile su backend e frontend | Report JaCoCo generato; suite Karma/Jasmine verde | ✅ 137 e 99 test superati; copertura righe 82,3 % e 38,6 % |
+| 5 — Documentazione | Relazione tracciabile 1:1 rispetto al codice, senza funzionalità dichiarate ma non implementate | Ogni sezione verificata contro il codice sorgente | ✅ Riallineata il 20 settembre; difetti residui dichiarati nel [cap. 9](./9-Valutazione_Risultati.md) |
 
-Questi obiettivi derivano direttamente dalla traccia del PW16 (servizio significativo per un'organizzazione sanitaria, architettura API-based, backend RESTful, interfaccia utente intuitiva) e sono stati resi più specifici e misurabili rispetto alla formulazione generica della traccia stessa.
+Gli obiettivi discendono dalla traccia del PW16 (servizio significativo per un'organizzazione sanitaria, architettura API-based, backend RESTful, interfaccia intuitiva) e sono stati resi più specifici e misurabili rispetto alla formulazione generica della traccia.
 
-## Diagramma di Gantt
+## 7.2 Piano iniziale (diagramma di Gantt)
+
+Il piano, redatto prima dell'implementazione, prevedeva circa **33 giorni-persona** per un progetto individuale part-time.
 
 ```mermaid
 gantt
-    title Pianificazione del Project Work — HealthCare Plus
+    title Piano iniziale — HealthCare Plus
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m
 
@@ -34,7 +36,7 @@ gantt
     section Fase 1 — Backend Core
     Setup progetto Spring Boot + H2          :done, f1a, after f0b, 1d
     Entità JPA, repository, mapper MapStruct :done, f1b, after f1a, 3d
-    Controller REST (Appointment, Patient, Doctor, Ticket) :done, f1c, after f1b, 3d
+    Controller REST                          :done, f1c, after f1b, 3d
     Documentazione Swagger/OpenAPI           :done, f1d, after f1c, 1d
 
     section Fase 2 — Sicurezza
@@ -50,26 +52,82 @@ gantt
     section Fase 4 — Test e Qualità
     Test unitari backend (JUnit + JaCoCo)    :done, f4a, after f3c, 2d
     Test unitari frontend (Karma/Jasmine)    :done, f4b, after f3c, 2d
-    Test funzionali end-to-end (screenshot)  :crit, f4c, after f4b, 2d
+    Test funzionali end-to-end (screenshot)  :done, f4c, after f4b, 2d
 
     section Fase 5 — Documentazione Finale
-    Stesura relazione (contesto, design, API, processo) :done, f5a, after f1d, 2d
-    Revisione finale e coerenza report/codice :crit, f5b, after f4c, 1d
+    Stesura relazione                        :done, f5a, after f1d, 2d
+    Revisione finale coerenza report/codice  :done, f5b, after f4c, 1d
 ```
-
-## Dettaglio delle fasi e allocazione del tempo
 
 | # | Fase | Durata stimata | Output atteso | Stato |
 |---|---|---|---|---|
-| 0 | Analisi del contesto e design (ER, UML, C4) | 4 giorni | Diagrammi ER/UML/C4 approvati, casi d'uso definiti | ✅ Completato |
-| 1 | Backend core (Spring Boot, JPA, mapper, controller REST) | 8 giorni | API REST funzionanti su porta 8080, Swagger pubblicato | ✅ Completato |
-| 2 | Sicurezza (JWT, 2FA TOTP, RBAC) | 5 giorni | Login/registrazione protetti, ruoli applicati agli endpoint | ✅ Completato |
-| 3 | Frontend Angular (SPA, componenti, interceptors) | 8 giorni | UI navigabile su porta 4200, gestione errori centralizzata | ✅ Completato |
-| 4 | Test e qualità (JUnit, Karma/Jasmine, JaCoCo, screenshot funzionali) | 5 giorni | Suite di test verdi, evidenze visive del funzionamento | 🔄 In corso (screenshot ancora da produrre) |
-| 5 | Documentazione finale e revisione di coerenza | 3 giorni | Relazione completa e allineata al codice | 🔄 In corso |
+| 0 | Analisi del contesto e design (ER, UML, C4) | 4 giorni | Diagrammi approvati, casi d'uso definiti | ✅ Completato |
+| 1 | Backend core (Spring Boot, JPA, mapper, controller REST) | 8 giorni | API su porta 8080, Swagger pubblicato | ✅ Completato |
+| 2 | Sicurezza (JWT, 2FA TOTP, RBAC) | 5 giorni | Login/registrazione protetti, ruoli applicati | ✅ Completato |
+| 3 | Frontend Angular (SPA, componenti, interceptors) | 8 giorni | UI navigabile su porta 4200, errori centralizzati | ✅ Completato |
+| 4 | Test e qualità (JUnit, Karma/Jasmine, JaCoCo, screenshot) | 5 giorni | Suite verdi, evidenze visive | ✅ Completato (screenshot acquisiti il 20 settembre) |
+| 5 | Documentazione finale e revisione di coerenza | 3 giorni | Relazione allineata al codice | ✅ Completato |
 
-**Totale stimato: circa 33 giorni-persona**, distribuiti su un progetto individuale part-time (compatibile con un impegno di studio parallelo).
+La stima è un dato di **pianificazione**: lo storico Git registra quando il codice è stato consegnato, non quante ore sono state dedicate, quindi il tempo effettivo non è misurabile a posteriori.
 
-## Dipendenze critiche
+## 7.3 Calendario effettivo (dalla storia Git)
 
-La Fase 2 (Sicurezza) blocca la Fase 3 (Frontend), poiché i componenti Angular dipendono dagli endpoint di login/JWT per gestire l'instradamento autenticato. La Fase 4 dipende trasversalmente da tutte le fasi precedenti, poiché i test funzionali richiedono l'intero stack (backend + frontend) in esecuzione contemporaneamente.
+Il repository contiene **39 commit** tra il 10 luglio e il 20 settembre 2026. Il piano iniziale è stato seguito nella sostanza, ma il lavoro reale si è articolato in iterazioni successive alla prima consegna, molte delle quali guidate da ciò che la verifica faceva emergere (in particolare sicurezza e coerenza documentazione ↔ codice).
+
+```mermaid
+gantt
+    title Calendario effettivo — dai commit del repository
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d/%m
+
+    section Consegna iniziale
+    Prima versione backend + frontend nel repository :milestone, m1, 2026-07-10, 0d
+    Pulizia del repository (dipendenze tracciate per errore) :done, a1, 2026-07-11, 1d
+    section CI e contenitori
+    Pipeline GitHub Actions, release, package-lock :done, c1, 2026-07-29, 1d
+    Ripristino template frontend                    :done, c2, 2026-07-30, 1d
+    Pipeline snellita per modulo (PR 21)            :done, c3, 2026-07-31, 1d
+    section Sicurezza e funzionalità
+    RBAC completo, fix IDOR referti (PR 24)         :done, s1, 2026-07-31, 1d
+    Routing con guardie, CRUD visite, stampa (PR 24) :done, s2, 2026-07-31, 1d
+    Funzionalità del medico (PR 25)                 :done, s3, 2026-07-31, 2d
+    section Interfaccia
+    Design system e coerenza visiva (PR 25-27)      :done, u1, 2026-07-31, 2d
+    Login a schermo intero                          :done, u2, 2026-08-01, 1d
+    Nuova palette (PR 29-30)                        :done, u3, 2026-09-13, 1d
+    section Consolidamento
+    Diagrammi di sequenza mancanti, pulizia del repository :done, k1, 2026-09-13, 1d
+    Immagine Docker unica, cartella clinica, login  :done, k2, 2026-09-20, 1d
+    Riallineamento documentazione e verifiche       :done, k3, 2026-09-20, 1d
+```
+
+### Iterazioni integrate tramite pull request
+
+| Data | PR | Contenuto |
+|---|---|---|
+| 31 lug | #21 `ci/streamline-workflows` | Pipeline a build/test/release per modulo modificato |
+| 31 lug | #23 `fix/frontend-css-cleanup` | Ripristino CSS e correzione di `karma.conf.js` e degli spec |
+| 31 lug | #24 `feature/security-and-functional-fixes` | RBAC completo, correzione IDOR sui referti, CRUD e validazioni, routing con guardie, esportazione stampabile, statistiche estese |
+| 1 ago | #25 `feature/oauth-doctor-ui-polish` | Nuove funzionalità per il medico, refresh del design system |
+| 1 ago | #26 `feature/security-and-functional-fixes` | Seconda integrazione del branch `security-and-functional-fixes` |
+| 1 ago | #27 `ui/consistency-pass` | Coerenza visiva (icone, stati vuoti, login) |
+| 13 set | #29, #30 `ui/direction-b-palette` | Nuova palette e revisione grafica |
+
+Il commit `bd5459a9` del 20 settembre aggiunge il documento di consegna in formato Word (`HealthCarePlus_ProjectWork_L31.docx`).
+
+## 7.4 Dipendenze critiche
+
+- La **Fase 2 (Sicurezza)** blocca la **Fase 3 (Frontend)**: i componenti Angular dipendono da login e JWT per l'instradamento autenticato.
+- La **Fase 4** dipende trasversalmente da tutte le precedenti: i test funzionali richiedono l'intero stack (backend + frontend) in esecuzione insieme.
+- La **Fase 5** dipende da tutte: la documentazione va riverificata a ogni modifica sostanziale del codice (lo mostra l'evoluzione del codice dalla prima consegna alle iterazioni successive, che ha reso obsoleti diversi paragrafi).
+
+## 7.5 Rischi incontrati
+
+| Rischio | Cosa è successo | Risposta |
+|---|---|---|
+| Eccezione di sicurezza lasciata dopo la rimozione di un modulo | `POST /api/tickets` era rimasto aperto | Ownership ripristinata e ricerca sistematica di tutti i `@PreAuthorize` |
+| Repository appesantito da file non sorgente | Migliaia di file di dipendenze e ambienti locali tracciati per errore in più occasioni | Rimozione dal tracking e regole `.gitignore` |
+| Documentazione che diverge dal codice | Strumenti, Docker e ruoli descritti in modo non più corretto | Riallineamento sistematico con verifica sull'applicazione in esecuzione (questo aggiornamento) |
+| Regressione non intercettata dai test | 4 spec frontend rotti da una modifica grafica | Test rieseguiti e corretti; controllo della CI prima del merge come regola da rispettare |
+
+[Avanti: Risorse Utilizzate ➡](./8-Risorse_Utilizzate.md)

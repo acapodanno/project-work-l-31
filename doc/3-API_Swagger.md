@@ -71,7 +71,7 @@ Legenda: **P** = Paziente, **M** = Medico, **S** = Supporto. «Proprio» signifi
 |---|---|---|
 | `GET /` | M, S | Tutte le visite |
 | `GET /patient/{patientId}` | M, S, oppure P proprietario | Visite di un paziente |
-| `POST /` | M, S, oppure P per **sé stesso** | `patientId` nel corpo deve coincidere con l'utente se è un paziente. Risponde `201` |
+| `POST /` | M, S, oppure P per **sé stesso** | `patientId` nel corpo deve coincidere con l'utente se è un paziente. Risponde `201`. Nell'interfaccia il Medico crea visite dal form «Nuovo appuntamento» (con scelta del paziente); per il Supporto il form di prenotazione non prevede la scelta del paziente (L15) |
 | `PUT /{id}` | M, S, oppure P proprietario | Modifica data, motivo, note; solo se la visita è ancora `SCHEDULED` |
 | `PATCH /{id}/status?status=…` | M, S per ogni stato; P proprietario **solo** `CANCELLED` | `SCHEDULED`, `COMPLETED`, `CANCELLED`; applica lo Strategy pattern |
 | `DELETE /{id}` | M, S | |

@@ -190,5 +190,6 @@ Rieseguendo l'applicazione per redigere questo capitolo sono emersi i seguenti p
 | 5 | Il frontend si aspetta `validationErrors` come array, il backend lo restituisce come mappa campo → messaggio: i dettagli di validazione non compaiono nel Toast | Aperto (minore) |
 | 6 | Il backend in container non partiva: `AccessDeniedException: /app/uploads`. L'utente non privilegiato `spring` non poteva creare la cartella dei referti in `/app`, che è di root | **Corretto** in `backend/Dockerfile` (`mkdir -p /app/uploads && chown -R spring:spring /app`) |
 | 7 | Il controllo di salute del frontend risultava `unhealthy` anche con il sito attivo: `localhost` nel container viene risolto prima in IPv6 (`::1`) ma Nginx ascolta solo su IPv4 | **Corretto** in `frontend/Dockerfile` (controllo su `127.0.0.1`) |
+| 8 | La voce «Prenota Visita» è visibile e raggiungibile anche dal Supporto, ma il form prenota sempre per il profilo dell'utente collegato: il Supporto non ne ha uno e vede «Devi essere registrato come paziente per prenotare», anche se l'API gli consentirebbe di creare visite per un paziente | Aperto |
 
 [Avanti: Pianificazione delle Fasi ➡](./7-Pianificazione_Fasi.md)

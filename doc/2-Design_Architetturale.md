@@ -253,7 +253,7 @@ La SPA usa **componenti standalone** (nessun `NgModule`) e un router con guardie
 | `/` | `guestGuard` | ospiti | Landing page (chi è già loggato va in dashboard) |
 | `/account` | — | tutti | Login/registrazione se ospite; profilo e sicurezza (2FA, password) se loggato |
 | `/dashboard` | `authGuard` | tutti | Dashboard specifica per ruolo (paziente, medico, supporto) |
-| `/booking` | `authGuard`, `roleGuard` | `PATIENT`, `SUPPORT` | Elenco medici → dettaglio → form di prenotazione con slot |
+| `/booking` | `authGuard`, `roleGuard` | `PATIENT`, `SUPPORT` | Elenco medici → dettaglio → form di prenotazione con slot. Il form prenota sempre per il profilo dell'utente collegato: il Supporto vi accede ma non riesce a completare la prenotazione (nessun profilo paziente, nessun selettore del paziente) |
 | `/therapy` | `authGuard`, `roleGuard` | `PATIENT` | Terapie prescritte |
 | `/records` | `authGuard`, `roleGuard` | `PATIENT` | Cartella clinica e referti |
 | `/support` | `authGuard`, `roleGuard` | `PATIENT` | Apertura e consultazione dei ticket |

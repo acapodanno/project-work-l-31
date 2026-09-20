@@ -5,7 +5,7 @@
 ## Il Contesto Operativo
 **HealthCare Plus** è una clinica polispecialistica che offre visite in diversi ambiti (Cardiologia, Dermatologia, Pediatria, Ortopedia, Medicina Generale) e gestisce ogni giorno un flusso elevato di prenotazioni, documentazione clinica e richieste di assistenza da parte dei pazienti. Quando questi processi restano affidati a telefonate e carta, la clinica fatica a sapere quali visite sono libere, dove sia finito un referto o quale problema tecnico sia ancora aperto.
 
-L'organizzazione ha quindi deciso di adottare una **piattaforma web unica**, accessibile ai pazienti e al personale interno con permessi differenziati per ruolo. Il progetto risponde alla traccia del Project Work (servizio digitale significativo per un'organizzazione sanitaria, architettura basata su API, backend RESTful, interfaccia intuitiva) con un'applicazione full-stack: un backend Spring Boot che espone le API e una SPA Angular che le consuma.
+L'organizzazione ha quindi deciso di adottare una **piattaforma web unica**, accessibile ai pazienti e al personale interno con permessi differenziati per ruolo. Il progetto risponde alla traccia PW 16 del Project Work, Tema n. 1 «La digitalizzazione dell'impresa» (servizio digitale significativo per un'organizzazione sanitaria, architettura basata su API, backend RESTful, interfaccia intuitiva) con un'applicazione full-stack: un backend Spring Boot che espone le API e una SPA Angular che le consuma.
 
 ## Gli Attori e i Loro Permessi
 
@@ -63,6 +63,18 @@ Il portale copre due aree complementari.
 ### 2. Sistema di Ticket IT (Supporto)
 
 Il paziente segnala un problema tecnico dalla propria area «Assistenza»; il personale di **Supporto** vede le segnalazioni di tutti, le prende in carico e le chiude. Un pannello con contatori e filtri (aperti/chiusi, programmate/completate/cancellate) dà una vista d'insieme.
+
+## Valore per l'impresa
+
+Il tema del Project Work è la digitalizzazione dell'impresa. La piattaforma sposta su un canale unico attività che in una clinica tradizionale passano da telefonate e documenti cartacei:
+
+- il paziente vede la **disponibilità reale** dei medici e prenota senza intermediari;
+- i referti sono raccolti in un **archivio consultabile** e associato alla visita;
+- le richieste di assistenza sono **tracciate** con uno stato (aperta o chiusa) invece di disperdersi.
+
+Sono vantaggi *attesi* per il personale (meno tempo dedicato alla gestione telefonica di prenotazioni e richieste, minore rischio di errori di trascrizione) e per la clinica (costi di gestione contenuti, senza le licenze di una suite gestionale enterprise). **Non sono stati misurati in un contesto reale:** sono benefici attesi, non risultati.
+
+**Indicatori operativi.** Il pannello statistiche (`GET /api/dashboard/stats`, riservato a medici e supporto) restituisce già dati da cui ricavare indicatori: numero di pazienti e medici, visite programmate, completate e cancellate, ticket aperti e chiusi. Il rapporto tra visite cancellate e programmate indica il tasso di disdette, quello tra ticket chiusi e aperti l'efficacia del supporto. Sono la base di partenza per una dashboard economico-gestionale più ampia (ricavi per specialità, tempi di attesa), che **non è stata sviluppata**.
 
 ## Cosa non è incluso
 

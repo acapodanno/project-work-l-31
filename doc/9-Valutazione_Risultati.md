@@ -16,6 +16,22 @@ Gli obiettivi specifici definiti in fase di pianificazione ([capitolo 7](./7-Pia
 | Copertura di test misurabile | ✅ Misurata, ⚠️ disomogenea | Backend: 137 test, 82,3 % righe. Frontend: 99 test, 38,6 % righe (L9) |
 | Relazione tracciabile 1:1 rispetto al codice | ✅ Riallineata il 20 settembre | Questo aggiornamento; i difetti scoperti sono dichiarati qui e nel [cap. 6](./6-Test_Funzionali.md#4-difetti-emersi-dalla-verifica) |
 
+## Rispondenza alla traccia
+
+Il rapporto richiesto dalla traccia PW 16 e la sua copertura:
+
+| Elemento richiesto | Esito | Riferimento |
+|---|---|---|
+| Contesto dell'organizzazione e tipo di servizio | ✅ | [Cap. 1](./1-Contesto_e_Servizi.md), con il valore per l'impresa |
+| Aspetti di design (UML, ER) | ✅ | [Cap. 2](./2-Design_Architetturale.md): casi d'uso, classi, sequenza, ER e C4 |
+| Documentazione delle API (tipo Swagger) | ✅ | [Cap. 3](./3-API_Swagger.md), con matrice dei permessi |
+| Codici su repository Git | ✅ | [Cap. 4](./4-Repository_Git.md) |
+| Resoconto del processo e snippet commentati | ✅ | [Cap. 5](./5-Processo_Sviluppo.md) |
+| Test funzionale con screenshot | ✅ | [Cap. 6](./6-Test_Funzionali.md) |
+| Frontend HTML/CSS/JavaScript e backend object-oriented | ✅ | Angular 19 e Java 21 / Spring Boot |
+
+La traccia cita come esempio di servizio anche una *dashboard economico/finanziaria*: il progetto realizza un pannello di **indicatori operativi** (visite e ticket), non economico-finanziari (si veda il [cap. 1](./1-Contesto_e_Servizi.md#valore-per-limpresa)).
+
 ## Punti di forza
 
 **Applicazione consapevole di pattern OOP oltre il CRUD di base.** Lo Strategy pattern per le transizioni di stato (con Factory che raccolgono le implementazioni via iniezione) evita catene di `if/else` e rispetta l'Open/Closed Principle. Un onesto distinguo: le strategie oggi sono punti di estensione che registrano un log, non contengono ancora logica di business (L8).

@@ -11,5 +11,4 @@ Questo repository contiene la struttura base per un progetto full-stack in ambit
 
 ## Documentazione e Avvio
 
-*   [REPORT.md](./REPORT.md): riassunto esecutivo del progetto e istruzioni rapide di avvio.
 *   [doc/README.md](./doc/README.md): relazione tecnica completa (9 capitoli — contesto, design UML/ER, API/Swagger, repository Git, processo di sviluppo, test funzionali, pianificazione delle fasi, risorse utilizzate, valutazione critica dei risultati), da considerarsi la relazione di riferimento richiesta dalla traccia.

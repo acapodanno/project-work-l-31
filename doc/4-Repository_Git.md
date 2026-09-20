@@ -4,6 +4,8 @@
 
 Il progetto è organizzato come **monorepo**: nella stessa radice convivono il backend (Java/Spring), il frontend (Node/Angular), la documentazione e la configurazione di build/CI. Questa scelta mantiene allineati API e client e permette di far evolvere entrambi in un'unica pull request.
 
+**Repository Git:** [https://github.com/acapodanno/project-work-l-31](https://github.com/acapodanno/project-work-l-31) (branch `main`).
+
 ## Struttura delle Cartelle
 
 ```text

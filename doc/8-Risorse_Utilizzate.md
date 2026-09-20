@@ -4,6 +4,14 @@
 
 Le risorse tecniche sono state selezionate non per numero, ma per **attinenza** al problema (ognuna risolve un vincolo reale del dominio sanitario: sicurezza dei dati, tracciabilità, disponibilità del servizio), **attualità** (versioni correnti al 2026, non deprecate) e **approfondimento** (uso oltre la configurazione di default). Le versioni riportate sono quelle dichiarate in `backend/pom.xml`, `frontend/package.json` e nei Dockerfile.
 
+## Come sono state individuate le risorse
+
+Ho individuato le risorse partendo dalla **documentazione ufficiale** di ciascuna tecnologia (i siti sono in fondo al capitolo) e ho scelto le versioni correnti o a supporto a lungo termine, verificandole poi con la compilazione e con la suite di test. Le difficoltà sono state soprattutto di **compatibilità**:
+
+- Lombok e MapStruct richiedono un binding esplicito (`lombok-mapstruct-binding`) per non entrare in conflitto durante l'elaborazione delle annotazioni;
+- il backend richiede **Java 21**, quindi non si costruisce con versioni precedenti;
+- per la 2FA la libreria TOTP genera e verifica i codici ma **non offre il flusso di login**, che è stato progettato ex novo (si veda il [capitolo 5](./5-Processo_Sviluppo.md)).
+
 ## Backend (Java)
 
 | Risorsa | Versione | Perché è stata scelta | Uso non banale |

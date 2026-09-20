@@ -2,7 +2,7 @@
 
 [⬅ Indice](./README.md) | [Avanti: API Swagger ➡](./3-API_Swagger.md)
 
-In questa sezione vengono presentati i modelli concettuali e di sistema adottati: il modello dati (§2.1), l'architettura a livelli e di deployment (§2.2–2.3), i pattern e la sicurezza del backend (§2.4–2.5), la struttura del frontend (§2.6) e i diagrammi di sequenza dei flussi principali (§2.7–2.11).
+I diagrammi **UML** del progetto sono: casi d'uso ([capitolo 1](./1-Contesto_e_Servizi.md)), classi (§2.4) e sequenza (§2.7–2.11); il modello dati è rappresentato con il diagramma **Entità-Relazione** (§2.1). In questa sezione vengono presentati i modelli concettuali e di sistema adottati: il modello dati (§2.1), l'architettura a livelli e di deployment (§2.2–2.3), i pattern e la sicurezza del backend (§2.4–2.5), la struttura del frontend (§2.6) e i diagrammi di sequenza dei flussi principali (§2.7–2.11).
 
 ## 2.1 Diagramma Entità-Relazione (ER)
 

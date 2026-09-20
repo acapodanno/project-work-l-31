@@ -1,10 +1,6 @@
 # Orchestrazione dei tre servizi in locale (o su qualunque host con Docker).
 #
 # Avvio:            docker compose up --build
-# Solo i test:      docker compose -f docker-compose.test.yml up --build
-# Coverage estratta su host: vedi i commenti nei singoli Dockerfile
-#                   (target `test` + `docker build --output type=local,...`).
-
 services:
   backend:
     build:

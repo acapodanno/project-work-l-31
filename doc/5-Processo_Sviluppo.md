@@ -11,7 +11,7 @@ Lo sviluppo è stato guidato da un approccio **incrementale (Agile)**: fasi brev
 3. **Sicurezza.** JWT stateless, 2FA TOTP e RBAC per ruolo, raffinato più tardi con controlli di **ownership** per singola risorsa quando è emerso che un controllo per solo ruolo non impediva a un paziente di leggere i dati di un altro paziente.
 4. **Frontend Angular.** SPA con componenti standalone, routing con guardie, dashboard per ruolo, interceptor HTTP per autenticazione, errori e caricamento.
 5. **Iterazioni di consolidamento**, ciascuna in una pull request dedicata: RBAC completo e correzione di un accesso non autorizzato ai referti (IDOR), CRUD e validazioni; routing reale con guardie, CRUD appuntamenti ed esportazione stampabile; miglioramenti per il medico (slot in serie, terapie, storico pazienti); due passate di design system e coerenza visiva; login a schermo intero.
-6. **Contenitori e CI.** Dockerfile multi-stage, Docker Compose, immagine unica e pipeline GitHub Actions con release.
+6. **Contenitori e CI.** Dockerfile multi-stage, Docker Compose e pipeline GitHub Actions con release.
 7. **Verifica finale documentazione ↔ codice**, con test e screenshot rieseguiti sull'applicazione reale.
 
 Durante l'integrazione è emerso un problema di percezione: l'interfaccia sembrava «lenta» perché ogni chiamata asincrona, anche se veloce, faceva comparire e sparire lo spinner. È stato risolto con un interceptor di caricamento con ritardo di attivazione (snippet 2).

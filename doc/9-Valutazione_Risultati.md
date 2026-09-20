@@ -42,7 +42,7 @@ La traccia cita come esempio di servizio anche una *dashboard economico/finanzia
 
 **Verifica basata su evidenze.** Test automatici, verifiche end-to-end con utenti di ruoli diversi (incluso un TOTP calcolato in modo indipendente) e screenshot dell'applicazione reale, non simulati. Il fatto stesso di averle eseguite ha portato alla luce difetti che i test esistenti non vedevano (§Limiti noti).
 
-**Ambiente riproducibile.** Tre modalità di esecuzione (sviluppo, Compose, immagine unica), Dockerfile multi-stage con stage di test dedicato e CI indipendente per modulo, con release automatiche.
+**Ambiente riproducibile.** Due modalità di esecuzione (sviluppo e Docker Compose con un solo comando), Dockerfile multi-stage con stage di test dedicato e CI indipendente per modulo, con release automatiche.
 
 ## Limiti noti
 
@@ -63,7 +63,7 @@ Legenda gravità: **Alta** = da correggere prima di qualunque uso reale; **Media
 | L11 | Bassa | **Errori di dominio tutti `400`.** Ogni `RuntimeException` (anche «paziente non trovato») è mappata a `400`, non `404`/`409`; alcuni messaggi restano in inglese (es. «Bad credentials»). La creazione di una terapia risponde `200` invece di `201`. `Ticket.status` è una stringa, non un enum. Lo stato iniziale di appuntamento e ticket è accettato dal client (riscontrato dalla lettura del codice, non provato sul campo) | `GlobalExceptionHandler`, `TherapyController`, `Ticket`, `AppointmentService` | Eccezioni di dominio tipizzate, enum, ignorare lo stato in ingresso |
 | L12 | Bassa | **Dipendenze da rete esterna nel frontend.** Tailwind tramite CDN «Play» (non pensato per la produzione) e Google Fonts; `backendUrl` di produzione fissato a `http://localhost:8080/api` | `index.html`, `environment.prod.ts` | Tailwind compilato nel build; URL del backend configurabile per ambiente |
 | L13 | Bassa | **Swagger UI non consente di autenticarsi** (nessun `securitySchemes`), mostra `LocalTime` come oggetto e dichiara `200` per operazioni che rispondono `201` | configurazione OpenAPI | Definire uno schema `bearerAuth` e annotare risposte e tipi |
-| L14 | Scelta di scope | **Continuous Deployment non implementato.** La CI copre build, test e release degli artefatti, non il deploy su un ambiente. Le immagini Docker non sono state ricostruite durante questa verifica e l'immagine unica non ha un fallback per le rotte Angular profonde | `.github/workflows/ci.yml`, `Dockerfile` | Deploy containerizzato su un servizio PaaS al merge su `main`; forward delle rotte SPA |
+| L14 | Scelta di scope | **Continuous Deployment non implementato.** La CI copre build, test e release degli artefatti, non il deploy su un ambiente. Nei container i referti caricati (`/app/uploads`) si perdono alla ricreazione, perché non c'è un volume | `.github/workflows/ci.yml`, `docker-compose.yml` | Deploy containerizzato su un servizio PaaS al merge su `main`; volume o storage esterno per i referti |
 
 I limiti L1, L2, L3, L4 e L6 sono stati **riscontrati eseguendo l'applicazione** durante questo aggiornamento ([capitolo 6](./6-Test_Funzionali.md), §3–4); il difetto dei test frontend (`LoginComponent`) è stato invece corretto in corso d'opera.
 

@@ -97,7 +97,7 @@ gantt
     Nuova palette (PR 29-30)                        :done, u3, 2026-09-13, 1d
     section Consolidamento
     Diagrammi di sequenza mancanti, pulizia del repository :done, k1, 2026-09-13, 1d
-    Immagine Docker unica, cartella clinica, login  :done, k2, 2026-09-20, 1d
+    Cartella clinica e revisione del login       :done, k2, 2026-09-20, 1d
     Riallineamento documentazione e verifiche       :done, k3, 2026-09-20, 1d
 ```
 

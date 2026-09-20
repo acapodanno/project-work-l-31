@@ -97,6 +97,24 @@ Tutte le immagini sono in [`doc/img/`](./img). Gli utenti sono quelli di prova d
 
 Gli screenshot di Swagger UI sono nel [capitolo 3](./3-API_Swagger.md). Poiché il documento OpenAPI non dichiara uno schema di sicurezza, dalla UI si possono provare solo gli endpoint pubblici: gli endpoint protetti sono stati verificati con chiamate HTTP dirette (§3).
 
+### 2.6 Esecuzione in container (Docker Compose)
+
+L'applicazione si avvia anche in due container Docker con un solo comando, eseguito dalla radice del repository:
+
+```bash
+docker compose up --build
+```
+
+Il comando costruisce le due immagini (backend: JRE 21 Alpine con il jar Spring Boot; frontend: Nginx 1.27 Alpine con la SPA compilata) e avvia i container `backend-1` (porta 8080) e `frontend-1` (porta 4200, che nel container è la 80).
+
+![Terminale: docker compose up --build](./img/20_docker_compose_up.png)
+*Avvio con `docker compose up --build`: costruzione delle due immagini e creazione dei container.*
+
+![Docker Desktop: i due container attivi](./img/21_docker_desktop_container.png)
+*Docker Desktop: il progetto `project-work-l-31` con i container `frontend-1` (porta 4200→80) e `backend-1` (porta 8080).*
+
+**Verifiche eseguite sui container:** il backend risulta `healthy`, `GET /v3/api-docs` risponde `200`, `http://localhost:4200` risponde `200` e il login con l'utente di prova restituisce il ruolo `PATIENT`.
+
 ## 3. Verifiche end-to-end sull'API
 
 Le chiamate sono state eseguite da uno script contro il backend reale, con utenti di ruoli diversi. Il codice TOTP della 2FA è stato calcolato dallo script secondo RFC 6238, quindi la verifica dei due passaggi è realmente esercitata. **45 verifiche: 44 con l'esito previsto e 1 con un codice di stato diverso da quello atteso** (la creazione di una terapia risponde `200` e non `201`: è il comportamento del codice, riportato in tabella).
@@ -170,5 +188,7 @@ Rieseguendo l'applicazione per redigere questo capitolo sono emersi i seguenti p
 | 3 | L'anteprima PDF e il link «Scarica» del referto usano l'URL diretto senza header `Authorization`: il PDF non è visualizzabile dall'interfaccia | Aperto |
 | 4 | La creazione di un appuntamento non impedisce la doppia prenotazione dello stesso orario | Aperto |
 | 5 | Il frontend si aspetta `validationErrors` come array, il backend lo restituisce come mappa campo → messaggio: i dettagli di validazione non compaiono nel Toast | Aperto (minore) |
+| 6 | Il backend in container non partiva: `AccessDeniedException: /app/uploads`. L'utente non privilegiato `spring` non poteva creare la cartella dei referti in `/app`, che è di root | **Corretto** in `backend/Dockerfile` (`mkdir -p /app/uploads && chown -R spring:spring /app`) |
+| 7 | Il controllo di salute del frontend risultava `unhealthy` anche con il sito attivo: `localhost` nel container viene risolto prima in IPv6 (`::1`) ma Nginx ascolta solo su IPv4 | **Corretto** in `frontend/Dockerfile` (controllo su `127.0.0.1`) |
 
 [Avanti: Pianificazione delle Fasi ➡](./7-Pianificazione_Fasi.md)

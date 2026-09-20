@@ -159,7 +159,7 @@ flowchart LR
 
 ## 2.3 Modalità di deployment
 
-Lo stesso codice si avvia in tre modi, descritti operativamente nel [capitolo 4](./4-Repository_Git.md#tre-modi-di-eseguire-lapplicazione):
+Lo stesso codice si avvia in due modi, descritti operativamente nel [capitolo 4](./4-Repository_Git.md#due-modi-di-eseguire-lapplicazione):
 
 ```mermaid
 flowchart TB
@@ -171,13 +171,9 @@ flowchart TB
         direction LR
         B1[Nginx :80 → host 4200<br/>serve i file statici] -. "il browser chiama :8080" .-> B2[Spring Boot :8080]
     end
-    subgraph ALLINONE[3 · Immagine unica]
-        direction LR
-        C1[Spring Boot :8080<br/>API + SPA in static/]
-    end
 ```
 
-In tutte e tre le modalità il browser chiama il backend all'indirizzo configurato in `environment.backendUrl` (`http://localhost:8080/api`, sia in sviluppo sia in produzione, si veda [capitolo 9](./9-Valutazione_Risultati.md)).
+In entrambe le modalità il browser chiama il backend all'indirizzo configurato in `environment.backendUrl` (`http://localhost:8080/api`, sia in sviluppo sia in produzione, si veda [capitolo 9](./9-Valutazione_Risultati.md)).
 
 ## 2.4 Struttura del backend e Strategy pattern
 

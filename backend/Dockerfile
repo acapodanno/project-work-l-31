@@ -40,6 +40,10 @@ WORKDIR /app
 RUN apk add --no-cache wget && \
     addgroup -S spring && adduser -S spring -G spring
 COPY --from=build /app/target/*.jar app.jar
+# FileStorageService salva i referti in ./uploads, cioè /app/uploads. L'utente non
+# privilegiato `spring` non può creare cartelle in /app (di proprietà di root): senza
+# questa riga l'avvio fallisce con AccessDeniedException: /app/uploads.
+RUN mkdir -p /app/uploads && chown -R spring:spring /app
 USER spring
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=5s --retries=5 \

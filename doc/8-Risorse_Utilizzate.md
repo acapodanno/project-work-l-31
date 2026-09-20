@@ -50,10 +50,9 @@ Ho individuato le risorse partendo dalla **documentazione ufficiale** di ciascun
 |---|---|---|---|
 | Docker (multi-stage) | — | Ambiente riproducibile, indipendente dalla macchina dello sviluppatore | Ogni servizio ha uno stage `test` separato dal `runtime`: la copertura si calcola in isolamento ed è estraibile con `docker build --output type=local` |
 | Nginx | 1.27 (Alpine) | Serve la SPA con poco overhead | `try_files … /index.html` per il routing client-side; cache lunga sugli asset con hash, `no-cache` su `index.html` |
-| Docker Compose | — | Orchestra backend e frontend con healthcheck | `docker-compose.test.yml` separato che esegue solo gli stage di test |
-| frontend-maven-plugin | 1.15.1 | Costruisce l'Angular dentro il jar del backend, per un'immagine unica | Configurazione Angular `embedded` che scrive in `backend/src/main/resources/static` |
+| Docker Compose | — | Orchestra backend e frontend con un solo comando (`docker compose up --build`) | Controlli di salute su entrambi i servizi; `frontend` parte dopo `backend` |
 | GitHub Actions | — | Nativa su GitHub, nessuna infrastruttura da mantenere | Rilevamento dei moduli modificati con `dorny/paths-filter`; release automatiche con tag `backend-v1.0.N` / `frontend-v1.0.N` (`softprops/action-gh-release`) |
-| Maven | 3.9 | Build e gestione delle dipendenze | Due progetti Maven indipendenti (`backend/`, radice) per non accoppiare CI e immagine unica |
+| Maven | 3.9 | Build e gestione delle dipendenze del backend | Plugin JaCoCo agganciato al ciclo `test`; compilazione con gli annotation processor di Lombok e MapStruct |
 | Playwright (solo per gli screenshot) | — | Acquisizione automatica e ripetibile delle schermate in [cap. 6](./6-Test_Funzionali.md) | Usato in una cartella temporanea fuori dal repository, con il Chrome di sistema |
 
 ## Sviluppo assistito da intelligenza artificiale
@@ -122,7 +121,6 @@ Riferimenti web ufficiali di tecnologie, standard e strumenti citati in questo c
 - [Nginx](https://nginx.org)
 - [GitHub Actions](https://docs.github.com/actions)
 - [dorny/paths-filter](https://github.com/dorny/paths-filter)
-- [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin)
 - [Git](https://git-scm.com)
 - [GitHub](https://github.com)
 

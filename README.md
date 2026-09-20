@@ -6,8 +6,8 @@ Questo repository contiene la struttura base per un progetto full-stack in ambit
 
 - `frontend/`: Contiene l'applicazione frontend in Angular 19.
 - `backend/`: Contiene il servizio backend REST in Spring Boot 3 + Java 21.
-- `Dockerfile`: File per il build Docker.
-- `REPORT.md`: Relazione tecnica finale del progetto.
+- `docker-compose.yml`: avvio dei due container con `docker compose up --build`.
+- `doc/`: relazione tecnica completa (screenshot in `doc/img/`).
 
 ## Documentazione e Avvio
 

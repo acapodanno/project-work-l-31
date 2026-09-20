@@ -36,12 +36,8 @@ Il progetto è organizzato come **monorepo**: nella stessa radice convivono il b
  ├── doc/                          # questa relazione (9 capitoli) + img/ (screenshot reali)
  ├── .github/workflows/ci.yml      # pipeline CI: build → test → release per modulo
  ├── docker-compose.yml            # backend + frontend (Nginx) con healthcheck
- ├── docker-compose.test.yml       # esegue solo gli stage `test` dei due Dockerfile
- ├── Dockerfile                    # immagine "all-in-one" (backend con SPA incorporata)
- ├── pom.xml                       # pom di servizio: compila l'Angular dentro il backend
- ├── .dockerignore  .gitignore
- ├── README.md                     # panoramica breve
- └── REPORT.md                     # riassunto esecutivo
+ ├── .gitignore
+ └── README.md                     # panoramica breve
 ```
 
 ## Setup per lo Sviluppo (clonazione ed esecuzione)
@@ -77,17 +73,31 @@ Il progetto è organizzato come **monorepo**: nella stessa radice convivono il b
    ```
    La variabile `CHROME_BIN` deve puntare a Chrome/Chromium se non è nel percorso predefinito.
 
-## Tre modi di eseguire l'applicazione
+## Due modi di eseguire l'applicazione
 
 | Modalità | Comando | Cosa parte | Porte |
 |---|---|---|---|
 | **Sviluppo** | `mvn spring-boot:run` + `npm start` | Backend e dev server Angular separati, con hot reload | 8080 + 4200 |
-| **Docker Compose** | `docker compose up --build` | Immagine backend (JRE Alpine) e immagine frontend (Nginx), con healthcheck; `frontend` dipende da `backend` | 8080 + 4200 (→ 80 nel container) |
-| **Immagine unica** | `docker build -t healthcare-app .` e `docker run --rm -p 8080:8080 healthcare-app` | Un solo container: il Spring Boot serve anche la SPA incorporata in `static/` | 8080 |
+| **Docker Compose** | `docker compose up --build` | Immagine backend (JRE 21 Alpine) e immagine frontend (Nginx 1.27 Alpine con la SPA compilata), con controlli di salute; `frontend` parte dopo `backend` | 8080 + 4200 (→ 80 nel container) |
 
-Come funziona l'immagine unica: il `pom.xml` di radice usa **frontend-maven-plugin** per installare Node, eseguire `npm ci` e compilare Angular con la configurazione `production,embedded` (definita in `frontend/angular.json`), che scrive l'output in `backend/src/main/resources/static`. Poi `backend/pom.xml` impacchetta il jar includendo quei file. I due comandi Maven vanno eseguiti in quest'ordine (lo fa il `Dockerfile`): non sono un reactor unico perché `backend/pom.xml` deve restare autonomo per `backend/Dockerfile` e per la CI.
+### Avvio con Docker Compose
 
-> **Nota di verifica.** Le modalità *Sviluppo* sono state eseguite e provate direttamente (screenshot e verifiche del [capitolo 6](./6-Test_Funzionali.md)). Le configurazioni Docker sono state rilette e allineate al codice, ma le immagini non sono state ricostruite durante questo aggiornamento della documentazione (Docker non era disponibile nell'ambiente). L'immagine unica non definisce un fallback per le rotte Angular profonde: un refresh su `/dashboard` va gestito con un controller di forward o una regola di rewrite, in alternativa si usa la modalità Compose con Nginx.
+Dalla radice del repository, con Docker in esecuzione:
+
+```bash
+docker compose up --build
+```
+
+Al termine della costruzione delle immagini il frontend è su `http://localhost:4200`, il backend su `http://localhost:8080` (Swagger su `/swagger-ui.html`). Per fermare tutto: `Ctrl+C` e poi `docker compose down`. Le schermate dell'avvio e dei due container attivi sono nel [capitolo 6, §2.6](./6-Test_Funzionali.md#26-esecuzione-in-container-docker-compose).
+
+Il test dei due moduli in container resta disponibile come stage dedicato dei Dockerfile, senza avviare nulla in ascolto:
+
+```bash
+docker build --target test ./backend      # JUnit + JaCoCo
+docker build --target test ./frontend     # Karma headless + coverage
+```
+
+> **Verifica.** La modalità *Sviluppo* e l'avvio con Docker Compose sono stati eseguiti realmente (screenshot e verifiche del [capitolo 6](./6-Test_Funzionali.md)). Provando Compose sono emersi e sono stati corretti due difetti dei Dockerfile, descritti nel capitolo 6 (§4): il backend non partiva per un problema di permessi sulla cartella `uploads/` e il controllo di salute del frontend risultava sempre `unhealthy`. I referti caricati nel container sono nella cartella `/app/uploads` **interna al container** e si perdono quando lo si ricrea: per conservarli basterebbe un volume su quella cartella.
 
 ## Flusso di lavoro Git
 

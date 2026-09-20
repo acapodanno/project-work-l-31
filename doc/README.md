@@ -16,7 +16,7 @@ Questa directory contiene la relazione tecnica, suddivisa in nove capitoli per f
    I 9 controller REST (40 operazioni), matrice dei permessi per ruolo, formato degli errori, esempi di chiamata e limiti dell'interfaccia Swagger.
 
 4. 📦 **[Repository Git e Struttura Codice](./4-Repository_Git.md)**
-   Struttura del monorepo, tre modalità di avvio (sviluppo, Docker Compose, immagine unica), configurazione, flusso di lavoro Git e release.
+   Struttura del monorepo, due modalità di avvio (sviluppo e Docker Compose), configurazione, flusso di lavoro Git e release.
 
 5. 💻 **[Processo di Sviluppo e Code Snippets](./5-Processo_Sviluppo.md)**
    Metodo, iterazioni reali, pipeline CI, strategia di test, uso dell'IA nello sviluppo, difficoltà incontrate e codice significativo.

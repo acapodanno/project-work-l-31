@@ -40,5 +40,7 @@ FROM nginx:1.27-alpine AS runtime
 COPY --from=build /app/dist/healthcare-frontend/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
+# 127.0.0.1 e non `localhost`: nel container `localhost` viene risolto prima in IPv6 (::1),
+# ma nginx ascolta solo su IPv4 (`listen 80;`), quindi il controllo fallirebbe pur con il sito attivo.
 HEALTHCHECK --interval=10s --timeout=5s --retries=5 \
-    CMD wget -qO- http://localhost:80 || exit 1
+    CMD wget -qO- http://127.0.0.1:80 || exit 1

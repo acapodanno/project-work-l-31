@@ -70,6 +70,23 @@ gantt
 
 La stima è un dato di **pianificazione**: lo storico Git registra quando il codice è stato consegnato, non quante ore sono state dedicate, quindi il tempo effettivo non è misurabile a posteriori.
 
+### Giorni per fase e tempo disponibile
+
+Le durate del piano iniziale restano quelle indicate (circa **33 giorni-persona**). Rispetto al piano, i test funzionali e le correzioni incrementali sono diventati una fase a sé (**Fase 5**): la Fase 4 del piano (5 giorni, che comprendeva anche gli screenshot funzionali) è stata divisa in **Fase 4 – Test e qualità (3 giorni)** e **Fase 5 – Test funzionali e bug fix incrementali (2 giorni)**, e la documentazione è la **Fase 6**. Il totale non cambia.
+
+Il progetto è individuale e part-time, con circa **un'ora la sera** e **alcune ore** nei giorni di weekend: per questo un «giorno» equivale a circa **4–5 ore** (una sessione di weekend o quattro-cinque serate), non a una giornata intera da otto ore. Dal 1 luglio al 20 settembre 2026 (82 giorni: 58 feriali e 24 di weekend) il tempo disponibile è di circa **154 ore** (1 ora per sera, 4 ore per giorno di weekend), cioè circa 4,7 ore per ciascuno dei 33 giorni. Sono **stime sul tempo disponibile**, non misure.
+
+| Fase | Giorni | Ore equivalenti (≈ 4,7 h/giorno) |
+|---|---|---|
+| 0 — Analisi e design | 4 | 19 |
+| 1 — Backend core | 8 | 37 |
+| 2 — Sicurezza | 5 | 23 |
+| 3 — Frontend Angular | 8 | 37 |
+| 4 — Test e qualità | 3 | 14 |
+| 5 — Test funzionali e bug fix incrementali | 2 | 9 |
+| 6 — Documentazione finale | 3 | 14 |
+| **Totale** | **33** | **≈ 154** |
+
 ## 7.3 Calendario effettivo (dalla storia Git)
 
 Il repository contiene **39 commit** tra il 10 luglio e il 20 settembre 2026. Il piano iniziale è stato seguito nella sostanza, ma il lavoro reale si è articolato in iterazioni successive alla prima consegna, molte delle quali guidate da ciò che la verifica faceva emergere (in particolare sicurezza e coerenza documentazione ↔ codice).
